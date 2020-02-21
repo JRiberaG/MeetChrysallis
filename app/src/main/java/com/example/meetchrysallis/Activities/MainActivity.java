@@ -17,6 +17,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.List;
 
 //Tutorial Navigation Bottom Bar https://www.youtube.com/watch?v=tPV8xA7m-iw
+
 public class MainActivity extends AppCompatActivity {
 
     private List<Administrador> adminList;
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                     Fragment selectedFragment = null;
 
-                    switch(menuItem.getItemId()){
+                    switch (menuItem.getItemId()) {
                         case R.id.nav_home:
                             selectedFragment = new HomeFragment();
                             break;
