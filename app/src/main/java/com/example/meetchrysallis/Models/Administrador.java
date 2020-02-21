@@ -89,4 +89,18 @@ public class Administrador {
     public void setComunidades(List<Comunidad> comunidades) {
         this.comunidades = comunidades;
     }
+
+    @Override
+    public String toString() {
+        return "Administrador{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", apellidos='" + apellidos + '\'' +
+                ", email='" + email + '\'' +
+                ", contrasenya='" + contrasenya + '\'' +
+                ", superadmin=" + superadmin +
+                ", eventos=" + eventos +
+                ", comunidades=" + comunidades +
+                '}';
+    }
 }
