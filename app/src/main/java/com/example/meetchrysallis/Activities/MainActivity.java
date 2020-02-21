@@ -1,16 +1,22 @@
 package com.example.meetchrysallis.Activities;
 
-import android.Manifest;
 import android.os.Bundle;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 
+import com.example.meetchrysallis.Fragments.BuscarFragment;
+import com.example.meetchrysallis.Fragments.HomeFragment;
+import com.example.meetchrysallis.Fragments.PerfilFragment;
 import com.example.meetchrysallis.Models.Administrador;
 import com.example.meetchrysallis.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
 
+//Tutorial Navigation Bottom Bar https://www.youtube.com/watch?v=tPV8xA7m-iw
 public class MainActivity extends AppCompatActivity {
 
     private List<Administrador> adminList;
@@ -20,36 +26,35 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ActivityCompat.requestPermissions(MainActivity.this,
-                new String[]{Manifest.permission.INTERNET},
-                1);
+        BottomNavigationView botNavBar = findViewById(R.id.bottom_nav_bar);
+        botNavBar.setOnNavigationItemSelectedListener(navListener);
 
-        /* PRUEBA DE LA API
-
-        AdministradorService adminService = Api.getApi().create(AdministradorService.class);
-
-        Call<List<Administrador>> listCall = adminService.getAdministradores();
-
-        listCall.enqueue(new Callback<List<Administrador>>() {
-            @Override
-            public void onResponse(Call<List<Administrador>> call, Response<List<Administrador>> response) {
-                switch(response.code()){
-                    case 200:
-                        adminList = response.body();
-                        //txt.setText(adminList.get(0).toString());
-                        break;
-                    default:
-                        break;
-                }
-            }
-            @Override
-            public void onFailure(Call<List<Administrador>> call, Throwable t) {
-                Toast.makeText(getApplicationContext(),
-                            t.getCause().toString() + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-        */
-
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                new HomeFragment()).commit();
 
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener =
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                    Fragment selectedFragment = null;
+
+                    switch(menuItem.getItemId()){
+                        case R.id.nav_home:
+                            selectedFragment = new HomeFragment();
+                            break;
+                        case R.id.nav_perfil:
+                            selectedFragment = new PerfilFragment();
+                            break;
+                        case R.id.nav_buscar:
+                            selectedFragment = new BuscarFragment();
+                            break;
+                    }
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                            selectedFragment).commit();
+
+                    return true;
+                }
+            };
 }

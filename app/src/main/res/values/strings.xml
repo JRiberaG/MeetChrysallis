@@ -6,8 +6,7 @@
     <string name="loginincorrecto">Usuario/contraseña incorrectos</string>
     <string name="acceder">Acceder</string>
     <string name="nombrepassolvidado">Me olvidé del usuario o la contraseña</string>
-    <string name="title_activity_eventos">EventosActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="nav_search">Buscar</string>
+    <string name="nav_profile">Perfil</string>
+    <string name="nav_home">Principal</string>
 </resources>
