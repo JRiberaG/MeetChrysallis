@@ -1,5 +1,6 @@
 package com.example.meetchrysallis.Activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,12 +8,14 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.meetchrysallis.Fragments.BuscarFragment;
 import com.example.meetchrysallis.Fragments.HomeFragment;
 import com.example.meetchrysallis.Fragments.PerfilFragment;
 import com.example.meetchrysallis.Models.Administrador;
+import com.example.meetchrysallis.Models.Socio;
 import com.example.meetchrysallis.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -23,11 +26,15 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private List<Administrador> adminList;
+    private static final String PATH = "";
+    private static Socio socio = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        pedirPermisos();
 
         //Iniciamos la Activity del login
         Intent intent = new Intent(this, LoginActivity.class);
@@ -39,6 +46,15 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 new HomeFragment()).commit();
 
+    }
+
+    private void pedirPermisos() {
+        ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                1);
+        ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                2);
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
@@ -70,13 +86,12 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1){
-            if (resultCode == Activity.RESULT_CANCELED){
-                //System.exit(0);
+            if (resultCode == Activity.RESULT_CANCELED)
                 finish();
-            }
             else if(resultCode == Activity.RESULT_FIRST_USER)
-                //System.exit(0);
                 finish();
+            else{
+            }
         }
     }
 }

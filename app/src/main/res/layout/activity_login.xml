@@ -88,7 +88,9 @@
             android:id="@+id/TxtLoginIncorrecto"
             android:layout_marginTop="20dp"
             android:layout_gravity="center"
-            android:textSize="20sp"/>
+            android:textSize="20sp"
+            android:textColor="@android:color/holo_red_light"
+            android:visibility="invisible"/>
 
     </LinearLayout>
 
@@ -106,12 +108,23 @@
             android:layout_gravity="center"
             android:id="@+id/BtnAcceder"/>
 
+        <TextView
+            android:id="@+id/TextViewOlvide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+
+            android:text="@string/nombrepassolvidado"
+            android:textSize="16sp"/>
+        <!--
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nombrepassolvidado"
             android:layout_gravity="center"
             android:id="@+id/BtnOlvidar"/>
+            -->
 
     </LinearLayout>
 
