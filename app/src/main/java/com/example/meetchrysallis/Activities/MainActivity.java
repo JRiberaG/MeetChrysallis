@@ -1,5 +1,7 @@
 package com.example.meetchrysallis.Activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -26,6 +28,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Iniciamos la Activity del login
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivityForResult(intent, 1);
 
         BottomNavigationView botNavBar = findViewById(R.id.bottom_nav_bar);
         botNavBar.setOnNavigationItemSelectedListener(navListener);
@@ -58,4 +64,19 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1){
+            if (resultCode == Activity.RESULT_CANCELED){
+                //System.exit(0);
+                finish();
+            }
+            else if(resultCode == Activity.RESULT_FIRST_USER)
+                //System.exit(0);
+                finish();
+        }
+    }
 }
