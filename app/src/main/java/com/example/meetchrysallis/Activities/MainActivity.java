@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.meetchrysallis.Fragments.BuscarFragment;
+import com.example.meetchrysallis.Fragments.MisEventosFragment;
 import com.example.meetchrysallis.Fragments.HomeFragment;
 import com.example.meetchrysallis.Fragments.PerfilFragment;
 import com.example.meetchrysallis.Models.Administrador;
@@ -26,8 +26,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private List<Administrador> adminList;
-    private static final String PATH = "";
-    private static Socio socio = null;
+    public static Socio socio = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         botNavBar.setOnNavigationItemSelectedListener(navListener);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                new HomeFragment()).commit();
+                new HomeFragment(getApplicationContext())).commit();
     }
 
     private void pedirPermisos() {
@@ -64,13 +63,13 @@ public class MainActivity extends AppCompatActivity {
 
                     switch (menuItem.getItemId()) {
                         case R.id.nav_home:
-                            selectedFragment = new HomeFragment();
+                            selectedFragment = new HomeFragment(getApplicationContext());
                             break;
                         case R.id.nav_perfil:
                             selectedFragment = new PerfilFragment();
                             break;
-                        case R.id.nav_buscar:
-                            selectedFragment = new BuscarFragment();
+                        case R.id.nav_eventos:
+                            selectedFragment = new MisEventosFragment();
                             break;
                     }
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
