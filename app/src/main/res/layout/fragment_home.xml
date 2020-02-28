@@ -11,10 +11,8 @@
         android:layout_marginBottom="10dp">
         <TextView
             android:padding="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/fragmentHome_header"
-            android:textSize="@dimen/txt_bigHeader"/>
+            style="@style/Text_BigHeader"
+            android:text="@string/fragmentHome_header" />
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerHome"

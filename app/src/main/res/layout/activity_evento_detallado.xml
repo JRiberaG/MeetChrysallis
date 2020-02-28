@@ -19,10 +19,8 @@
             android:gravity="center">
             <TextView
                 android:id="@+id/eve_det_nombre"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TITULO"
-                android:textSize="24sp"/>
+                style="@style/Text_PageHeader"
+                android:text="TITULO"/>
         </LinearLayout>
         <LinearLayout
             android:layout_marginHorizontal="15dp"
