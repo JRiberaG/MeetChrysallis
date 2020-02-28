@@ -40,8 +40,8 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/icon_medium"
+                android:layout_height="@dimen/icon_medium"
                 android:src="@drawable/mail"/>
 
             <EditText
@@ -68,8 +68,8 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/icon_medium"
+                android:layout_height="@dimen/icon_medium"
                 android:src="@drawable/password"/>
 
             <EditText
@@ -108,7 +108,7 @@
             android:text="@string/acceder"
             android:layout_gravity="center"
             android:id="@+id/BtnAcceder"
-            android:background="@drawable/custom_button"
+            android:background="@drawable/custom_button_login"
             android:textColor="@android:color/white"
             android:textSize="16sp"/>
 
@@ -143,26 +143,26 @@
 
         <ImageButton
             android:background="@color/colorPrimary"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="@dimen/icon_big"
+            android:layout_height="@dimen/icon_big"
             android:scaleType="fitCenter"
             android:src="@drawable/cat"
             android:layout_marginRight="20dp"
             android:id="@+id/BtnCat"/>
 
         <ImageButton
+            android:id="@+id/BtnEsp"
             android:background="@color/colorPrimary"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="@dimen/icon_big"
+            android:layout_height="@dimen/icon_big"
             android:scaleType="fitCenter"
             android:src="@drawable/esp"
-            android:layout_marginRight="20dp"
-            android:id="@+id/BtnEsp"/>
+            android:layout_marginRight="20dp" />
 
         <ImageButton
             android:background="@color/colorPrimary"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="@dimen/icon_big"
+            android:layout_height="@dimen/icon_big"
             android:scaleType="fitCenter"
             android:src="@drawable/eng"
             android:id="@+id/BtnEng"/>

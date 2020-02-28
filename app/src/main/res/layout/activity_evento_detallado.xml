@@ -8,146 +8,169 @@
     android:background="@color/colorPrimary"
     android:orientation="vertical">
     <LinearLayout
-        android:layout_marginTop="25dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
-        <TextView
-            android:id="@+id/eve_det_nombre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TITULO"
-            android:textSize="24sp"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_marginHorizontal="15dp"
-        android:layout_marginVertical="15dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:background="@color/colorPrimaryDark">
         <LinearLayout
-            android:layout_weight="2"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_marginTop="25dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center">
-            <ImageView
-                android:id="@+id/eve_det_imagen"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:src="@drawable/eng"
-                android:layout_gravity="center"/>
+            <TextView
+                android:id="@+id/eve_det_nombre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TITULO"
+                android:textSize="24sp"/>
         </LinearLayout>
         <LinearLayout
-            android:layout_marginLeft="20dp"
-            android:layout_weight="3"
-            android:layout_width="0dp"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center">
+                <ImageView
+                    android:id="@+id/eve_det_imagen"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/eng"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginLeft="20dp"
+                android:layout_weight="3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:paddingBottom="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="@dimen/icon_small"
+                        android:layout_height="@dimen/icon_small"
+                        app:srcCompat="@drawable/ic_date_range_black_24dp"/>
+                    <TextView
+                        android:id="@+id/eve_det_fecha"
+                        android:paddingLeft="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fecha"
+                        android:layout_gravity="center"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:paddingBottom="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="@dimen/icon_small"
+                        android:layout_height="@dimen/icon_small"
+                        app:srcCompat="@drawable/ic_location_on_black_24dp"/>
+                    <TextView
+                        android:paddingLeft="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ubicación"
+                        android:layout_gravity="center"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:paddingBottom="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="@dimen/icon_small"
+                        android:layout_height="@dimen/icon_small"
+                        android:src="@drawable/cat"/>
+                    <TextView
+                        android:paddingLeft="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fecha límite"
+                        android:layout_gravity="center"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:paddingBottom="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="@dimen/icon_small"
+                        android:layout_height="@dimen/icon_small"
+                        android:src="@drawable/cat"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="Comunidad"
+                        android:layout_gravity="center"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="@dimen/icon_small"
+                        android:layout_height="@dimen/icon_small"
+                        android:src="@drawable/cat"/>
+                    <TextView
+                        android:paddingLeft="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ADMIN"
+                        android:layout_gravity="center"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
             <LinearLayout
-                android:paddingBottom="5dp"
+                android:layout_marginHorizontal="35dp"
+                android:layout_marginVertical="15dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <ImageView
-                    android:layout_width="@dimen/icon_small"
-                    android:layout_height="@dimen/icon_small"
-                    app:srcCompat="@drawable/ic_date_range_black_24dp"/>
+                android:layout_height="match_parent">
                 <TextView
-                    android:id="@+id/eve_det_fecha"
-                    android:paddingLeft="10dp"
+                    android:id="@+id/eve_det_descripcion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Fecha"
-                    android:layout_gravity="center"/>
-            </LinearLayout>
-            <LinearLayout
-                android:paddingBottom="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <ImageView
-                    android:layout_width="@dimen/icon_small"
-                    android:layout_height="@dimen/icon_small"
-                    app:srcCompat="@drawable/ic_location_on_black_24dp"/>
-                <TextView
-                    android:paddingLeft="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ubicación"
-                    android:layout_gravity="center"/>
-            </LinearLayout>
-            <LinearLayout
-                android:paddingBottom="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <ImageView
-                    android:layout_width="@dimen/icon_small"
-                    android:layout_height="@dimen/icon_small"
-                    android:src="@drawable/cat"/>
-                <TextView
-                    android:paddingLeft="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Fecha límite"
-                    android:layout_gravity="center"/>
-            </LinearLayout>
-            <LinearLayout
-                android:paddingBottom="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <ImageView
-                    android:layout_width="@dimen/icon_small"
-                    android:layout_height="@dimen/icon_small"
-                    android:src="@drawable/cat"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="10dp"
-                    android:text="Comunidad"
-                    android:layout_gravity="center"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <ImageView
-                    android:layout_width="@dimen/icon_small"
-                    android:layout_height="@dimen/icon_small"
-                    android:src="@drawable/cat"/>
-                <TextView
-                    android:paddingLeft="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ADMIN"
-                    android:layout_gravity="center"/>
+                    android:text="Lorem ipsum dolor sit amet consectetur adipiscing elit proin inceptos nibh, neque mus justo in ac dictumst dapibus nullam diam tincidunt volutpat, lacus natoque mi pretium malesuada erat placerat maecenas ultrices. Fermentum nostra natoque et viverra ut nam sociosqu nulla taciti vitae urna orci sollicitudin quis pharetra, quisque mollis interdum dapibus porta mus imperdiet neque himenaeos fringilla netus odio ridiculus ac. Vitae facilisis purus fames id venenatis vivamus eros convallis sapien urna est, pellentesque facilisi aliquet lectus orci conubia litora dignissim ridiculus pharetra aliquam sociis, a sodales ut faucibus tristique sed malesuada enim arcu eu. Nullam a penatibus cubilia molestie tempor nisl urna vivamus praesent bibendum platea fusce hendrerit velit, in placerat consequat cras eu vitae sollicitudin sociosqu nunc est duis commodo.
+                            Lorem ipsum dolor sit amet consectetur adipiscing elit proin inceptos nibh, neque mus justo in ac dictumst dapibus nullam diam tincidunt volutpat, lacus natoque mi pretium malesuada erat placerat maecenas ultrices. Fermentum nostra natoque et viverra ut nam sociosqu nulla taciti vitae urna orci sollicitudin quis pharetra, quisque mollis interdum dapibus porta mus imperdiet neque himenaeos fringilla ..."/>
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_marginHorizontal="35dp"
-        android:layout_marginVertical="15dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <TextView
-            android:id="@+id/eve_det_descripcion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Lorem ipsum dolor sit amet consectetur adipiscing elit proin inceptos nibh, neque mus justo in ac dictumst dapibus nullam diam tincidunt volutpat, lacus natoque mi pretium malesuada erat placerat maecenas ultrices. Fermentum nostra natoque et viverra ut nam sociosqu nulla taciti vitae urna orci sollicitudin quis pharetra, quisque mollis interdum dapibus porta mus imperdiet neque himenaeos fringilla netus odio ridiculus ac. Vitae facilisis purus fames id venenatis vivamus eros convallis sapien urna est, pellentesque facilisi aliquet lectus orci conubia litora dignissim ridiculus pharetra aliquam sociis, a sodales ut faucibus tristique sed malesuada enim arcu eu. Nullam a penatibus cubilia molestie tempor nisl urna vivamus praesent bibendum platea fusce hendrerit velit, in placerat consequat cras eu vitae sollicitudin sociosqu nunc est duis commodo.
-                            Lorem ipsum dolor sit amet consectetur adipiscing elit proin inceptos nibh, neque mus justo in ac dictumst dapibus nullam diam tincidunt volutpat, lacus natoque mi pretium malesuada erat placerat maecenas ultrices. Fermentum nostra natoque et viverra ut nam sociosqu nulla taciti vitae urna orci sollicitudin quis pharetra, quisque mollis interdum dapibus porta mus imperdiet neque himenaeos fringilla netus odio ridiculus ac. Vitae facilisis purus fames id venenatis vivamus eros convallis sapien urna est, pellentesque facilisi aliquet lectus orci conubia litora dignissim ridiculus pharetra aliquam sociis, a sodales ut faucibus tristique sed malesuada enim arcu eu. Nullam a penatibus cubilia molestie tempor nisl urna vivamus praesent bibendum platea fusce hendrerit velit, in placerat consequat cras eu vitae sollicitudin sociosqu nunc est duis commodo."/>
-    </LinearLayout>
-    <!--
+    </ScrollView>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <Button
             android:id="@+id/eve_det_asistire"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ASISTIRÉ"/>
+            android:layout_height="match_parent"
+            android:text="ASISTIRÉ"
+            android:background="@drawable/selector_custom_button"/>
+
     </LinearLayout>
-    -->
+    <!--
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+    </LinearLayout>
+-->
 </LinearLayout>
