@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:background="@drawable/gradient_background"
     tools:context=".Activities.MainActivity">
 
     <TextView
@@ -102,18 +102,22 @@
         android:layout_gravity="center">
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="10dp"
             android:text="@string/acceder"
             android:layout_gravity="center"
-            android:id="@+id/BtnAcceder"/>
+            android:id="@+id/BtnAcceder"
+            android:background="@drawable/custom_button"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/TextViewOlvide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="25dp"
 
             android:text="@string/nombrepassolvidado"
             android:textSize="16sp"/>

@@ -77,26 +77,23 @@ public class LoginActivity extends AppCompatActivity {
                     String password = edPassword.getText().toString();
 
                     if (email != null && password != null){
-                        tvError.setVisibility(View.GONE);
-                        Socio newSocio = new Socio(email, password);
-                        //Se intenta conectar a la base de datos. Si se consigue y ese socio es válido...
-                        if(conectarBaseDatos(newSocio, true)){
-                            guardarJsonCredenciales(fileCreds, newSocio);
-                            devolverSocioLogueado(newSocio);
-                        }
-                        else{
-                            Toast.makeText(getApplicationContext(), "Imposible conectar con la base de datos",Toast.LENGTH_LONG).show();
-                            tvError.setVisibility(View.VISIBLE);
-                        }
-                        /*if (email.equals("prueba") && password.equals("prueba")){
+                        //Pendiente: borrar sólo este if / else (el condicional), lo de dentro se queda
+                        if (email.equals("prueba") && password.equals("prueba")){
                             tvError.setVisibility(View.GONE);
-                            Socio s = new Socio(email, password);
-                            guardarJsonCredenciales(fileCreds, s);
-                            devolverSocioLogueado(s);
+                            Socio newSocio = new Socio(email, password);
+                            //Se intenta conectar a la base de datos. Si se consigue y ese socio es válido...
+                            if(conectarBaseDatos(newSocio, true)){
+                                guardarJsonCredenciales(fileCreds, newSocio);
+                                devolverSocioLogueado(newSocio);
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(), "Imposible conectar con la base de datos",Toast.LENGTH_LONG).show();
+                                tvError.setVisibility(View.VISIBLE);
+                            }
                         }
                         else{
                             tvError.setVisibility(View.VISIBLE);
-                        }*/
+                        }
                     }
                 }
             });
@@ -111,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private boolean conectarBaseDatos(Socio socio, boolean esNuevo) {
+    private boolean conectarBaseDatos(Socio socio, boolean nuevaCredencial) {
         //pendiente:
         //si nos conectamos a comprobando datos de un socioNuevo y es válido ese socio, recoger el
         //socio al completo de la BD y asignarlo a pasado por parámetro

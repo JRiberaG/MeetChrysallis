@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 new HomeFragment()).commit();
-
     }
 
     private void pedirPermisos() {
@@ -86,11 +85,12 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1){
-            if (resultCode == Activity.RESULT_CANCELED)
-                finish();
-            else if(resultCode == Activity.RESULT_FIRST_USER)
-                finish();
+            if (resultCode == Activity.RESULT_OK) {
+                Socio s = (Socio)data.getExtras().getSerializable("socio");
+                socio = s;
+            }
             else{
+                finish();
             }
         }
     }
