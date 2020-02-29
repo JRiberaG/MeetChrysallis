@@ -11,6 +11,10 @@ import android.widget.Toast;
 
 import com.example.meetchrysallis.R;
 
+/**
+ * Clase con métodos estáticos que muestran distintos tipos de Toasts modificados (icono y fondos
+ * personalizados)
+ */
 public class CustomToast {
     /**
      * Muestra un toast de color verde con un icono a la izquierda (tick). Está orientado a que sea

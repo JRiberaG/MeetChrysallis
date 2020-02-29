@@ -1,6 +1,8 @@
 package com.example.meetchrysallis.Activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -71,23 +73,6 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     EditText edCorreo = findViewById(R.id.EditTextCorreo);
-                    String correo = edCorreo.getText().toString();
-                    switch(correo){
-                        case "1":
-                            CustomToast.mostrarSuccess(LoginActivity.this, getLayoutInflater(), "Usuario dado de alta con éxito!");
-                            break;
-                        case "2":
-                            CustomToast.mostrarError(LoginActivity.this, getLayoutInflater(), "Hubo un error en el sistema");
-                            break;
-                        case "3":
-                            CustomToast.mostrarWarning(LoginActivity.this, getLayoutInflater(), "Posibilidad de borrar datos");
-                            break;
-                        default:
-                            CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), "No hay conexión a internet");
-                            break;
-                    }
-
-                    /*EditText edCorreo = findViewById(R.id.EditTextCorreo);
                     EditText edPassword = findViewById(R.id.EditTextPassword);
                     TextView tvError = findViewById(R.id.TxtLoginIncorrecto);
 
@@ -105,14 +90,16 @@ public class LoginActivity extends AppCompatActivity {
                                 devolverSocioLogueado(newSocio);
                             }
                             else{
-                                Toast.makeText(getApplicationContext(), "Imposible conectar con la base de datos",Toast.LENGTH_LONG).show();
+                                //TODO: si no se puede conectar a la base de datos mostrar el toast,
+                                // si se conecta pero no se reconoce al usuario mostrar el tvError
+                                CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), "Imposible conectar con la base de datos");
                                 tvError.setVisibility(View.VISIBLE);
                             }
                         }
                         else{
                             tvError.setVisibility(View.VISIBLE);
                         }
-                    }*/
+                    }
                 }
             });
         }
@@ -120,17 +107,53 @@ public class LoginActivity extends AppCompatActivity {
         TextView tvOlvide = findViewById(R.id.TextViewOlvide);
         tvOlvide.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"ME OLVIDÉ!", Toast.LENGTH_LONG).show();
+            public void onClick(final View v) {
+                //Toast.makeText(getApplicationContext(),"ME OLVIDÉ!", Toast.LENGTH_LONG).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                final View view = getLayoutInflater().inflate(R.layout.dialog_olvide, null);
+                builder.setView(view)
+                        .setTitle("Escriba su correo").setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //Buscar en la base de datos el email facilitado por el usuario,
+                                //si lo está, enviar una nueva contraseña el email, si no lo está,
+                                //informar al usuario con un toast
+                                //TODO:
+                                // PENDIENTE de programar:
+                                //      - Buscar email en BD
+                                //      - Crear generador contraseña
+                                //      - Crear enviar email
+                                EditText etEmail = view.findViewById(R.id.dialog_olvide_etEmail);
+                                String email = etEmail.getText().toString();
+                                //FIXME: limpiar esto
+
+                                if (email.isEmpty()){//(email.equals("prueba")){
+                                    CustomToast.mostrarSuccess(LoginActivity.this,getLayoutInflater(),"Se le ha enviado una nueva contraseña al email");
+                                }
+                                else{
+                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),"Ese email no está asociado a ningún socio");
+                                }
+                                //buscar en la base de datos el correo
+                                //si existe, enviar un email
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }
 
     private boolean conectarBaseDatos(Socio socio, boolean nuevaCredencial) {
-        //pendiente:
-        //si nos conectamos a comprobando datos de un socioNuevo y es válido ese socio, recoger el
-        //socio al completo de la BD y asignarlo a pasado por parámetro
-        //si es válido pero lo comprobamos a través del json, no asignar nada
+        //TODO:
+        // Si nos conectamos a comprobando datos de un socioNuevo y es válido ese socio, recoger el
+        // socio al completo de la BD y asignarlo al pasado por parámetro
+        // si es válido pero lo comprobamos a través del json, no asignar nada
         return true;
     }
 
