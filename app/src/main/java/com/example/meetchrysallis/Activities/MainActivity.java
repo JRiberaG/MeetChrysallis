@@ -93,5 +93,8 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(MainActivity.this,
                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 2);
+        ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{Manifest.permission.INTERNET},
+                2);
     }
 }

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.meetchrysallis.Models.Socio;
 import com.example.meetchrysallis.Others.CustomToast;
+import com.example.meetchrysallis.Others.JavaMailAPI;
 import com.example.meetchrysallis.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Random;
 
 //TODO:
 //  Programar la conexión a la base de datos
@@ -127,17 +129,40 @@ public class LoginActivity extends AppCompatActivity {
                                 //TODO:
                                 // PENDIENTE de programar:
                                 //      - Buscar email en BD
-                                //      - Crear generador contraseña
-                                //      - Crear enviar email
+                                //      - Modificar en BD la contraseña
                                 EditText etEmail = view.findViewById(R.id.dialog_olvide_etEmail);
                                 String email = etEmail.getText().toString();
-                                //FIXME: limpiar esto
+                                String contrasenya = generarContrasenya();
+                                String asunto = "MeetChrysallis - Recuperación de contraseña";
+                                String mensaje = "Hola,\n\n" +
+                                            "Esta es su nueva contraseña: \n"
+                                            + contrasenya + "\n\n"
+                                            + "Si lo desea, puede modificarla accediendo a la pestaña" +
+                                            "de \"Perfil\" > \"Modificar Datos personales\". \n" +
+                                            "\nMuchas gracias.";
+
+                                //MODIFICAR: comprobar que el email existe en la bd
 
                                 if (email.isEmpty()){//(email.equals("prueba")){
-                                    CustomToast.mostrarSuccess(LoginActivity.this,getLayoutInflater(),"Se le ha enviado una nueva contraseña al email");
+                                    //TODO: modificar estos parámetros
+                                    JavaMailAPI javaMailAPI = new JavaMailAPI(getApplicationContext(), "jribgomez@gmail.com", asunto, mensaje);
+                                    javaMailAPI.execute();
+
+                                    //Esperamos 2,5 segundos para que dé tiempo a poder enviar el mensaje
+                                    //para luego poder enviar un mensaje al usuario informándole del resultado
+                                    try {
+                                        //Esperamos 2,5 segundos para que de tiempo a poder enviar el mensaje
+                                        Thread.sleep(2500);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    if(javaMailAPI.isResult())
+                                        CustomToast.mostrarSuccess(LoginActivity.this,getLayoutInflater(),"Email enviado con éxito");
+                                    else
+                                        CustomToast.mostrarError(LoginActivity.this,getLayoutInflater(),"No se pudo enviar el email");
                                 }
                                 else{
-                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),"Ese email no está asociado a ningún socio");
+                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),"No hay ningún socio registrado con ese email");
                                 }
                                 //buscar en la base de datos el correo
                                 //si existe, enviar un email
@@ -147,6 +172,25 @@ public class LoginActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
+    }
+
+    /**
+     * Genera una nueva contraseña aleatoria con un tamaño de 6 carácteres
+     * @return  La contraseña generada.
+     */
+    private String generarContrasenya() {
+        String password = "";
+
+        do {
+            Random r = new Random();
+            char letra = (char)(r.nextInt(26)+ 'a');
+
+            if(Character.isAlphabetic(letra))
+                password += letra;
+
+        }while(password.length() < 7);
+
+        return password;
     }
 
     private boolean conectarBaseDatos(Socio socio, boolean nuevaCredencial) {
@@ -159,8 +203,8 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Guarda (escribe) en un JSON las credenciales del usuario (email y contraseña)
-     * @param fileCreds
-     * @param socio
+     * @param fileCreds El archivo donde se escribirá
+     * @param socio     Los datos del socio
      */
     private void guardarJsonCredenciales(File fileCreds, Socio socio) {
         Gson gson = new GsonBuilder()
@@ -186,6 +230,11 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Lee un fichero JSON en el que recogerá (en caso de que las haya) las credenciales del usuario.
+     * @param path  El archivo a leer
+     * @return      Los datos del socio. De no existir las credenciales devolverá null
+     */
     private Socio leerJsonCredenciales(String path) {
         Socio socio = null;
 
@@ -198,6 +247,10 @@ public class LoginActivity extends AppCompatActivity {
         return socio;
     }
 
+    /**
+     * Vuelve a la MainActivity pasándole el socio logueado como 'Extra'.
+     * @param socio     El socio logueado
+     */
     private void devolverSocioLogueado(Socio socio) {
         Intent returnIntent = new Intent();
         returnIntent.putExtra("socio", socio);
