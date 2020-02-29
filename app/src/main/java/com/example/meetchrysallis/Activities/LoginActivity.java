@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -44,10 +43,12 @@ public class LoginActivity extends AppCompatActivity {
         //  3- si lo encuentra y está activo, se volverá a la MainActivity
         //
         //OPCIÓN B: No hay credenciales guardadas
-        //  1- si no se encuentra/lee el json, el socio escribirá email y pw
+        //  1- si no se encuentra/lee el json, el socio escribirá email y pw en el login
         //  2- conectar con la base de datos para comprobar que haya un usuario con ese email y pw
         //  3- si lo encuentra y está activo, ese socio se guardará en el JSON credenciales y se
         //      volverá a la MainActivity
+        //
+        //Si no se entiende en el drive hay un FlowChart explicándolo
 
         //este path es '/storage/emulated/0/Android/data/com.example.meetchrysallis/files/cred.json'
         final File fileCreds = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.json");
@@ -57,14 +58,17 @@ public class LoginActivity extends AppCompatActivity {
         //Si hay algún socio registrado en el JSON de credenciales...
         if(socio != null){
             //Se intenta conectar a la base de datos. Si se consigue y ese socio es válido...
-            if (conectarBaseDatos(socio, false)){
-                //Se vuelve a la MainActivity devolviendo el socio
-                devolverSocioLogueado(socio);
-            }
-            else{
-                //Si no se consige conectar a la BD, se muestra un Toast
-                Toast.makeText(getApplicationContext(), "Imposible conectar con la base de datos",Toast.LENGTH_LONG).show();
-
+            int resultadoConexion = conectarBaseDatos(socio, false);
+            switch(resultadoConexion){
+                case 1: //conexión buena, socio bueno
+                    devolverSocioLogueado(socio);
+                    break;
+                case 0: //conexión buena, socio malo (credenciales incorrectas)
+                    fileCreds.delete(); //borramos las credenciales
+                    break;
+                default: //conexión mala
+                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), "No se pudo conectar con la base de datos. Compruebe que tiene conexión a internet");
+                    break;
             }
         }
         //Si no hay ninguna credencial guardada en el JSON, el socio procederá a intentar loguearse
@@ -86,15 +90,29 @@ public class LoginActivity extends AppCompatActivity {
                         if (email.equals("prueba") && password.equals("prueba")){
                             Socio newSocio = new Socio(email, password);
                             //Se intenta conectar a la base de datos. Si se consigue y ese socio es válido...
+                            int resultadoConexion = conectarBaseDatos(newSocio, true);
+                            switch(resultadoConexion){
+                                case 1: //login correcto (se conecta a la BD y existe ese usuario)
+                                    guardarJsonCredenciales(fileCreds, newSocio);
+                                    devolverSocioLogueado(newSocio);
+                                    break;
+                                case 0: //login incorrecto (se conecta pero no existe ese usuario)
+                                    edCorreo.setText("");
+                                    edPassword.setText("");
+                                    edCorreo.requestFocus();
+                                    CustomToast.mostrarError(LoginActivity.this,getLayoutInflater(), "Email o contraseña incorrectos");
+                                    break;
+                                default: //error al conectar con la bd
+                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), "No se pudo conectar con la base de datos. Compruebe que tiene conexión a internet");
+                                    break;
+                            }/*
                             if(conectarBaseDatos(newSocio, true)){
                                 guardarJsonCredenciales(fileCreds, newSocio);
                                 devolverSocioLogueado(newSocio);
                             }
-                            else{
-                                //TODO: si no se puede conectar a la base de datos mostrar el toast,
-                                // si se conecta pero no se reconoce al usuario mostrar el tvError
+                            else if{
                                 CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), "Imposible conectar con la base de datos");
-                            }
+                            }*/
                         }
                         else{
                             edCorreo.setText("");
@@ -194,12 +212,28 @@ public class LoginActivity extends AppCompatActivity {
         return password;
     }
 
-    private boolean conectarBaseDatos(Socio socio, boolean nuevaCredencial) {
+    /**
+     * Se conecta a la base de datos y busca el socio que se le pasa por parámetro. Si existe un
+     * socio con ese email y contraseña y hemos accedido a través del login
+     * (el usuario ha escrito su email y contraseñas y ha dado al botón acceder = nuevaCredencial true),
+     * se recupera todos los datos de ese socio y esa información se le asigna al objeto Socio pasado
+     * por parámetro. Si existe ese socio y hemos accedido a través de las credenciales
+     * (flag nuevaCredencial es false), no se asigna nada.<br/><br/>
+     * Posibles resultados de la conexión: <br/>
+     * - Conexión buena y el socio existe       -> resultado = 1<br/>
+     * - Conexión buena pero el socio no existe -> resultado = 0<br/>
+     * - Conexión mala                          -> resultado = -1
+     * @param socio             El socio (email y contraseña) a buscar en la base de datos
+     * @param nuevaCredencial   Flag que indica si se accede a través del login o del JSON
+     * @return                  El resultado de la conexión en forma de entero
+     */
+    private int conectarBaseDatos(Socio socio, boolean nuevaCredencial) {
+        int resultado = 1;
+
         //TODO:
-        // Si nos conectamos a comprobando datos de un socioNuevo y es válido ese socio, recoger el
-        // socio al completo de la BD y asignarlo al pasado por parámetro
-        // si es válido pero lo comprobamos a través del json, no asignar nada
-        return true;
+        // Pendiente de programar
+
+        return resultado;
     }
 
     /**
