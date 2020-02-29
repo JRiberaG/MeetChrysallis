@@ -1,0 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toast_success_layout"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:background="@drawable/custom_toast_success">
+
+    <ImageView
+        android:layout_width="@dimen/icon_toastMed"
+        android:layout_height="@dimen/icon_toastMed"
+        android:layout_marginRight="10dp"
+        android:layout_gravity="center"
+        android:src="@drawable/icono_tick"/>
+
+    <TextView android:id="@+id/toast_success_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:layout_gravity="center"
+        android:textSize="16sp"
+        android:paddingRight="5dp"/>
+</LinearLayout>

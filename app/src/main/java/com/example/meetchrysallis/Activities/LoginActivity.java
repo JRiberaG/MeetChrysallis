@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.meetchrysallis.Models.Socio;
+import com.example.meetchrysallis.Others.CustomToast;
 import com.example.meetchrysallis.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -70,6 +71,23 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     EditText edCorreo = findViewById(R.id.EditTextCorreo);
+                    String correo = edCorreo.getText().toString();
+                    switch(correo){
+                        case "1":
+                            CustomToast.mostrarSuccess(LoginActivity.this, getLayoutInflater(), "Usuario dado de alta con éxito!");
+                            break;
+                        case "2":
+                            CustomToast.mostrarError(LoginActivity.this, getLayoutInflater(), "Hubo un error en el sistema");
+                            break;
+                        case "3":
+                            CustomToast.mostrarWarning(LoginActivity.this, getLayoutInflater(), "Posibilidad de borrar datos");
+                            break;
+                        default:
+                            CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), "No hay conexión a internet");
+                            break;
+                    }
+
+                    /*EditText edCorreo = findViewById(R.id.EditTextCorreo);
                     EditText edPassword = findViewById(R.id.EditTextPassword);
                     TextView tvError = findViewById(R.id.TxtLoginIncorrecto);
 
@@ -94,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
                         else{
                             tvError.setVisibility(View.VISIBLE);
                         }
-                    }
+                    }*/
                 }
             });
         }
