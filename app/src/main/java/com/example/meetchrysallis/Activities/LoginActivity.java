@@ -84,7 +84,6 @@ public class LoginActivity extends AppCompatActivity {
                     if (email != null && password != null){
                         //Pendiente: borrar sólo este if / else (el condicional), lo de dentro se queda
                         if (email.equals("prueba") && password.equals("prueba")){
-                            tvError.setVisibility(View.GONE);
                             Socio newSocio = new Socio(email, password);
                             //Se intenta conectar a la base de datos. Si se consigue y ese socio es válido...
                             if(conectarBaseDatos(newSocio, true)){
@@ -95,11 +94,13 @@ public class LoginActivity extends AppCompatActivity {
                                 //TODO: si no se puede conectar a la base de datos mostrar el toast,
                                 // si se conecta pero no se reconoce al usuario mostrar el tvError
                                 CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), "Imposible conectar con la base de datos");
-                                tvError.setVisibility(View.VISIBLE);
                             }
                         }
                         else{
-                            tvError.setVisibility(View.VISIBLE);
+                            edCorreo.setText("");
+                            edPassword.setText("");
+                            edCorreo.requestFocus();
+                            CustomToast.mostrarError(LoginActivity.this,getLayoutInflater(), "Email o contraseña incorrectos");
                         }
                     }
                 }
