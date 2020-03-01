@@ -11,9 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.meetchrysallis.Fragments.MisEventosFragment;
 import com.example.meetchrysallis.Fragments.HomeFragment;
-import com.example.meetchrysallis.Fragments.PerfilFragment;
+import com.example.meetchrysallis.Fragments.MisEventosFragment;
+import com.example.meetchrysallis.Fragments.OpcionesFragment;
 import com.example.meetchrysallis.Models.Administrador;
 import com.example.meetchrysallis.Models.Socio;
 import com.example.meetchrysallis.R;
@@ -54,13 +54,13 @@ public class MainActivity extends AppCompatActivity {
 
                     switch (menuItem.getItemId()) {
                         case R.id.nav_home:
-                            selectedFragment = new HomeFragment(getApplicationContext());
-                            break;
-                        case R.id.nav_perfil:
-                            selectedFragment = new PerfilFragment();
+                            selectedFragment = new HomeFragment(MainActivity.this);
                             break;
                         case R.id.nav_eventos:
                             selectedFragment = new MisEventosFragment();
+                            break;
+                        case R.id.nav_opciones:
+                            selectedFragment = new OpcionesFragment(MainActivity.this);
                             break;
                     }
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,

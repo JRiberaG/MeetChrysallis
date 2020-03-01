@@ -35,20 +35,21 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //PASOS PARA EL LOGIN
+        // --------- PASOS PARA EL LOGIN ---------
         //OPCIÓN A: Hay credenciales guardadas
         //  1- leer json (si existe json es que ya se logueó y se guardaron sus credenciales)
-        //  2- conectar con la base de datos para comprobar que siga dado de alta el user y/o que
-        //      no se hayan cambiado esas credenciales
-        //  3- si lo encuentra y está activo, se volverá a la MainActivity
+        //  2- conectarse con la base de datos para comprobar que siga dado de alta el user y/o que
+        //      no se hayan cambiado esas credenciales (email o pw)
+        //  3- si lo encuentra y está activo, se da el login por bueno y se volverá a la MainActivity
         //
         //OPCIÓN B: No hay credenciales guardadas
-        //  1- si no se encuentra/lee el json, el socio escribirá email y pw en el login
-        //  2- conectar con la base de datos para comprobar que haya un usuario con ese email y pw
-        //  3- si lo encuentra y está activo, ese socio se guardará en el JSON credenciales y se
-        //      volverá a la MainActivity
+        //  1- si no se encuentra/lee el json, el socio tendrá que escribir el email y pw
+        //  2- conectarse con la base de datos para comprobar que haya un usuario con ese email y pw
+        //  3- si lo encuentra y está activo, las credenciales usadas para el login se guardaran
+        //      en el JSON, se dará el login por bueno y se volverá a la MainActivity
         //
-        //Si no se entiende en el drive hay un FlowChart explicándolo
+        //(Si no se entiende en el drive hay un FlowChart explicándolo)
+        //----------------------------------------
 
         //este path es '/storage/emulated/0/Android/data/com.example.meetchrysallis/files/cred.json'
         final File fileCreds = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.json");
@@ -57,13 +58,13 @@ public class LoginActivity extends AppCompatActivity {
 
         //Si hay algún socio registrado en el JSON de credenciales...
         if(socio != null){
-            //Se intenta conectar a la base de datos. Si se consigue y ese socio es válido...
+            //Se intenta conectar a la base de datos
             int resultadoConexion = conectarBaseDatos(socio, false);
             switch(resultadoConexion){
                 case 1: //conexión buena, socio bueno
                     devolverSocioLogueado(socio);
                     break;
-                case 0: //conexión buena, socio malo (credenciales incorrectas)
+                case 0: //conexión buena, socio malo (credenciales incorrectas/socio inactivo)
                     fileCreds.delete(); //borramos las credenciales
                     break;
                 default: //conexión mala
@@ -80,16 +81,16 @@ public class LoginActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     EditText edCorreo = findViewById(R.id.EditTextCorreo);
                     EditText edPassword = findViewById(R.id.EditTextPassword);
-                    TextView tvError = findViewById(R.id.TxtLoginIncorrecto);
 
                     String email = edCorreo.getText().toString();
                     String password = edPassword.getText().toString();
 
-                    if (email != null && password != null){
-                        //Pendiente: borrar sólo este if / else (el condicional), lo de dentro se queda
+                    if (!email.isEmpty() && !password.isEmpty()){
+                        //TODO:
+                        // borrar sólo este if / else (el condicional), lo de dentro se queda
                         if (email.equals("prueba") && password.equals("prueba")){
                             Socio newSocio = new Socio(email, password);
-                            //Se intenta conectar a la base de datos. Si se consigue y ese socio es válido...
+                            //Se intenta conectar a la base de datos
                             int resultadoConexion = conectarBaseDatos(newSocio, true);
                             switch(resultadoConexion){
                                 case 1: //login correcto (se conecta a la BD y existe ese usuario)
@@ -105,14 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                                 default: //error al conectar con la bd
                                     CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), "No se pudo conectar con la base de datos. Compruebe que tiene conexión a internet");
                                     break;
-                            }/*
-                            if(conectarBaseDatos(newSocio, true)){
-                                guardarJsonCredenciales(fileCreds, newSocio);
-                                devolverSocioLogueado(newSocio);
                             }
-                            else if{
-                                CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), "Imposible conectar con la base de datos");
-                            }*/
                         }
                         else{
                             edCorreo.setText("");
@@ -129,7 +123,6 @@ public class LoginActivity extends AppCompatActivity {
         tvOlvide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                //Toast.makeText(getApplicationContext(),"ME OLVIDÉ!", Toast.LENGTH_LONG).show();
                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                 final View view = getLayoutInflater().inflate(R.layout.dialog_olvide, null);
                 builder.setView(view)
@@ -154,16 +147,19 @@ public class LoginActivity extends AppCompatActivity {
                                 String contrasenya = generarContrasenya();
                                 String asunto = "MeetChrysallis - Recuperación de contraseña";
                                 String mensaje = "Hola,\n\n" +
-                                            "Esta es su nueva contraseña: \n"
-                                            + contrasenya + "\n\n"
-                                            + "Si lo desea, puede modificarla accediendo a la pestaña" +
+                                            "Esta es su nueva contraseña: \n" +
+                                            contrasenya + "\n\n" +
+                                            "Si lo desea, puede modificarla accediendo a la pestaña" +
                                             "de \"Perfil\" > \"Modificar Datos personales\". \n" +
-                                            "\nMuchas gracias.";
+                                            "\nMuchas gracias.\n\n" +
+                                            "** Mensaje generado automáticamente." +
+                                            "Por favor, no responda a este email.**";
 
                                 //MODIFICAR: comprobar que el email existe en la bd
-
-                                if (email.isEmpty()){//(email.equals("prueba")){
-                                    //TODO: modificar estos parámetros
+                                //algo así como if (emailExisteEnBD())
+                                if (email.isEmpty()){
+                                    //TODO: sustituir el javaMail que está activo ahora por el comentado
+                                    //JavaMailAPI javaMailAPI = new JavaMailAPI(getApplicationContext(), email, asunto, mensaje);
                                     JavaMailAPI javaMailAPI = new JavaMailAPI(getApplicationContext(), "jribgomez@gmail.com", asunto, mensaje);
                                     javaMailAPI.execute();
 
@@ -183,8 +179,6 @@ public class LoginActivity extends AppCompatActivity {
                                 else{
                                     CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),"No hay ningún socio registrado con ese email");
                                 }
-                                //buscar en la base de datos el correo
-                                //si existe, enviar un email
                             }
                         });
                 AlertDialog dialog = builder.create();

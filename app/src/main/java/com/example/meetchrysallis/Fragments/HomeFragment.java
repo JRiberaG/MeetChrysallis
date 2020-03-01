@@ -27,8 +27,9 @@ import java.util.Date;
 public class HomeFragment extends Fragment {
     private Context context;
 
-    public HomeFragment(Context ctx) {
-        this.context = ctx;
+    //Constructor
+    public HomeFragment(Context context) {
+        this.context = context;
     }
 
     @Override
@@ -55,8 +56,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onItemClick(int position) {
                 Evento e = eventosPrueba2.get(position);
-//                Toast.makeText(context, "ITEM CLICKADO! - " + e.getDescripcion(), Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(context, EventoDetalladoActivity.class);
+                //intent.putExtra("evento", e);
                 startActivity(intent);
             }
         });

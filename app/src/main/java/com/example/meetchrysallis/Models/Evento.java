@@ -1,11 +1,14 @@
 package com.example.meetchrysallis.Models;
 
+import android.os.Parcelable;
+
 import androidx.annotation.Nullable;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class Evento {
+public class Evento implements Serializable {
 
     private short id;
     private String titulo;

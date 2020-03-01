@@ -7,7 +7,7 @@
     <string name="acceder">Acceder</string>
     <string name="nombrepassolvidado"><u>Me olvidé del usuario o la contraseña</u></string>
     <string name="nav_search">Buscar</string>
-    <string name="nav_profile">Perfil</string>
+    <string name="nav_opciones">Opciones</string>
     <string name="nav_home">Principal</string>
     <string name="nav_eventos">Mis eventos</string>
     <string name="fragmentHome_header">EVENTOS DISPONIBLES</string>
