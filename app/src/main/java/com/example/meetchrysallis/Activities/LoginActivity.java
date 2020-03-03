@@ -12,6 +12,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.meetchrysallis.API.Api;
+import com.example.meetchrysallis.API.ApiService.SocioService;
+import com.example.meetchrysallis.Models.Administrador;
 import com.example.meetchrysallis.Models.Socio;
 import com.example.meetchrysallis.Others.CustomToast;
 import com.example.meetchrysallis.Others.JavaMailAPI;
@@ -24,16 +27,39 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 //TODO:
 //  Programar la conexión a la base de datos
 //  https://dribbble.com/shots/6787415-Meet-Up-Login-App-UI-Design
 public class LoginActivity extends AppCompatActivity {
 
+    private boolean encontrado;
+    private boolean conexionBuena;
+    private boolean hayCredenciales;
+
+    private ArrayList<Socio> listaSocios = new ArrayList<>();
+    private Socio socio;
+    private Administrador admin;
+
+    private File fileCreds;
+
+    private SocioService socioService = Api.getApi().create(SocioService.class);
+    private Call<List<Socio>> sociosCall = socioService.getSocios();
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        //TODO:
+        //  - Buscar en la bd también para los admins (ellos tambien pueden loguearse...)
 
         // --------- PASOS PARA EL LOGIN ---------
         //OPCIÓN A: Hay credenciales guardadas
@@ -52,72 +78,98 @@ public class LoginActivity extends AppCompatActivity {
         //----------------------------------------
 
         //este path es '/storage/emulated/0/Android/data/com.example.meetchrysallis/files/cred.json'
-        final File fileCreds = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.json");
+        fileCreds = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.json");
 
-        Socio socio = leerJsonCredenciales(fileCreds.getPath());
+        //final Socio[] socio = {leerJsonCredenciales(fileCreds.getPath())};
+        socio = leerJsonCredenciales(fileCreds.getPath());
 
-        //Si hay algún socio registrado en el JSON de credenciales...
+        //Si hay algunas credenciales guardadas (en el JSON)...
         if(socio != null){
-            //Se intenta conectar a la base de datos
-            int resultadoConexion = conectarBaseDatos(socio, false);
-            switch(resultadoConexion){
-                case 1: //conexión buena, socio bueno
-                    devolverSocioLogueado(socio);
-                    break;
-                case 0: //conexión buena, socio malo (credenciales incorrectas/socio inactivo)
-                    fileCreds.delete(); //borramos las credenciales
-                    break;
-                default: //conexión mala
-                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), "No se pudo conectar con la base de datos. Compruebe que tiene conexión a internet");
-                    break;
-            }
-        }
-        //Si no hay ninguna credencial guardada en el JSON, el socio procederá a intentar loguearse
-        else{
-            Button btnAcceder = findViewById(R.id.BtnAcceder);
-
-            btnAcceder.setOnClickListener(new View.OnClickListener() {
+            //Hacemos una llamada a la API
+            sociosCall.clone().enqueue(new Callback<List<Socio>>() {
                 @Override
-                public void onClick(View v) {
-                    EditText edCorreo = findViewById(R.id.EditTextCorreo);
-                    EditText edPassword = findViewById(R.id.EditTextPassword);
-
-                    String email = edCorreo.getText().toString();
-                    String password = edPassword.getText().toString();
-
-                    if (!email.isEmpty() && !password.isEmpty()){
-                        //TODO:
-                        // borrar sólo este if / else (el condicional), lo de dentro se queda
-                        if (email.equals("prueba") && password.equals("prueba")){
-                            Socio newSocio = new Socio(email, password);
-                            //Se intenta conectar a la base de datos
-                            int resultadoConexion = conectarBaseDatos(newSocio, true);
-                            switch(resultadoConexion){
-                                case 1: //login correcto (se conecta a la BD y existe ese usuario)
-                                    guardarJsonCredenciales(fileCreds, newSocio);
-                                    devolverSocioLogueado(newSocio);
+                public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
+                    switch(response.code()){
+                        case 200:
+                            switch(comprobarSocio(socio, response)){
+                                case 1: //login ok
+                                    devolverSocioLogueado(socio);
                                     break;
-                                case 0: //login incorrecto (se conecta pero no existe ese usuario)
-                                    edCorreo.setText("");
-                                    edPassword.setText("");
-                                    edCorreo.requestFocus();
-                                    CustomToast.mostrarError(LoginActivity.this,getLayoutInflater(), "Email o contraseña incorrectos");
+                                case 0: //login mal
+                                    fileCreds.delete(); //borramos las credenciales (son erroneas)
                                     break;
-                                default: //error al conectar con la bd
-                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), "No se pudo conectar con la base de datos. Compruebe que tiene conexión a internet");
+                                default: //no hay socios en la bd
+                                    CustomToast.mostrarWarning(LoginActivity.this,getLayoutInflater(), "No hay ningún socio registrado en la base de datos");
                                     break;
                             }
-                        }
-                        else{
-                            edCorreo.setText("");
-                            edPassword.setText("");
-                            edCorreo.requestFocus();
-                            CustomToast.mostrarError(LoginActivity.this,getLayoutInflater(), "Email o contraseña incorrectos");
-                        }
+                            break;
+                        default:
+                            CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), response.code() + " - " + response.message());
+                            break;
                     }
+                }
+
+                @Override
+                public void onFailure(Call<List<Socio>> call, Throwable t) {
+                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), "No se ha podido conectar con la base de datos");
                 }
             });
         }
+
+        //Si no hay ninguna credencial guardada en el JSON (o la que había es errónea),
+        //el socio procederá a intentar loguearse manualmente
+        Button btnAcceder = findViewById(R.id.BtnAcceder);
+        btnAcceder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final EditText edCorreo = findViewById(R.id.EditTextCorreo);
+                final EditText edPassword = findViewById(R.id.EditTextPassword);
+
+                final String email = edCorreo.getText().toString();
+                final String password = edPassword.getText().toString();
+
+                if (!email.isEmpty() && !password.isEmpty()){
+                    final Socio newSocio = new Socio(email, password);
+
+                    //Se clonan las calls para poder realizar una tras otra
+                    // (por ejemplo, el usuario se equivoca al loguearse +2 veces), de lo contrario
+                    // petan lanzando la siguiente exception:
+                    //      IllegalStateException: Already executed
+                    sociosCall.clone().enqueue(new Callback<List<Socio>>(){
+                        @Override
+                        public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
+                            switch(response.code()){
+                                case 200:
+                                    switch(comprobarSocio(newSocio, response)){
+                                        case 1: //login ok
+                                            guardarJsonCredenciales(fileCreds, newSocio);
+                                            devolverSocioLogueado(newSocio);
+                                            break;
+                                        case 0: //login mal
+                                            edCorreo.setText("");
+                                            edPassword.setText("");
+                                            edCorreo.requestFocus();
+                                            CustomToast.mostrarError(LoginActivity.this,getLayoutInflater(), "Email o contrasenña incorrectos");
+                                            break;
+                                        default: //no hay socios en la bd
+                                            CustomToast.mostrarWarning(LoginActivity.this,getLayoutInflater(), "No hay ningún socio registrado en la base de datos");
+                                            break;
+                                    }
+                                    break;
+                                default:
+                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), response.code() + " - " + response.message());
+                                    break;
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<Socio>> call, Throwable t) {
+                            CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), "No se ha podido conectar con la base de datos");
+                        }
+                    });
+                }
+            }
+        });
 
         TextView tvOlvide = findViewById(R.id.TextViewOlvide);
         tvOlvide.setOnClickListener(new View.OnClickListener() {
@@ -141,7 +193,7 @@ public class LoginActivity extends AppCompatActivity {
                                 //TODO:
                                 // PENDIENTE de programar:
                                 //      - Buscar email en BD
-                                //      - Modificar en BD la contraseña
+                                //      - Modificar en BD la contraseña (encriptada) (updatear socio)
                                 EditText etEmail = view.findViewById(R.id.dialog_olvide_etEmail);
                                 String email = etEmail.getText().toString();
                                 String contrasenya = generarContrasenya();
@@ -188,6 +240,47 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
+     * Comprueba que el socio pasado por parámetro se encuentre dentro de la base de datos (y que
+     * sea un socio en activo) a través del Response que también se pasa por parámetro.<br/>
+     * <b>Resultados</b><br/>
+     * 1 = Socio existente y activo, LOGIN CORRECTO<br/>
+     * 0 = Socio inexistente o inactivo, LOGIN INCORRECTO<br/>
+     * -1 = Datos recuperados null o insuficientes (lista vacía)
+     * @param socio         El Socio a comprobar
+     * @param response      La Response que se recupera de la API
+     * @return              El resultado de la comprobación
+     */
+    private int comprobarSocio(Socio socio, Response response) {
+        int resultado;
+        listaSocios = (ArrayList<Socio>)response.body();
+
+        if(listaSocios != null || listaSocios.size() < 1){
+            Iterator ite = listaSocios.iterator();
+            Socio socioIterado;
+
+            while(ite.hasNext() && !encontrado){
+                socioIterado = (Socio) ite.next();
+
+                if(socioIterado.getEmail().equals(socio.getEmail())
+                        && socioIterado.getContrasenya().equals(socio.getContrasenya())
+                        && socioIterado.isActivo()){
+                    encontrado = true;
+                    socio = socioIterado;
+                }
+            }
+
+            if(encontrado)
+                resultado = 1;
+            else
+                resultado = 0;
+        }
+        else
+            resultado = -1;
+
+        return resultado;
+    }
+
+    /**
      * Genera una nueva contraseña aleatoria con un tamaño de 6 carácteres
      * @return  La contraseña generada.
      */
@@ -221,14 +314,7 @@ public class LoginActivity extends AppCompatActivity {
      * @param nuevaCredencial   Flag que indica si se accede a través del login o del JSON
      * @return                  El resultado de la conexión en forma de entero
      */
-    private int conectarBaseDatos(Socio socio, boolean nuevaCredencial) {
-        int resultado = 1;
 
-        //TODO:
-        // Pendiente de programar
-
-        return resultado;
-    }
 
     /**
      * Guarda (escribe) en un JSON las credenciales del usuario (email y contraseña)

@@ -9,20 +9,20 @@ public class Administrador {
     private String email;
     private String contrasenya;
     private boolean superadmin;
-    private List<Evento> eventos;
-    private List<Comunidad> comunidades;
+    private List<Evento> Eventos;
+    private List<Comunidad> Comunidades;
 
     //Constructores
     public Administrador(){}
-    public Administrador(byte id, String nombre, String apellidos, String email, String contrasenya, boolean superadmin, List<Evento> eventos, List<Comunidad> comunidades) {
+    public Administrador(byte id, String nombre, String apellidos, String email, String contrasenya, boolean superadmin, List<Evento> Eventos, List<Comunidad> Comunidades) {
         this.id = id;
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.email = email;
         this.contrasenya = contrasenya;
         this.superadmin = superadmin;
-        this.eventos = eventos;
-        this.comunidades = comunidades;
+        this.Eventos = Eventos;
+        this.Comunidades = Comunidades;
     }
 
     //Getters & Setters
@@ -75,19 +75,19 @@ public class Administrador {
     }
 
     public List<Evento> getEventos() {
-        return eventos;
+        return Eventos;
     }
 
     public void setEventos(List<Evento> eventos) {
-        this.eventos = eventos;
+        this.Eventos = eventos;
     }
 
     public List<Comunidad> getComunidades() {
-        return comunidades;
+        return Comunidades;
     }
 
     public void setComunidades(List<Comunidad> comunidades) {
-        this.comunidades = comunidades;
+        this.Comunidades = comunidades;
     }
 
     @Override
@@ -99,8 +99,8 @@ public class Administrador {
                 ", email='" + email + '\'' +
                 ", contrasenya='" + contrasenya + '\'' +
                 ", superadmin=" + superadmin +
-                ", eventos=" + eventos +
-                ", comunidades=" + comunidades +
+                ", Eventos=" + Eventos +
+                ", Comunidades=" + Comunidades +
                 '}';
     }
 }

@@ -8,6 +8,6 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 
 public interface SocioService {
-    @GET("api/Socios")
+    @GET("api/socios")
     Call<List<Socio>> getSocios();
 }

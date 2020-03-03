@@ -2,12 +2,12 @@ package com.example.meetchrysallis.API.ApiService;
 
 import com.example.meetchrysallis.Models.Evento;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 
-public interface Eventos {
+public interface EventoService {
     @GET("api/Eventos")
-    Call<List<Evento>> getEventos();
+    Call<ArrayList<Evento>> getEventos();
 }
