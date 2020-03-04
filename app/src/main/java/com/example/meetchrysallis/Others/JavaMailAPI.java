@@ -30,11 +30,8 @@ public class JavaMailAPI extends AsyncTask<Void,Void,Void>  {
     private String mSubject;
     private String mMessage;
 
-    private boolean result;
-
-    public boolean isResult() {
-        return result;
-    }
+    //Atributo añadido para verificar que se haya enviado el mail correctamente o no
+    private boolean ok;
 
     //Constructor
     public JavaMailAPI(Context mContext, String mEmail, String mSubject, String mMessage) {
@@ -80,7 +77,7 @@ public class JavaMailAPI extends AsyncTask<Void,Void,Void>  {
             mm.setText(mMessage);
             //Sending email
             Transport.send(mm);
-            result = true;
+            ok = true;
 //            BodyPart messageBodyPart = new MimeBodyPart();
 //
 //            messageBodyPart.setText(message);
@@ -102,8 +99,12 @@ public class JavaMailAPI extends AsyncTask<Void,Void,Void>  {
 //            mm.setContent(multipart);
 
         } catch (MessagingException e) {
-            result = false;
+            ok = false;
         }
         return null;
+    }
+
+    public boolean isOk() {
+        return ok;
     }
 }

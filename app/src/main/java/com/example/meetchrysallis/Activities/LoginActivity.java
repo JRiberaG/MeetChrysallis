@@ -14,19 +14,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.meetchrysallis.API.Api;
 import com.example.meetchrysallis.API.ApiService.SocioService;
-import com.example.meetchrysallis.Models.Administrador;
 import com.example.meetchrysallis.Models.Socio;
 import com.example.meetchrysallis.Others.CustomToast;
-import com.example.meetchrysallis.Others.JavaMailAPI;
+import com.example.meetchrysallis.Others.JsonHelper;
 import com.example.meetchrysallis.R;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -36,18 +32,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-//TODO:
-//  Programar la conexión a la base de datos
-//  https://dribbble.com/shots/6787415-Meet-Up-Login-App-UI-Design
-public class LoginActivity extends AppCompatActivity {
 
-    private boolean encontrado;
-    private boolean conexionBuena;
-    private boolean hayCredenciales;
+//https://dribbble.com/shots/6787415-Meet-Up-Login-App-UI-Design
+public class LoginActivity extends AppCompatActivity {
 
     private ArrayList<Socio> listaSocios = new ArrayList<>();
     private Socio socio;
-    private Administrador admin;
+    private Socio newSocio;
 
     private File fileCreds;
 
@@ -57,9 +48,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        //TODO:
-        //  - Buscar en la bd también para los admins (ellos tambien pueden loguearse...)
 
         // --------- PASOS PARA EL LOGIN ---------
         //OPCIÓN A: Hay credenciales guardadas
@@ -80,12 +68,12 @@ public class LoginActivity extends AppCompatActivity {
         //este path es '/storage/emulated/0/Android/data/com.example.meetchrysallis/files/cred.json'
         fileCreds = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.json");
 
-        //final Socio[] socio = {leerJsonCredenciales(fileCreds.getPath())};
-        socio = leerJsonCredenciales(fileCreds.getPath());
+        //Intentamos leer el archivo de credenciales y pasamos los datos del archivo a un objeto Socio
+        socio = JsonHelper.leerJsonCredenciales(fileCreds.getPath());
 
-        //Si hay algunas credenciales guardadas (en el JSON)...
+        //Si hay algunas credenciales guardadas...
         if(socio != null){
-            //Hacemos una llamada a la API
+            //Hacemos una llamada a la API para comprobar que esas credenciales sean válidas
             sociosCall.clone().enqueue(new Callback<List<Socio>>() {
                 @Override
                 public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
@@ -111,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<List<Socio>> call, Throwable t) {
-                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), "No se ha podido conectar con la base de datos");
+                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
                 }
             });
         }
@@ -129,11 +117,13 @@ public class LoginActivity extends AppCompatActivity {
                 final String password = edPassword.getText().toString();
 
                 if (!email.isEmpty() && !password.isEmpty()){
-                    final Socio newSocio = new Socio(email, password);
+                    //Encriptamos la contraseña para poder comparar con las que hay en la BD
+                    String contrasenyaEncriptada = encriptarContrasenya(password).toUpperCase();
+                    newSocio = new Socio(email, contrasenyaEncriptada);
 
                     //Se clonan las calls para poder realizar una tras otra
                     // (por ejemplo, el usuario se equivoca al loguearse +2 veces), de lo contrario
-                    // petan lanzando la siguiente exception:
+                    // petaría lanzando la siguiente exception:
                     //      IllegalStateException: Already executed
                     sociosCall.clone().enqueue(new Callback<List<Socio>>(){
                         @Override
@@ -142,14 +132,14 @@ public class LoginActivity extends AppCompatActivity {
                                 case 200:
                                     switch(comprobarSocio(newSocio, response)){
                                         case 1: //login ok
-                                            guardarJsonCredenciales(fileCreds, newSocio);
+                                            JsonHelper.guardarJsonCredenciales(fileCreds, newSocio);
                                             devolverSocioLogueado(newSocio);
                                             break;
                                         case 0: //login mal
                                             edCorreo.setText("");
                                             edPassword.setText("");
                                             edCorreo.requestFocus();
-                                            CustomToast.mostrarError(LoginActivity.this,getLayoutInflater(), "Email o contrasenña incorrectos");
+                                            CustomToast.mostrarError(LoginActivity.this,getLayoutInflater(), getString(R.string.loginincorrecto));
                                             break;
                                         default: //no hay socios en la bd
                                             CustomToast.mostrarWarning(LoginActivity.this,getLayoutInflater(), "No hay ningún socio registrado en la base de datos");
@@ -164,7 +154,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         @Override
                         public void onFailure(Call<List<Socio>> call, Throwable t) {
-                            CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), "No se ha podido conectar con la base de datos");
+                            CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
                         }
                     });
                 }
@@ -187,50 +177,101 @@ public class LoginActivity extends AppCompatActivity {
                         .setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                //Buscar en la base de datos el email facilitado por el usuario,
-                                //si lo está, enviar una nueva contraseña el email, si no lo está,
-                                //informar al usuario con un toast
-                                //TODO:
-                                // PENDIENTE de programar:
-                                //      - Buscar email en BD
-                                //      - Modificar en BD la contraseña (encriptada) (updatear socio)
+                                //Busca en la base de datos el email facilitado por el usuario,
+                                //si lo está, envía una nueva contraseña al email, si no lo está,
+                                //informa al usuario
                                 EditText etEmail = view.findViewById(R.id.dialog_olvide_etEmail);
-                                String email = etEmail.getText().toString();
-                                String contrasenya = generarContrasenya();
-                                String asunto = "MeetChrysallis - Recuperación de contraseña";
-                                String mensaje = "Hola,\n\n" +
+                                final String email = etEmail.getText().toString();
+                                //Genera una nueva contraseña aleatorio de 6 carácteres alfabéticos
+                                final String contrasenyaRandom = generarContrasenya();
+                                final String asunto = "MeetChrysallis - Recuperación de contraseña";
+                                final String mensaje = "¡Hola!\n\n" +
                                             "Esta es su nueva contraseña: \n" +
-                                            contrasenya + "\n\n" +
+                                            contrasenyaRandom + "\n\n" +
                                             "Si lo desea, puede modificarla accediendo a la pestaña" +
                                             "de \"Perfil\" > \"Modificar Datos personales\". \n" +
                                             "\nMuchas gracias.\n\n" +
-                                            "** Mensaje generado automáticamente." +
+                                            "** Mensaje generado automáticamente. " +
                                             "Por favor, no responda a este email.**";
 
-                                //MODIFICAR: comprobar que el email existe en la bd
-                                //algo así como if (emailExisteEnBD())
-                                if (email.isEmpty()){
-                                    //TODO: sustituir el javaMail que está activo ahora por el comentado
-                                    //JavaMailAPI javaMailAPI = new JavaMailAPI(getApplicationContext(), email, asunto, mensaje);
-                                    JavaMailAPI javaMailAPI = new JavaMailAPI(getApplicationContext(), "jribgomez@gmail.com", asunto, mensaje);
-                                    javaMailAPI.execute();
+                                sociosCall.clone().enqueue(new Callback<List<Socio>>() {
+                                    @Override
+                                    public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
+                                        listaSocios = (ArrayList<Socio>)response.body();
+                                        boolean emailEncontrado = false;
 
-                                    //Esperamos 2,5 segundos para que dé tiempo a poder enviar el mensaje
-                                    //para luego poder enviar un mensaje al usuario informándole del resultado
-                                    try {
-                                        //Esperamos 2,5 segundos para que de tiempo a poder enviar el mensaje
-                                        Thread.sleep(2500);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
+                                        if(listaSocios != null || listaSocios.size() < 1) {
+                                            Iterator ite = listaSocios.iterator();
+                                            Socio socioIterado = null;
+
+                                            while (ite.hasNext() && !emailEncontrado) {
+                                                socioIterado = (Socio) ite.next();
+
+                                                if (socioIterado.getEmail().equals(email) &&
+                                                    socioIterado.isActivo()) {
+                                                    emailEncontrado = true;
+                                                }
+                                            }
+                                            //FIXME: modificar el mail para cuando se acaben de hacer las pruebas
+                                            if (emailEncontrado){
+                                                //Encripta la contraseña generada automáticamente
+                                                String contrasenyaEncriptada = encriptarContrasenya("prueba").toUpperCase();
+                                                Socio socioUpdated = socioIterado;
+                                                socioUpdated.setContrasenya(contrasenyaEncriptada);
+
+                                                //Hace una llamada a la API modificando la contraseña del socio
+                                                Call<Socio> callUpdateSocio = socioService.updateSocio(socioUpdated.getId(), socioUpdated);
+                                                callUpdateSocio.enqueue(new Callback<Socio>() {
+                                                    //FIXME: correguir los toasts: se actualiza la  contraseña pero es codigo 200 (cuando debería)
+                                                    @Override
+                                                    public void onResponse(Call<Socio> call, Response<Socio> response) {
+                                                        switch(response.code()){
+                                                            case 200:
+                                                                CustomToast.mostrarSuccess(LoginActivity.this, getLayoutInflater(), "Todo ok");
+                                                                break;
+                                                            case 400:
+                                                                CustomToast.mostrarWarning(LoginActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                                                                break;
+                                                            default:
+                                                                CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<Socio> call, Throwable t) {
+                                                        CustomToast.mostrarInfo(getApplicationContext(), getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                    }
+                                                });
+
+                                                //Enviamos el mail al usuario con la nueva contraseña (sin encriptar)
+                                                /*JavaMailAPI javaMailAPI = new JavaMailAPI(getApplicationContext(), "jribgomez@gmail.com", asunto, mensaje);
+                                                javaMailAPI.execute();
+
+                                                //FIXME: este sistema es cutre, procurar mejorarlo
+                                                //Esperamos 2,5 segundos para que dé tiempo a poder enviar el mensaje
+                                                //para luego poder enviar un mensaje al usuario informándole del resultado
+                                                try {
+                                                    //Esperamos 2,5 segundos para que de tiempo a poder enviar el mensaje
+                                                    Thread.sleep(2500);
+                                                } catch (InterruptedException e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                                if(javaMailAPI.isOk())
+                                                    CustomToast.mostrarSuccess(LoginActivity.this,getLayoutInflater(),"Email enviado con éxito");
+                                                else
+                                                    CustomToast.mostrarError(LoginActivity.this,getLayoutInflater(),"No se pudo enviar el email");
+                                            */}
+                                            else
+                                                CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),"No hay ningún socio registrado con ese email");
+                                        }
                                     }
-                                    if(javaMailAPI.isResult())
-                                        CustomToast.mostrarSuccess(LoginActivity.this,getLayoutInflater(),"Email enviado con éxito");
-                                    else
-                                        CustomToast.mostrarError(LoginActivity.this,getLayoutInflater(),"No se pudo enviar el email");
-                                }
-                                else{
-                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),"No hay ningún socio registrado con ese email");
-                                }
+
+                                    @Override
+                                    public void onFailure(Call<List<Socio>> call, Throwable t) {
+                                        CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
+                                    }
+                                });
                             }
                         });
                 AlertDialog dialog = builder.create();
@@ -246,26 +287,27 @@ public class LoginActivity extends AppCompatActivity {
      * 1 = Socio existente y activo, LOGIN CORRECTO<br/>
      * 0 = Socio inexistente o inactivo, LOGIN INCORRECTO<br/>
      * -1 = Datos recuperados null o insuficientes (lista vacía)
-     * @param socio         El Socio a comprobar
+     * @param s         El Socio a comprobar
      * @param response      La Response que se recupera de la API
      * @return              El resultado de la comprobación
      */
-    private int comprobarSocio(Socio socio, Response response) {
+    private int comprobarSocio(Socio s, Response response) {
         int resultado;
         listaSocios = (ArrayList<Socio>)response.body();
 
         if(listaSocios != null || listaSocios.size() < 1){
             Iterator ite = listaSocios.iterator();
             Socio socioIterado;
+            boolean encontrado = false;
 
             while(ite.hasNext() && !encontrado){
                 socioIterado = (Socio) ite.next();
 
-                if(socioIterado.getEmail().equals(socio.getEmail())
-                        && socioIterado.getContrasenya().equals(socio.getContrasenya())
-                        && socioIterado.isActivo()){
+                if(socioIterado.getEmail().equals(s.getEmail())
+                        && socioIterado.getContrasenya().equals(s.getContrasenya())
+                        && socioIterado.isActivo()) {
                     encontrado = true;
-                    socio = socioIterado;
+                    newSocio = socioIterado;
                 }
             }
 
@@ -300,66 +342,41 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * Se conecta a la base de datos y busca el socio que se le pasa por parámetro. Si existe un
-     * socio con ese email y contraseña y hemos accedido a través del login
-     * (el usuario ha escrito su email y contraseñas y ha dado al botón acceder = nuevaCredencial true),
-     * se recupera todos los datos de ese socio y esa información se le asigna al objeto Socio pasado
-     * por parámetro. Si existe ese socio y hemos accedido a través de las credenciales
-     * (flag nuevaCredencial es false), no se asigna nada.<br/><br/>
-     * Posibles resultados de la conexión: <br/>
-     * - Conexión buena y el socio existe       -> resultado = 1<br/>
-     * - Conexión buena pero el socio no existe -> resultado = 0<br/>
-     * - Conexión mala                          -> resultado = -1
-     * @param socio             El socio (email y contraseña) a buscar en la base de datos
-     * @param nuevaCredencial   Flag que indica si se accede a través del login o del JSON
-     * @return                  El resultado de la conexión en forma de entero
+     * Encripta con el sistema SHA5-512 un string que se le pasará por parámetro.
+     * @param contrasenya   El string a encriptar
+     * @return              El string encriptado
      */
-
-
-    /**
-     * Guarda (escribe) en un JSON las credenciales del usuario (email y contraseña)
-     * @param fileCreds El archivo donde se escribirá
-     * @param socio     Los datos del socio
-     */
-    private void guardarJsonCredenciales(File fileCreds, Socio socio) {
-        Gson gson = new GsonBuilder()
-                                    .serializeNulls() //podrá escribir nulos (si los hay)
-                                    .setPrettyPrinting() //lo escribirá con buen formato
-                                    .create(); //crea el builder
-        FileWriter fw = null;
-
+    private String encriptarContrasenya(String contrasenya){
+        String result;
         try {
-            fw = new FileWriter(fileCreds.getPath());
-            gson.toJson(socio, fw);
-        } catch (IOException e) {
-            //error al abrir el archivo
-        }
-        finally{
-            if (fw != null) {
-                try {
-                    fw.close();
-                } catch (IOException e) {
-                    //error al cerrar el arhcivo
-                }
+            // getInstance() method is called with algorithm SHA-512
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+
+            // digest() method is called
+            // to calculate message digest of the input string
+            // returned as array of byte
+            byte[] messageDigest = md.digest(contrasenya.getBytes());
+
+            // Convert byte array into signum representation
+            BigInteger no = new BigInteger(1, messageDigest);
+
+            // Convert message digest into hex value
+            String hashtext = no.toString(16);
+
+            // Add preceding 0s to make it 32 bit
+            while (hashtext.length() < 32) {
+                hashtext = "0" + hashtext;
             }
-        }
-    }
 
-    /**
-     * Lee un fichero JSON en el que recogerá (en caso de que las haya) las credenciales del usuario.
-     * @param path  El archivo a leer
-     * @return      Los datos del socio. De no existir las credenciales devolverá null
-     */
-    private Socio leerJsonCredenciales(String path) {
-        Socio socio = null;
-
-        Gson gson = new Gson();
-        try {
-            socio = gson.fromJson(new FileReader(path), Socio.class);
-        } catch (FileNotFoundException e) {
-            //no se encontró el archivo y por tanto, no hay credenciales registradas
+            result = hashtext;
         }
-        return socio;
+
+        // For specifying wrong message digest algorithms
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result;
     }
 
     /**

@@ -25,6 +25,7 @@
         android:layout_gravity="center"
         android:orientation="vertical">
 
+        <!--
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,27 +33,44 @@
             android:layout_gravity="center"
             android:layout_marginLeft="10dp"
             android:textSize="20sp"/>
+            -->
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="@drawable/background_edittext_login"
+            android:padding="5dp"
+            android:layout_marginBottom="20dp"
+            android:paddingTop="15dp">
 
             <ImageView
                 android:layout_width="@dimen/icon_medium"
                 android:layout_height="@dimen/icon_medium"
-                android:src="@drawable/mail"/>
+                android:src="@drawable/mail"
+                android:padding="4dp"/>
 
             <EditText
                 android:layout_width="200dp"
                 android:layout_height="40dp"
-                android:layout_marginLeft="10dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="10dp"
                 android:inputType="textEmailAddress"
-                android:id="@+id/EditTextCorreo"/>
+                android:id="@+id/EditTextCorreo"
+                android:background="@null"
+                android:layout_gravity="center"
+                android:hint="Email"/>
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+        <!--
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -61,24 +79,32 @@
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
             android:textSize="20sp"/>
-
+-->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="@drawable/background_edittext_login"
+            android:padding="5dp">
 
             <ImageView
                 android:layout_width="@dimen/icon_medium"
                 android:layout_height="@dimen/icon_medium"
-                android:src="@drawable/password"/>
+                android:src="@drawable/password"
+                android:padding="4dp"/>
 
             <EditText
                 android:layout_width="200dp"
                 android:layout_height="40dp"
-                android:layout_marginLeft="10dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="10dp"
                 android:id="@+id/EditTextPassword"
-                android:inputType="textPassword"/>
+                android:inputType="textPassword"
+                android:background="@null"
+                android:maxLength="16"
+                android:layout_gravity="center"
+                android:hint="Contraseña"/>
 
         </LinearLayout>
 
