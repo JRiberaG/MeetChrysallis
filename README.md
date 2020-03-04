@@ -1,1 +1,1 @@
-<h4>APLICACIÓN ANDROID para asociación Chrysallis</h4>
+Aplicación Android para la asociación Chrysallis.
