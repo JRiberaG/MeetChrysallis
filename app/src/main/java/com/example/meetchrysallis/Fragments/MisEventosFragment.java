@@ -1,5 +1,6 @@
 package com.example.meetchrysallis.Fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +16,12 @@ import com.example.meetchrysallis.R;
 import java.util.ArrayList;
 
 public class MisEventosFragment extends Fragment {
-
+    private Context context;
     private ArrayList<Evento> eventos;
+
+    public MisEventosFragment(Context context) {
+        this.context = context;
+    }
 
     @Nullable
     @Override

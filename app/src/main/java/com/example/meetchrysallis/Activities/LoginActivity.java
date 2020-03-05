@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import com.example.meetchrysallis.API.Api;
 import com.example.meetchrysallis.API.ApiService.SocioService;
 import com.example.meetchrysallis.Models.Socio;
 import com.example.meetchrysallis.Others.CustomToast;
+import com.example.meetchrysallis.Others.JavaMailAPI;
 import com.example.meetchrysallis.Others.JsonHelper;
 import com.example.meetchrysallis.R;
 
@@ -96,10 +98,14 @@ public class LoginActivity extends AppCompatActivity {
                             break;
                     }
                 }
-
                 @Override
                 public void onFailure(Call<List<Socio>> call, Throwable t) {
-                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
+                    //CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
+                    String fallo = t.toString();
+                    if (fallo.contains("failed to connect"))
+                        CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
+                    else
+                        CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), t.toString());
                 }
             });
         }
@@ -116,7 +122,12 @@ public class LoginActivity extends AppCompatActivity {
                 final String email = edCorreo.getText().toString();
                 final String password = edPassword.getText().toString();
 
+                LinearLayout linearEmail = findViewById(R.id.login_linearlayout_email);
+                LinearLayout linearPW = findViewById(R.id.login_linearlayout_password);
+
                 if (!email.isEmpty() && !password.isEmpty()){
+                    linearEmail.setBackgroundResource(R.drawable.background_edittext_login);
+                    linearPW.setBackgroundResource(R.drawable.background_edittext_login);
                     //Encriptamos la contraseña para poder comparar con las que hay en la BD
                     String contrasenyaEncriptada = encriptarContrasenya(password).toUpperCase();
                     newSocio = new Socio(email, contrasenyaEncriptada);
@@ -151,12 +162,21 @@ public class LoginActivity extends AppCompatActivity {
                                     break;
                             }
                         }
-
                         @Override
                         public void onFailure(Call<List<Socio>> call, Throwable t) {
                             CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
                         }
                     });
+                }
+                else{
+                    if (email.isEmpty())
+                        linearEmail.setBackgroundResource(R.drawable.background_edittext_login_empty);
+                    if (password.isEmpty())
+                        linearPW.setBackgroundResource(R.drawable.background_edittext_login_empty);
+                    if (!email.isEmpty())
+                        linearEmail.setBackgroundResource(R.drawable.background_edittext_login);
+                    if (!password.isEmpty())
+                        linearPW.setBackgroundResource(R.drawable.background_edittext_login);
                 }
             }
         });
@@ -182,96 +202,84 @@ public class LoginActivity extends AppCompatActivity {
                                 //informa al usuario
                                 EditText etEmail = view.findViewById(R.id.dialog_olvide_etEmail);
                                 final String email = etEmail.getText().toString();
-                                //Genera una nueva contraseña aleatorio de 6 carácteres alfabéticos
-                                final String contrasenyaRandom = generarContrasenya();
-                                final String asunto = "MeetChrysallis - Recuperación de contraseña";
-                                final String mensaje = "¡Hola!\n\n" +
+
+                                if (!email.isEmpty()){
+                                    //Genera una nueva contraseña aleatorio de 6 carácteres alfabéticos
+                                    final String contrasenyaRandom = generarContrasenya();
+                                    final String asunto = "MeetChrysallis - Recuperación de contraseña";
+                                    final String mensaje = "¡Hola!\n\n" +
                                             "Esta es su nueva contraseña: \n" +
                                             contrasenyaRandom + "\n\n" +
                                             "Si lo desea, puede modificarla accediendo a la pestaña" +
                                             "de \"Perfil\" > \"Modificar Datos personales\". \n" +
                                             "\nMuchas gracias.\n\n" +
                                             "** Mensaje generado automáticamente. " +
-                                            "Por favor, no responda a este email.**";
+                                            "Por favor, no responda a este email. **";
 
-                                sociosCall.clone().enqueue(new Callback<List<Socio>>() {
-                                    @Override
-                                    public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
-                                        listaSocios = (ArrayList<Socio>)response.body();
-                                        boolean emailEncontrado = false;
+                                    sociosCall.clone().enqueue(new Callback<List<Socio>>() {
+                                        @Override
+                                        public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
+                                            listaSocios = (ArrayList<Socio>)response.body();
+                                            boolean emailEncontrado = false;
 
-                                        if(listaSocios != null || listaSocios.size() < 1) {
-                                            Iterator ite = listaSocios.iterator();
-                                            Socio socioIterado = null;
+                                            if(listaSocios != null || listaSocios.size() < 1) {
+                                                Iterator ite = listaSocios.iterator();
+                                                Socio socioIterado = null;
 
-                                            while (ite.hasNext() && !emailEncontrado) {
-                                                socioIterado = (Socio) ite.next();
+                                                while (ite.hasNext() && !emailEncontrado) {
+                                                    socioIterado = (Socio) ite.next();
 
-                                                if (socioIterado.getEmail().equals(email) &&
-                                                    socioIterado.isActivo()) {
-                                                    emailEncontrado = true;
+                                                    if (socioIterado.getEmail().equals(email) &&
+                                                            socioIterado.isActivo()) {
+                                                        emailEncontrado = true;
+                                                    }
                                                 }
-                                            }
-                                            //FIXME: modificar el mail para cuando se acaben de hacer las pruebas
-                                            if (emailEncontrado){
-                                                //Encripta la contraseña generada automáticamente
-                                                String contrasenyaEncriptada = encriptarContrasenya("prueba").toUpperCase();
-                                                Socio socioUpdated = socioIterado;
-                                                socioUpdated.setContrasenya(contrasenyaEncriptada);
+                                                //FIXME: modificar el mail para cuando se acaben de hacer las pruebas
+                                                if (emailEncontrado){
+                                                    //Encripta la contraseña generada automáticamente
+                                                    String contrasenyaEncriptada = encriptarContrasenya("prueba").toUpperCase();
+                                                    Socio socioUpdated = socioIterado;
+                                                    socioUpdated.setContrasenya(contrasenyaEncriptada);
 
-                                                //Hace una llamada a la API modificando la contraseña del socio
-                                                Call<Socio> callUpdateSocio = socioService.updateSocio(socioUpdated.getId(), socioUpdated);
-                                                callUpdateSocio.enqueue(new Callback<Socio>() {
-                                                    //FIXME: correguir los toasts: se actualiza la  contraseña pero es codigo 200 (cuando debería)
-                                                    @Override
-                                                    public void onResponse(Call<Socio> call, Response<Socio> response) {
-                                                        switch(response.code()){
-                                                            case 200:
-                                                                CustomToast.mostrarSuccess(LoginActivity.this, getLayoutInflater(), "Todo ok");
-                                                                break;
-                                                            case 400:
-                                                                CustomToast.mostrarWarning(LoginActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
-                                                                break;
-                                                            default:
-                                                                CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                                                    //Hace una llamada a la API modificando la contraseña del socio
+                                                    Call<Socio> callUpdateSocio = socioService.updateSocio(socioUpdated.getId(), socioUpdated);
+                                                    callUpdateSocio.enqueue(new Callback<Socio>() {
+                                                        //FIXME: correguir los toasts: se actualiza la  contraseña pero es codigo 200 (cuando debería)
+                                                        @Override
+                                                        public void onResponse(Call<Socio> call, Response<Socio> response) {
+                                                            switch(response.code()){
+                                                                case 200:
+                                                                case 204:
+                                                                    System.out.println("Se actualizó el usuario");
+                                                                    break;
+                                                                default:
+                                                                    System.out.println(response.code() + " - " + response.message());
+                                                            }
                                                         }
-                                                    }
 
-                                                    @Override
-                                                    public void onFailure(Call<Socio> call, Throwable t) {
-                                                        CustomToast.mostrarInfo(getApplicationContext(), getLayoutInflater(), getString(R.string.error_conexion_db));
-                                                    }
-                                                });
+                                                        @Override
+                                                        public void onFailure(Call<Socio> call, Throwable t) {
+                                                            CustomToast.mostrarInfo(getApplicationContext(), getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                        }
+                                                    });
 
-                                                //Enviamos el mail al usuario con la nueva contraseña (sin encriptar)
-                                                /*JavaMailAPI javaMailAPI = new JavaMailAPI(getApplicationContext(), "jribgomez@gmail.com", asunto, mensaje);
-                                                javaMailAPI.execute();
+                                                    //Enviamos el mail al usuario con la nueva contraseña (sin encriptar)
+                                                    JavaMailAPI javaMailAPI = new JavaMailAPI(getApplicationContext(), LoginActivity.this, "jribgomez@gmail.com", asunto, mensaje);
+                                                    javaMailAPI.execute();
 
-                                                //FIXME: este sistema es cutre, procurar mejorarlo
-                                                //Esperamos 2,5 segundos para que dé tiempo a poder enviar el mensaje
-                                                //para luego poder enviar un mensaje al usuario informándole del resultado
-                                                try {
-                                                    //Esperamos 2,5 segundos para que de tiempo a poder enviar el mensaje
-                                                    Thread.sleep(2500);
-                                                } catch (InterruptedException e) {
-                                                    e.printStackTrace();
+                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),"Se le ha enviado un correo con su nueva contraseña. En caso de no haberlo recibido, compruebe que su conexión no disponga de proxy");
                                                 }
-
-                                                if(javaMailAPI.isOk())
-                                                    CustomToast.mostrarSuccess(LoginActivity.this,getLayoutInflater(),"Email enviado con éxito");
                                                 else
-                                                    CustomToast.mostrarError(LoginActivity.this,getLayoutInflater(),"No se pudo enviar el email");
-                                            */}
-                                            else
-                                                CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),"No hay ningún socio registrado con ese email");
+                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),"No hay ningún socio registrado con ese email");
+                                            }
                                         }
-                                    }
 
-                                    @Override
-                                    public void onFailure(Call<List<Socio>> call, Throwable t) {
-                                        CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
-                                    }
-                                });
+                                        @Override
+                                        public void onFailure(Call<List<Socio>> call, Throwable t) {
+                                            CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
+                                        }
+                                    });
+                                }
                             }
                         });
                 AlertDialog dialog = builder.create();
@@ -388,5 +396,10 @@ public class LoginActivity extends AppCompatActivity {
         returnIntent.putExtra("socio", socio);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
+    }
+
+    @Override
+    public void onBackPressed(){
+        //Deshabilitamos el botón hacía atrás
     }
 }

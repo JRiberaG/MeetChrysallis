@@ -1,6 +1,7 @@
 package com.example.meetchrysallis.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.meetchrysallis.Activities.LoginActivity;
 import com.example.meetchrysallis.Others.CustomToast;
 import com.example.meetchrysallis.R;
+
+import java.io.File;
 
 public class OpcionesFragment extends Fragment {
     private Context context;
@@ -24,7 +28,7 @@ public class OpcionesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_perfil, container, false);
+        return inflater.inflate(R.layout.fragment_opciones, container, false);
     }
 
     @Override
@@ -59,8 +63,16 @@ public class OpcionesFragment extends Fragment {
         llLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //borrar credenciales
-                CustomToast.mostrarWarning(context, getLayoutInflater(), "Cerrando sesión...");
+                File fileCreds = new File(context.getExternalFilesDir(null).getPath() + File.separator + "cred.json");
+                try{
+                    fileCreds.delete();
+                    Intent intent = new Intent(context, LoginActivity.class);
+                    startActivity(intent);
+
+                }
+                catch(Exception e){
+                    //No se pudieron borrar las credenciales
+                }
             }
         });
     }

@@ -36,6 +36,7 @@
             -->
 
         <LinearLayout
+            android:id="@+id/login_linearlayout_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -81,6 +82,7 @@
             android:textSize="20sp"/>
 -->
         <LinearLayout
+            android:id="@+id/login_linearlayout_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -146,8 +148,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-
-            android:text="@string/nombrepassolvidado"
+            android:text="@string/contrasenyaolvidada"
             android:textSize="16sp" />
         <!--
         <Button
@@ -157,7 +158,6 @@
             android:layout_gravity="center"
             android:id="@+id/BtnOlvidar"/>
             -->
-
     </LinearLayout>
 
     <LinearLayout

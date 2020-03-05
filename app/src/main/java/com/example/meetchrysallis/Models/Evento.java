@@ -1,7 +1,5 @@
 package com.example.meetchrysallis.Models;
 
-import android.os.Parcelable;
-
 import androidx.annotation.Nullable;
 
 import java.io.Serializable;

@@ -5,7 +5,7 @@
     <string name="contrasenya">Contraseña</string>
     <string name="loginincorrecto">Usuario/contraseña incorrectos</string>
     <string name="acceder">Acceder</string>
-    <string name="nombrepassolvidado"><u>Me olvidé del usuario o la contraseña</u></string>
+    <string name="contrasenyaolvidada"><u>¿No recuerdas la contraseña?</u></string>
     <string name="nav_search">Buscar</string>
     <string name="nav_opciones">Opciones</string>
     <string name="nav_home">Principal</string>

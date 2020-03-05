@@ -1,5 +1,6 @@
 package com.example.meetchrysallis.Others;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -26,16 +27,16 @@ public class JavaMailAPI extends AsyncTask<Void,Void,Void>  {
     private Context mContext;
     private Session mSession;
 
+    private Activity activity;
+
     private String mEmail;
     private String mSubject;
     private String mMessage;
 
-    //Atributo añadido para verificar que se haya enviado el mail correctamente o no
-    private boolean ok;
-
     //Constructor
-    public JavaMailAPI(Context mContext, String mEmail, String mSubject, String mMessage) {
+    public JavaMailAPI(Context mContext, Activity activity, String mEmail, String mSubject, String mMessage) {
         this.mContext = mContext;
+        this.activity = activity;
         this.mEmail = mEmail;
         this.mSubject = mSubject;
         this.mMessage = mMessage;
@@ -77,7 +78,8 @@ public class JavaMailAPI extends AsyncTask<Void,Void,Void>  {
             mm.setText(mMessage);
             //Sending email
             Transport.send(mm);
-            ok = true;
+
+            CustomToast.mostrarSuccess(mContext, activity.getLayoutInflater(),"Email enviado con éxito");
 //            BodyPart messageBodyPart = new MimeBodyPart();
 //
 //            messageBodyPart.setText(message);
@@ -99,12 +101,8 @@ public class JavaMailAPI extends AsyncTask<Void,Void,Void>  {
 //            mm.setContent(multipart);
 
         } catch (MessagingException e) {
-            ok = false;
+            System.out.println(e.getCause());
         }
         return null;
-    }
-
-    public boolean isOk() {
-        return ok;
     }
 }
