@@ -19,10 +19,14 @@ public class Evento implements Serializable {
     private List<Asistir> asistir;
     private List<Documento> documentos;
     private List<Notificacion> notificaciones;
+    private float valoracionMedia;
+    private List<Comentario> comentario;
 
     public Evento(){}
 
-    public Evento(short id, String titulo, Date fecha, String ubicacion, String descripcion, @Nullable Date fecha_limite, Comunidad comunidad, Administrador admin, List<Asistir> asistir, List<Documento> documentos, List<Notificacion> notificaciones) {
+    public Evento(short id, String titulo, Date fecha, String ubicacion, String descripcion, @Nullable Date fecha_limite,
+                  Comunidad comunidad, Administrador admin, List<Asistir> asistir, List<Documento> documentos,
+                  List<Notificacion> notificaciones, float valoracionMedia, List<Comentario> comentario) {
         this.id = id;
         this.titulo = titulo;
         this.fecha = fecha;
@@ -34,6 +38,8 @@ public class Evento implements Serializable {
         this.asistir = asistir;
         this.documentos = documentos;
         this.notificaciones = notificaciones;
+        this.valoracionMedia = valoracionMedia;
+        this.comentario = comentario;
     }
 
     public short getId() {
@@ -123,5 +129,21 @@ public class Evento implements Serializable {
 
     public void setNotificaciones(List<Notificacion> notificaciones) {
         this.notificaciones = notificaciones;
+    }
+
+    public float getValoracionMedia() {
+        return valoracionMedia;
+    }
+
+    public void setValoracionMedia(float valoracionMedia) {
+        this.valoracionMedia = valoracionMedia;
+    }
+
+    public List<Comentario> getComentario() {
+        return comentario;
+    }
+
+    public void setComentario(List<Comentario> comentario) {
+        this.comentario = comentario;
     }
 }

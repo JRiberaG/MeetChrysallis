@@ -22,11 +22,7 @@ import com.example.meetchrysallis.Models.Evento;
 import com.example.meetchrysallis.Others.CustomToast;
 import com.example.meetchrysallis.R;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -103,30 +99,5 @@ public class HomeFragment extends Fragment {
                 CustomToast.mostrarInfo(context, getLayoutInflater(), t.toString());
             }
         });
-    }
-
-
-
-    // ================ BORRAR ================
-    private void inicializarEventos(ArrayList<Evento> eventosPrueba) {
-        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String dateString = "2014-02-01",
-                dateString1 = "2018-10-20",
-                dateString2 = "2014-03-24",
-                dateString3 = "2014-08-11";
-        Date d = null,
-                d1 = null,
-                d2 = null,
-                d3 = null;
-        try {
-            d = sdf.parse(dateString);
-            d1 = sdf.parse(dateString1);
-            d2 = sdf.parse(dateString2);
-            d3 = sdf.parse(dateString3);
-        } catch (ParseException e) {}
-        eventosPrueba.add(new Evento((short)1, "Quedada masiva en polideportivo", d, "Barcelona", "descripcionPrueba", null, null, null, null, null, null));
-        eventosPrueba.add(new Evento((short)1, "Quedada - Playa", d1, "Castelledefdels", "dqwijdwq", null, null, null, null, null, null));
-        eventosPrueba.add(new Evento((short)1, "Quedada en local", d2, "Santa Coloma", "dqwewqeqw", null, null, null, null, null, null));
-        eventosPrueba.add(new Evento((short)1, "Manifestación pacífica", d3, "Hospitalet", "dwqewq", null, null, null, null, null, null));
     }
 }

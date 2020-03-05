@@ -20,14 +20,18 @@ import com.example.meetchrysallis.Models.Socio;
 import com.example.meetchrysallis.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
+
 //Tutorial Navigation Bottom Bar https://www.youtube.com/watch?v=tPV8xA7m-iw
 
 public class MainActivity extends AppCompatActivity {
 
-    FragmentManager manager;
-    FragmentTransaction ft;
-    BottomNavigationView botNavBar;
     public static Socio socio = null;
+
+    private FragmentManager manager;
+    private FragmentTransaction ft;
+    private BottomNavigationView botNavBar;
+    private ArrayList<Integer> menuIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
         pedirPermisos();
 
+        menuIds = new ArrayList<>();
+
         //Iniciamos la Activity del login
         Intent intent = new Intent(this, LoginActivity.class);
         startActivityForResult(intent, 1);
@@ -43,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         botNavBar = findViewById(R.id.bottom_nav_bar);
         botNavBar.setOnNavigationItemSelectedListener(navListener);
 
-       /* getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+        /*getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 new HomeFragment(MainActivity.this)).commit();*/
         manager = getSupportFragmentManager();
     }
@@ -54,6 +60,15 @@ public class MainActivity extends AppCompatActivity {
                 public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                     Fragment selectedFragment = null;
                     String nombreFragment = "";
+
+
+                    if(menuIds.size() <= 1){
+                        menuIds.add(menuItem.getItemId());
+                    }
+                    else{
+                        menuIds.set(0, menuIds.get(1));
+                        menuIds.set(1, menuItem.getItemId());
+                    }
 
                     switch (menuItem.getItemId()) {
                         case R.id.nav_home:
@@ -71,14 +86,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                     /*getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                             selectedFragment).addToBackStack(nombreFragment).commit();*/
+
                     ft = manager.beginTransaction();
                     ft.replace(R.id.fragment_container, selectedFragment);
-                    if (manager.getBackStackEntryCount() > 0){
-                        FragmentManager.BackStackEntry backEntry = manager.getBackStackEntryAt(manager.getBackStackEntryCount()-1);
-                        if(!backEntry.getName().equals(nombreFragment))
+                    if (manager.getBackStackEntryCount() > 0) {
+                        FragmentManager.BackStackEntry backEntry = manager.getBackStackEntryAt(manager.getBackStackEntryCount() - 1);
+                        if (!backEntry.getName().equals(nombreFragment))
                             ft.addToBackStack(nombreFragment);
-                    }
-                    else
+                    } else
                         ft.addToBackStack(nombreFragment);
                     ft.commit();
 
@@ -87,21 +102,30 @@ public class MainActivity extends AppCompatActivity {
             };
 
     @Override
+    public void onBackPressed(){
+        //FIXME: Arreglar el onBackPressed: cuando se presione a atrás que vaya al fragment anterior y que cambie el item del menú también
+        if(getSupportFragmentManager().getBackStackEntryCount() > 0){
+            manager.popBackStack();
+            //botNavBar.setSelectedItemId(menuIds.get(0));
+        }
+        else
+            super.onBackPressed();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         //Venimos de la Activity Login
         if (requestCode == 1){
             if (resultCode == Activity.RESULT_OK) {
-                Socio s = (Socio)data.getExtras().getSerializable("socio");
-                socio = s;
+                socio = (Socio)data.getExtras().getSerializable("socio");
 
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new HomeFragment(MainActivity.this)).commit();
             }
-            else{
+            else
                 finish();
-            }
         }
     }
 
@@ -115,15 +139,5 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(MainActivity.this,
                 new String[]{Manifest.permission.INTERNET},
                 2);
-    }
-
-    @Override
-    public void onBackPressed(){
-        if(getSupportFragmentManager().getBackStackEntryCount() > 0){
-            getSupportFragmentManager().popBackStack();
-            //botNavBar.setSelectedItemId();
-        }
-        else
-            super.onBackPressed();
     }
 }

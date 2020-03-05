@@ -86,6 +86,7 @@
                         app:srcCompat="@drawable/ic_location_on_black_24dp" />
 
                     <TextView
+                        android:id="@+id/eve_det_tvUbicacion"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -105,6 +106,7 @@
                         android:src="@drawable/cat" />
 
                     <TextView
+                        android:id="@+id/eve_det_tvFechaLimite"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -124,6 +126,7 @@
                         android:src="@drawable/cat" />
 
                     <TextView
+                        android:id="@+id/eve_det_tvComunidad"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -205,37 +208,46 @@
                     android:layout_height="wrap_content"
                     android:text="Lorem ipsum dolor sit amet consectetur adipiscing elit proin inceptos nibh, neque mus justo in ac dictumst dapibus nullam diam tincidunt volutpat, lacus natoque mi pretium malesuada erat placerat maecenas ultrices. Fermentum nostra natoque et viverra ut nam sociosqu nulla taciti vitae urna orci sollicitudin quis pharetra, quisque mollis interdum dapibus porta mus imperdiet neque himenaeos fringilla netus odio ridiculus ac. Vitae facilisis purus fames id venenatis vivamus eros convallis sapien urna est, pellentesque facilisi aliquet lectus orci conubia litora dignissim ridiculus pharetra aliquam sociis, a sodales ut faucibus tristique sed malesuada enim arcu eu. Nullam a penatibus cubilia molestie tempor nisl urna vivamus praesent bibendum platea fusce hendrerit velit, in placerat consequat cras eu vitae sollicitudin sociosqu nunc est duis commodo.
                             Lorem ipsum dolor sit amet consectetur adipiscing elit proin inceptos nibh, neque mus justo in ac dictumst dapibus nullam diam tincidunt volutpat, lacus natoque mi pretium malesuada erat placerat maecenas ultrices. Fermentum nostra natoque et viverra ut nam sociosqu nulla taciti vitae urna orci sollicitudin quis pharetra, quisque mollis interdum dapibus porta mus imperdiet neque himenaeos fringilla ..." />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:layout_marginHorizontal="45dp"
+                        android:background="@color/colorPrimaryDark_light"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="5dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Comentarios"
+                            android:textSize="@dimen/txt_subHeader"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Comentarios"
-                        android:textSize="@dimen/txt_subHeader"
-                        android:textStyle="bold" />
+                        <ImageView
+                            android:id="@+id/eve_det_ivExpand"
+                            android:layout_width="@dimen/icon_small"
+                            android:layout_height="@dimen/icon_small"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="3dp"
+                            app:srcCompat="@drawable/ic_expand_more_black_24dp" />
 
-                    <ImageView
-                        android:id="@+id/eve_det_ivExpand"
-                        android:layout_width="@dimen/icon_small"
-                        android:layout_height="@dimen/icon_small"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="3dp"
-                        app:srcCompat="@drawable/ic_expand_more_black_24dp" />
-
-                    <Button
-                        android:id="@+id/eve_det_btnComentar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:gravity="right"
-                        android:paddingHorizontal="25dp"
-                        android:paddingVertical="15dp"
-                        android:text="Comentar" />
+                        <Button
+                            android:id="@+id/eve_det_btnComentar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="15dp"
+                            android:gravity="right"
+                            android:paddingHorizontal="25dp"
+                            android:paddingVertical="15dp"
+                            android:text="Comentar" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -243,6 +255,11 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerComments"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"/>
                     <ListView
                         android:id="@+id/eve_det_lvComments"
                         android:layout_width="match_parent"
@@ -264,12 +281,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="25dp"
                     android:orientation="vertical"
-                    android:visibility="visible">
+                    android:visibility="visible"
+                    android:gravity="center">
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Valora el evento ¡Ayúdanos a mejorar!"
-                        android:textSize="@dimen/txt_body" />
+                        android:textSize="@dimen/txt_body"
+                        android:gravity="center"/>
                     <RatingBar
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

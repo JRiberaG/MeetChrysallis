@@ -79,8 +79,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             titulo.setText(evento.getTitulo());
             ubicacion.setText(evento.getUbicacion());
             fecha.setText(evento.getFecha().toString());
-            //TODO: contar el número de asistentes
-            //asistentes.setText(evento.getAsistir().size());
+            //TODO: contar el número de asistentes ???
+            asistentes.setText(String.valueOf(evento.getAsistir().size()));
         }
     }
 }

@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.meetchrysallis.Models.Evento;
 import com.example.meetchrysallis.Others.CustomToast;
 import com.example.meetchrysallis.R;
 
@@ -21,23 +22,61 @@ import java.util.ArrayList;
 
 public class EventoDetalladoActivity extends AppCompatActivity {
 
-    private Button asistir;
+    private Button btnAsistir;
+    private Button btnComentar;
+    private ImageView expand;
+
     private boolean asistido = false;
     private boolean expandido = false;
-    private ImageView expand;
+
+    private Evento evento;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_evento_detallado);
 
-        //comprobar que el socio no haya marcado su asistencia a ese evento ya
-        //algo así como:
-        //      asistido = comprobarAsistencia(MainActivity.socio);
-        asistir = findViewById(R.id.eve_det_btnAsistire);
-        comprobarAsistido(asistido);
+        evento = (Evento)getIntent().getExtras().getSerializable("evento");
 
-        asistir.setOnClickListener(new View.OnClickListener() {
+        // --------------- ELEMENTOS DEL LAYOUT ---------------
+        TextView tvTitulo = findViewById(R.id.eve_det_tvNombre);
+        TextView tvFecha = findViewById(R.id.eve_det_tvFecha);
+        TextView tvUbicacion = findViewById(R.id.eve_det_tvUbicacion);
+        TextView tvFechaLimite = findViewById(R.id.eve_det_tvFechaLimite);
+        TextView tvComunidad = findViewById(R.id.eve_det_tvComunidad);
+        TextView tvValoracionMedia = findViewById(R.id.eve_det_tvStars);
+        TextView tvNumComentarios = findViewById(R.id.eve_det_tvNumComments);
+        TextView tvDescripcion = findViewById(R.id.eve_det_tvDescripcion);
+
+        LinearLayout ratingMedio = findViewById(R.id.eve_det_linearLayout_ratingMedio);
+        LinearLayout ratingEstrellas = findViewById(R.id.eve_det_linearLayout_rating);
+
+        btnComentar = findViewById(R.id.eve_det_btnComentar);
+        btnAsistir = findViewById(R.id.eve_det_btnAsistire);
+        //------------------------------------------------------------------------------
+
+        tvTitulo.setText(evento.getTitulo());
+        //FIXME: parsear la fecha --> tvFecha.setText(evento.getFecha());
+        tvUbicacion.setText(evento.getUbicacion());
+        if(evento.getFecha_limite() != null)
+            //FIXME: parsear la fecha --> tvFechaLimite.setText(evento.getFecha_limite());
+            tvComunidad.setText(evento.getComunidad().getNombre());
+        if(evento.getValoracionMedia() == 0)
+            ratingMedio.setVisibility(View.GONE);
+        else
+            //FIXME: formatear este float
+            tvValoracionMedia.setText(String.valueOf(evento.getValoracionMedia()));
+        tvNumComentarios.setText(evento.getComentario().size());
+        tvDescripcion.setText(evento.getDescripcion());
+
+        //TODO:
+        //  - si el evento ya ha finalizado activar el lineaLayoutRatingEstrellas
+        //  - comprobar que el socio no no se haya inscrito ya.
+        //      En caso de haberlo hecho, cambiar el botón a NO ASISTIR
+
+        comprobarAsistido(evento.getAsistir().contains(MainActivity.socio));
+
+        btnAsistir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(asistido){
@@ -63,7 +102,6 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                 TextView tvNoComments = findViewById(R.id.eve_det_tvNoComments);
                 ListView lvComments = findViewById(R.id.eve_det_lvComments);
                 if(expandido){
-                    tvNoComments.setVisibility(View.GONE);
                     tvNoComments.setVisibility(View.GONE);
                     CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), "Se han escondido los comentarios");
                     expand.setImageResource(R.drawable.ic_expand_more_black_24dp);
@@ -92,7 +130,6 @@ public class EventoDetalladoActivity extends AppCompatActivity {
 
 
         // ---------------------- BOTÓN COMENTAR -------------------------
-        Button btnComentar = findViewById(R.id.eve_det_btnComentar);
         btnComentar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,23 +158,13 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                                 String comment = etComent.getText().toString();
                                 boolean mostrarNombre = cbMostrarNombre.isChecked();
 
-                                //TODO:
-                                //  - Indicar el número máx de carácteres
+                                //FIXME: indicar el número máx de carácteres
                                 int maxCaracteres = 5;
                                 if (comment.length() > maxCaracteres){
                                     CustomToast.mostrarWarning(EventoDetalladoActivity.this,getLayoutInflater(),"El  comentario excede el número máximo de carácteres permitidos");
                                 }
                                 else{
-                                    //TODO:
-                                    // - Si mostrarNombre = true que cuando se vaya a añadir el comentario
-                                    //  se muestre el nombre del socio
-                                    //  Si es false, que el autor salga como 'anónimo'
-                                    if (mostrarNombre){
-
-                                    }
-                                    else{
-
-                                    }
+                                    //TODO: añadir el comentario
                                     dialog.dismiss();
                                     CustomToast.mostrarInfo(EventoDetalladoActivity.this,getLayoutInflater(),"Comentario añadido");
                                 }
@@ -160,17 +187,19 @@ public class EventoDetalladoActivity extends AppCompatActivity {
 
     /**
      * Comprueba que el socio haya asistido o no al evento para así poder cambiar el estilo
-     * al botón
-     * @param asistido      true = ha asistido, false = no ha asistido
+     * al botón y también poder habilitarle o no el botón para realizar comentarios
+     * @param asist      true = ha asistido, false = no ha asistido
      */
-    private void comprobarAsistido(boolean asistido) {
-        if(asistido){
-            asistir.setText("NO ASISTIR");
-            asistir.setBackground(this.getResources().getDrawable(R.drawable.selector_custom_button_red));
+    private void comprobarAsistido(boolean asist) {
+        if(asist){
+            btnAsistir.setText("NO ASISTIR");
+            btnAsistir.setBackground(this.getResources().getDrawable(R.drawable.selector_custom_button_red));
+            btnComentar.setVisibility(View.VISIBLE);
         }
         else{
-            asistir.setText("ASISTIRÉ");
-            asistir.setBackground(this.getResources().getDrawable(R.drawable.selector_custom_button_green));
+            btnAsistir.setText("ASISTIRÉ");
+            btnAsistir.setBackground(this.getResources().getDrawable(R.drawable.selector_custom_button_green));
+            btnComentar.setVisibility(View.GONE);
         }
     }
 }
