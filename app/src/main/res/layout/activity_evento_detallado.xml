@@ -186,7 +186,7 @@
     </LinearLayout>
 
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
@@ -211,17 +211,19 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="15dp"
                     android:orientation="vertical">
+
+                    <!-- LAYOUT DIVISIORIO -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:layout_marginHorizontal="45dp"
+                        android:layout_marginHorizontal="35dp"
                         android:background="@color/colorPrimaryDark_light"/>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="5dp">
+                        android:layout_marginTop="10dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -251,19 +253,14 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerComments"
+                        android:id="@+id/eve_det_recyclerComments"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"/>
-                    <ListView
-                        android:id="@+id/eve_det_lvComments"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:visibility="gone" />
 
                     <TextView

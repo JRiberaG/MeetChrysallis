@@ -78,9 +78,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public void asignarDatos(Evento evento) {
             titulo.setText(evento.getTitulo());
             ubicacion.setText(evento.getUbicacion());
-            fecha.setText(evento.getFecha().toString());
-            //TODO: contar el número de asistentes ???
-            asistentes.setText(String.valueOf(evento.getAsistir().size()));
+
+            if(evento.getFecha() != null)
+                fecha.setText(evento.getFecha().toString());
+            else
+                fecha.setText("");
+
+            if(evento.getAsistir() != null)
+                asistentes.setText(String.valueOf(evento.getAsistir().size()));
+            else
+                asistentes.setText("0");
         }
     }
 }

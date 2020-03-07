@@ -2,7 +2,10 @@ package com.example.meetchrysallis.Models;
 
 import androidx.annotation.Nullable;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,20 +16,21 @@ public class Evento implements Serializable {
     private Date fecha;
     private String ubicacion;
     private String descripcion;
-    private @Nullable Date fecha_limite;
+    @Nullable
+    private Date fecha_limite;
+    @SerializedName("Comunidades")
     private Comunidad comunidad;
-    private Administrador admin;
+    private byte idComunidad;
+    //private Administrador admin;
     private List<Asistir> asistir;
     private List<Documento> documentos;
     private List<Notificacion> notificaciones;
     private float valoracionMedia;
-    private List<Comentario> comentario;
+    private ArrayList<Comentario> comentarios;
 
     public Evento(){}
 
-    public Evento(short id, String titulo, Date fecha, String ubicacion, String descripcion, @Nullable Date fecha_limite,
-                  Comunidad comunidad, Administrador admin, List<Asistir> asistir, List<Documento> documentos,
-                  List<Notificacion> notificaciones, float valoracionMedia, List<Comentario> comentario) {
+    public Evento(short id, String titulo, Date fecha, String ubicacion, String descripcion, @Nullable Date fecha_limite, Comunidad comunidad, byte idComunidad, List<Asistir> asistir, List<Documento> documentos, List<Notificacion> notificaciones, float valoracionMedia, ArrayList<Comentario> comentarios) {
         this.id = id;
         this.titulo = titulo;
         this.fecha = fecha;
@@ -34,12 +38,12 @@ public class Evento implements Serializable {
         this.descripcion = descripcion;
         this.fecha_limite = fecha_limite;
         this.comunidad = comunidad;
-        this.admin = admin;
+        this.idComunidad = idComunidad;
         this.asistir = asistir;
         this.documentos = documentos;
         this.notificaciones = notificaciones;
         this.valoracionMedia = valoracionMedia;
-        this.comentario = comentario;
+        this.comentarios = comentarios;
     }
 
     public short getId() {
@@ -99,12 +103,12 @@ public class Evento implements Serializable {
         this.comunidad = comunidad;
     }
 
-    public Administrador getAdmin() {
-        return admin;
+    public byte getIdComunidad() {
+        return idComunidad;
     }
 
-    public void setAdmin(Administrador admin) {
-        this.admin = admin;
+    public void setIdComunidad(byte idComunidad) {
+        this.idComunidad = idComunidad;
     }
 
     public List<Asistir> getAsistir() {
@@ -139,11 +143,11 @@ public class Evento implements Serializable {
         this.valoracionMedia = valoracionMedia;
     }
 
-    public List<Comentario> getComentario() {
-        return comentario;
+    public ArrayList<Comentario> getComentarios() {
+        return comentarios;
     }
 
-    public void setComentario(List<Comentario> comentario) {
-        this.comentario = comentario;
+    public void setComentarios(ArrayList<Comentario> comentarios) {
+        this.comentarios = comentarios;
     }
 }

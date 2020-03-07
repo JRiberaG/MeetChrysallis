@@ -52,23 +52,23 @@ public class MainActivity extends AppCompatActivity {
         /*getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 new HomeFragment(MainActivity.this)).commit();*/
         manager = getSupportFragmentManager();
+        manager.beginTransaction().replace(R.id.fragment_container, new HomeFragment(MainActivity.this)).commit();
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                    Fragment selectedFragment = null;
-                    String nombreFragment = "";
-
-
-                    if(menuIds.size() <= 1){
+                    /*if(menuIds.size() <= 1){
                         menuIds.add(menuItem.getItemId());
                     }
                     else{
                         menuIds.set(0, menuIds.get(1));
                         menuIds.set(1, menuItem.getItemId());
-                    }
+                    }*/
+
+                    Fragment selectedFragment = null;
+                    String nombreFragment = "";
 
                     switch (menuItem.getItemId()) {
                         case R.id.nav_home:
@@ -87,29 +87,32 @@ public class MainActivity extends AppCompatActivity {
                     /*getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                             selectedFragment).addToBackStack(nombreFragment).commit();*/
 
+
                     ft = manager.beginTransaction();
                     ft.replace(R.id.fragment_container, selectedFragment);
-                    if (manager.getBackStackEntryCount() > 0) {
+                    /*if (manager.getBackStackEntryCount() > 0) {
                         FragmentManager.BackStackEntry backEntry = manager.getBackStackEntryAt(manager.getBackStackEntryCount() - 1);
                         if (!backEntry.getName().equals(nombreFragment))
                             ft.addToBackStack(nombreFragment);
                     } else
-                        ft.addToBackStack(nombreFragment);
+                        ft.addToBackStack(nombreFragment);*/
                     ft.commit();
 
                     return true;
                 }
             };
 
+
     @Override
     public void onBackPressed(){
-        //FIXME: Arreglar el onBackPressed: cuando se presione a atrás que vaya al fragment anterior y que cambie el item del menú también
-        if(getSupportFragmentManager().getBackStackEntryCount() > 0){
+        //FIXME: Arreglar el onBackPressed: cuando se presione a atrás que vaya al fragment anterior y QUE CAMBIE EL ITEM DEL MENÚ
+        /*if(getSupportFragmentManager().getBackStackEntryCount() > 0){
             manager.popBackStack();
             //botNavBar.setSelectedItemId(menuIds.get(0));
         }
         else
-            super.onBackPressed();
+            super.onBackPressed();*/
+        finish();
     }
 
     @Override

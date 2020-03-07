@@ -15,14 +15,17 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.meetchrysallis.API.Api;
+import com.example.meetchrysallis.API.ApiService.ComunidadService;
 import com.example.meetchrysallis.API.ApiService.EventoService;
 import com.example.meetchrysallis.Activities.EventoDetalladoActivity;
 import com.example.meetchrysallis.Adapters.RecyclerAdapter;
+import com.example.meetchrysallis.Models.Comunidad;
 import com.example.meetchrysallis.Models.Evento;
 import com.example.meetchrysallis.Others.CustomToast;
 import com.example.meetchrysallis.R;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -32,6 +35,7 @@ import retrofit2.Response;
 public class HomeFragment extends Fragment {
     private Context context;
     private ArrayList<Evento> eventos;
+    private ArrayList<Comunidad> comunidades;
 
     //Constructor
     public HomeFragment(Context context) {
@@ -47,12 +51,8 @@ public class HomeFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        //TODO: recuperar eventos de la base de datos
-        /*
-        //Lista de testeo: he creado eventos para comprobar que va bien el recycler y cardview ---
-        ArrayList<Evento> eventosPrueba = new ArrayList<Evento>();
-        inicializarEventos(eventosPrueba);
-        //----------------------------------------------------------------------------------------*/
+        //FIXME: recuperar sólo los eventos de las comunidades en las que el socio muestra interes
+        //      o recuperar todo los eventos y mostrar solo los que el socio quiera ver
         EventoService eventoService = Api.getApi().create(EventoService.class);
         Call<List<Evento>> eventosCall = eventoService.getEventos();
         eventosCall.enqueue(new Callback<List<Evento>>() {
@@ -63,30 +63,65 @@ public class HomeFragment extends Fragment {
                     case 204:
                         eventos = (ArrayList<Evento>)response.body();
 
-                        TextView tv_noEventos = getView().findViewById(R.id.fragment_home_tvNoEventos);
+                        //Ahora, llamamos a la API para recoger las comunidades
+                        ComunidadService comunidadService = Api.getApi().create(ComunidadService.class);
+                        Call<ArrayList<Comunidad>> comunidadesCall = comunidadService.getComunidades();
+                        comunidadesCall.clone().enqueue(new Callback<ArrayList<Comunidad>>() {
+                            @Override
+                            public void onResponse(Call<ArrayList<Comunidad>> call2, Response<ArrayList<Comunidad>> response2) {
+                                switch(response2.code()){
+                                    case 200:
+                                    case 204:
+                                        comunidades = response2.body();
 
-                        RecyclerView recycler = getView().findViewById(R.id.recyclerHome);
-                        recycler.setLayoutManager(new GridLayoutManager(context,1));
-                        RecyclerAdapter adapter = new RecyclerAdapter(eventos);
-                        recycler.setAdapter(adapter);
+                                        TextView tv_noEventos = getView().findViewById(R.id.fragment_home_tvNoEventos);
+                                        RecyclerView recycler = getView().findViewById(R.id.recyclerHome);
 
-                        if(adapter.getItemCount() <= 0){
-                            tv_noEventos.setVisibility(View.VISIBLE);
-                        }
-                        else{
-                            tv_noEventos.setVisibility(View.GONE);
+                                        recycler.setLayoutManager(new GridLayoutManager(context,1));
+                                        RecyclerAdapter adapter = new RecyclerAdapter(eventos);
+                                        recycler.setAdapter(adapter);
 
-                            //final ArrayList<Evento> eventos2 = eventos;
-                            adapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(int position) {
-                                    Evento e = eventos.get(position);
-                                    Intent intent = new Intent(context, EventoDetalladoActivity.class);
-                                    intent.putExtra("evento", e);
-                                    startActivity(intent);
+                                        if(adapter.getItemCount() <= 0){
+                                            tv_noEventos.setVisibility(View.VISIBLE);
+                                        }
+                                        else{
+                                            tv_noEventos.setVisibility(View.GONE);
+
+                                            adapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
+                                                @Override
+                                                public void onItemClick(int position) {
+                                                    Evento e = eventos.get(position);
+                                                    //Buscamos la comunidad del evento
+                                                    Iterator ite = comunidades.iterator();
+                                                    Comunidad c = null;
+                                                    boolean encontrado = false;
+                                                    while (ite.hasNext() && !encontrado){
+                                                        c = (Comunidad)ite.next();
+                                                        if (c.getId() == e.getIdComunidad())
+                                                            encontrado = true;
+                                                    }
+                                                    //Añadimos la comunidad al evento
+                                                    if (c != null)
+                                                        e.setComunidad(c);
+
+                                                    Intent intent = new Intent(context, EventoDetalladoActivity.class);
+                                                    intent.putExtra("evento", e);
+                                                    startActivity(intent);
+                                                }
+                                            });
+                                        }
+                                        break;
+                                    default:
+                                        CustomToast.mostrarWarning(context, getLayoutInflater(), response2.code() + " - " + response2.message());
+                                        break;
                                 }
-                            });
-                        }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ArrayList<Comunidad>> call2, Throwable t2) {
+                                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                            }
+                        });
                         break;
                     default:
                         CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());

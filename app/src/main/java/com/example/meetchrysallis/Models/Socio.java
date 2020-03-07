@@ -1,5 +1,7 @@
 package com.example.meetchrysallis.Models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -29,27 +31,22 @@ public class Socio implements Serializable {
     private byte idComunidad;
     private boolean activo;
     //private Comunidad idComunidad;
-    private ArrayList<Asistir> Asistir;
+    @SerializedName("Asistir")
+    private ArrayList<Asistir> asistencias;
     private Comunidad Comunidades;
-    private ArrayList<Comunidad> Comunidades1;
+    @SerializedName("Comunidades1")
+    private ArrayList<Comunidad> comunidadesInteres;
     private ArrayList<Comentario> Comentario;
 
     //Constructores
     public Socio(){}
-    public Socio(String email, String contrasenya){
-        this.id = -1;
-        this.dni = null;
-        this.nombre = null;
-        this.apellidos = null;
+
+    public Socio(String email, String contrasenya) {
         this.email = email;
         this.contrasenya = contrasenya;
-        this.telefono = null;
-        this.poblacion = null;
-        //this.idComunidad = null;
-        this.activo = true;
     }
 
-    public Socio(int id, String dni, String nombre, String apellidos, String email, String contrasenya, String telefono, String poblacion, byte idComunidad, boolean activo, ArrayList<Asistir> asistir, Comunidad comunidades, ArrayList<Comunidad> comunidades1, ArrayList<Comentario> comentario) {
+    public Socio(int id, String dni, String nombre, String apellidos, String email, String contrasenya, String telefono, String poblacion, byte idComunidad, boolean activo, ArrayList<Asistir> asistencias, Comunidad comunidades, ArrayList<Comunidad> comunidadesInteres, ArrayList<com.example.meetchrysallis.Models.Comentario> comentario) {
         this.id = id;
         this.dni = dni;
         this.nombre = nombre;
@@ -60,10 +57,10 @@ public class Socio implements Serializable {
         this.poblacion = poblacion;
         this.idComunidad = idComunidad;
         this.activo = activo;
-        this.Asistir = asistir;
-        this.Comunidades = comunidades;
-        this.Comunidades1 = comunidades1;
-        this.Comentario = comentario;
+        this.asistencias = asistencias;
+        Comunidades = comunidades;
+        this.comunidadesInteres = comunidadesInteres;
+        Comentario = comentario;
     }
 
     public int getId() {
@@ -130,11 +127,11 @@ public class Socio implements Serializable {
         this.poblacion = poblacion;
     }
 
-    public byte getComunidad() {
+    public byte getIdComunidad() {
         return idComunidad;
     }
 
-    public void setComunidad(byte idComunidad) {
+    public void setIdComunidad(byte idComunidad) {
         this.idComunidad = idComunidad;
     }
 
@@ -146,27 +143,12 @@ public class Socio implements Serializable {
         this.activo = activo;
     }
 
-
-
-
-
-
-
-
-    public byte getIdComunidad() {
-        return idComunidad;
+    public ArrayList<Asistir> getAsistencias() {
+        return asistencias;
     }
 
-    public void setIdComunidad(byte idComunidad) {
-        this.idComunidad = idComunidad;
-    }
-
-    public ArrayList<com.example.meetchrysallis.Models.Asistir> getAsistir() {
-        return Asistir;
-    }
-
-    public void setAsistir(ArrayList<com.example.meetchrysallis.Models.Asistir> asistir) {
-        Asistir = asistir;
+    public void setAsistencias(ArrayList<Asistir> asistencias) {
+        this.asistencias = asistencias;
     }
 
     public Comunidad getComunidades() {
@@ -177,12 +159,12 @@ public class Socio implements Serializable {
         Comunidades = comunidades;
     }
 
-    public ArrayList<Comunidad> getComunidades1() {
-        return Comunidades1;
+    public ArrayList<Comunidad> getComunidadesInteres() {
+        return comunidadesInteres;
     }
 
-    public void setComunidades1(ArrayList<Comunidad> comunidades1) {
-        Comunidades1 = comunidades1;
+    public void setComunidadesInteres(ArrayList<Comunidad> comunidadesInteres) {
+        this.comunidadesInteres = comunidadesInteres;
     }
 
     public ArrayList<com.example.meetchrysallis.Models.Comentario> getComentario() {

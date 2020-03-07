@@ -9,16 +9,25 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.meetchrysallis.API.Api;
+import com.example.meetchrysallis.API.ApiService.ComentarioService;
+import com.example.meetchrysallis.Adapters.RecyclerCommentsAdapter;
+import com.example.meetchrysallis.Models.Comentario;
 import com.example.meetchrysallis.Models.Evento;
 import com.example.meetchrysallis.Others.CustomToast;
 import com.example.meetchrysallis.R;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class EventoDetalladoActivity extends AppCompatActivity {
 
@@ -28,8 +37,10 @@ public class EventoDetalladoActivity extends AppCompatActivity {
 
     private boolean asistido = false;
     private boolean expandido = false;
+    private boolean comentariosCargados = false;
 
     private Evento evento;
+    //private ArrayList<Comentario> comentarios;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +56,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         TextView tvFechaLimite = findViewById(R.id.eve_det_tvFechaLimite);
         TextView tvComunidad = findViewById(R.id.eve_det_tvComunidad);
         TextView tvValoracionMedia = findViewById(R.id.eve_det_tvStars);
-        TextView tvNumComentarios = findViewById(R.id.eve_det_tvNumComments);
+        final TextView tvNumComentarios = findViewById(R.id.eve_det_tvNumComments);
         TextView tvDescripcion = findViewById(R.id.eve_det_tvDescripcion);
 
         LinearLayout ratingMedio = findViewById(R.id.eve_det_linearLayout_ratingMedio);
@@ -55,18 +66,53 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         btnAsistir = findViewById(R.id.eve_det_btnAsistire);
         //------------------------------------------------------------------------------
 
+        //Cargamos los comentarios del evento ----------------------
+        ComentarioService comentarioService = Api.getApi().create(ComentarioService.class);
+        Call<ArrayList<Comentario>> comentariosCall = comentarioService.getComentariosByEvento(evento.getId());
+        comentariosCall.clone().enqueue(new Callback<ArrayList<Comentario>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Comentario>> call, Response<ArrayList<Comentario>> response) {
+                switch(response.code()){
+                    case 200:
+                    case 400:
+                        ArrayList<Comentario> comentarios;
+                        comentarios = response.body();
+                        evento.setComentarios(comentarios);
+                        if(evento.getComentarios() != null)
+                            tvNumComentarios.setText(String.valueOf(evento.getComentarios().size()));
+                        else
+                            tvNumComentarios.setText("0");
+                        break;
+                    default:
+                        //FIXME: pendiente de programar
+                        break;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Comentario>> call, Throwable t) {
+                //FIXME: pendiente de programar
+            }
+        });
+        //------------------------------------------------------------------
+
+
         tvTitulo.setText(evento.getTitulo());
         //FIXME: parsear la fecha --> tvFecha.setText(evento.getFecha());
         tvUbicacion.setText(evento.getUbicacion());
-        if(evento.getFecha_limite() != null)
+        //if(evento.getFecha_limite() != null)
             //FIXME: parsear la fecha --> tvFechaLimite.setText(evento.getFecha_limite());
-            tvComunidad.setText(evento.getComunidad().getNombre());
+        tvComunidad.setText(evento.getComunidad().getNombre());
         if(evento.getValoracionMedia() == 0)
             ratingMedio.setVisibility(View.GONE);
         else
             //FIXME: formatear este float
             tvValoracionMedia.setText(String.valueOf(evento.getValoracionMedia()));
-        tvNumComentarios.setText(evento.getComentario().size());
+        //FIXME: conseguir los comentarios del evento
+        /*if(evento.getComentarios() != null)
+            //tvNumComentarios.setText(evento.getComentarios().size());
+        else
+            tvNumComentarios.setText("0");*/
         tvDescripcion.setText(evento.getDescripcion());
 
         //TODO:
@@ -74,7 +120,8 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         //  - comprobar que el socio no no se haya inscrito ya.
         //      En caso de haberlo hecho, cambiar el botón a NO ASISTIR
 
-        comprobarAsistido(evento.getAsistir().contains(MainActivity.socio));
+        //FIXME: descomentar y solucionar
+//        comprobarAsistido(evento.getAsistir().contains(MainActivity.socio));
 
         btnAsistir.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,28 +146,17 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         expand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView tvNoComments = findViewById(R.id.eve_det_tvNoComments);
-                ListView lvComments = findViewById(R.id.eve_det_lvComments);
+                final TextView tvNoComments = findViewById(R.id.eve_det_tvNoComments);
+                final RecyclerView recyclerComments = findViewById(R.id.eve_det_recyclerComments);
                 if(expandido){
                     tvNoComments.setVisibility(View.GONE);
-                    CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), "Se han escondido los comentarios");
+                    recyclerComments.setVisibility(View.GONE);
                     expand.setImageResource(R.drawable.ic_expand_more_black_24dp);
                     expandido = false;
                 }
                 else{
-                    //TODO:
-                    //  - Programar el recuperar los comentarios de la base de datos
-                    //  - Programar el ArrayAdapter para mostrarlos en una ListView
-                    ArrayList<String> comentarios = new ArrayList<>();
-                    if(comentarios.isEmpty()){
-                        tvNoComments.setVisibility(View.VISIBLE);
-                        lvComments.setVisibility(View.GONE);
-                    }
-                    else{
-                        tvNoComments.setVisibility(View.GONE);
-                        lvComments.setVisibility(View.VISIBLE);
-                    }
-                    CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), "Se han mostrado los comentarios");
+                    cargarComentarios(tvNoComments, recyclerComments);
+
                     expand.setImageResource(R.drawable.ic_expand_less_black_24dp);
                     expandido = true;
                 }
@@ -183,6 +219,22 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         //linearRatingMedio.setVisibility(View.GONE);
         //Si el evento no se ha realizado y el usuario no ha participado, escoonder el layout
         //linearRating.setVisibility(View.GONE);
+    }
+
+    private void cargarComentarios(TextView noComments, RecyclerView recycler) {
+        if(evento.getComentarios().isEmpty() || evento.getComentarios() == null){
+            noComments.setVisibility(View.VISIBLE);
+            recycler.setVisibility(View.GONE);
+        }
+        else{
+            noComments.setVisibility(View.GONE);
+
+            recycler.setLayoutManager(new GridLayoutManager(EventoDetalladoActivity.this,1));
+            RecyclerCommentsAdapter recyclerAdapter = new RecyclerCommentsAdapter(evento.getComentarios());
+            recycler.setAdapter(recyclerAdapter);
+
+            recycler.setVisibility(View.VISIBLE);
+        }
     }
 
     /**

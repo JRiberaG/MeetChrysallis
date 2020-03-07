@@ -249,6 +249,9 @@ public class LoginActivity extends AppCompatActivity {
                                                         public void onResponse(Call<Socio> call, Response<Socio> response) {
                                                             switch(response.code()){
                                                                 case 200:
+                                                                case 201:
+                                                                case 202:
+                                                                case 203:
                                                                 case 204:
                                                                     System.out.println("Se actualizó el usuario");
                                                                     break;

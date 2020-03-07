@@ -2,19 +2,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/background_item_comment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="15dp"
+        android:layout_marginBottom="5dp">
         <TextView
             android:id="@+id/item_comentario_tvNombre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/txt_body"
             android:textStyle="bold"
-            android:text="Nombre"/>
+            android:text="(nombre)"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -24,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="5dp"
                 android:textSize="@dimen/txt_body2"
-                android:text="20/10/19 12:16"
+                android:text="(XX/XX/XX XX:XX)"
                 android:paddingLeft="15dp"
                 android:layout_gravity="center"/>
         </LinearLayout>
@@ -34,7 +38,13 @@
         android:id="@+id/item_comentario_tvComent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingHorizontal="15dp"
+        android:paddingBottom="10dp"
         android:textSize="@dimen/txt_body2"
-        android:text="Comentario"/>
+        android:text="(comentario)"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0.75dp"
+        android:background="@color/md_grey_600"/>
 
 </LinearLayout>

@@ -8,11 +8,18 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface ComentarioService {
     @GET("api/Comentarios")
     Call<ArrayList<Comentario>> getComentarios();
 
-    @POST("api/Comentarios/5")
+    @GET("api/Comentarios/ComentariosByEvento/{idEvento}")
+    Call<ArrayList<Comentario>> getComentariosByEvento(@Path("idEvento") short idEvento);
+
+    @GET("api/Comentarios/ComentariosBySocio/{idSocio}")
+    Call<ArrayList<Comentario>> getComentariosBySocio(@Path("idSocio")int idSocio);
+
+    @POST("api/Comentarios")
     Call<Comentario> insertComentario(@Body Comentario comentario);
 }
