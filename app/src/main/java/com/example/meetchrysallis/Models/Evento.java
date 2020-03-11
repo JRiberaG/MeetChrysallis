@@ -5,32 +5,34 @@ import androidx.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Evento implements Serializable {
 
     private short id;
     private String titulo;
-    private Date fecha;
+    private Timestamp fecha;
     private String ubicacion;
     private String descripcion;
     @Nullable
-    private Date fecha_limite;
+    private Timestamp fecha_limite;
     @SerializedName("Comunidades")
     private Comunidad comunidad;
     private byte idComunidad;
     //private Administrador admin;
-    private List<Asistir> asistir;
+    @SerializedName("Asistir")
+    private List<Asistir> asistencia;
     private List<Documento> documentos;
     private List<Notificacion> notificaciones;
     private float valoracionMedia;
+    @SerializedName("Comentarios")
     private ArrayList<Comentario> comentarios;
 
     public Evento(){}
 
-    public Evento(short id, String titulo, Date fecha, String ubicacion, String descripcion, @Nullable Date fecha_limite, Comunidad comunidad, byte idComunidad, List<Asistir> asistir, List<Documento> documentos, List<Notificacion> notificaciones, float valoracionMedia, ArrayList<Comentario> comentarios) {
+    public Evento(short id, String titulo, Timestamp fecha, String ubicacion, String descripcion, @Nullable Timestamp fecha_limite, Comunidad comunidad, byte idComunidad, List<Asistir> asistencia, List<Documento> documentos, List<Notificacion> notificaciones, float valoracionMedia, ArrayList<Comentario> comentarios) {
         this.id = id;
         this.titulo = titulo;
         this.fecha = fecha;
@@ -39,7 +41,7 @@ public class Evento implements Serializable {
         this.fecha_limite = fecha_limite;
         this.comunidad = comunidad;
         this.idComunidad = idComunidad;
-        this.asistir = asistir;
+        this.asistencia = asistencia;
         this.documentos = documentos;
         this.notificaciones = notificaciones;
         this.valoracionMedia = valoracionMedia;
@@ -62,11 +64,11 @@ public class Evento implements Serializable {
         this.titulo = titulo;
     }
 
-    public Date getFecha() {
+    public Timestamp getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(Timestamp fecha) {
         this.fecha = fecha;
     }
 
@@ -87,11 +89,11 @@ public class Evento implements Serializable {
     }
 
     @Nullable
-    public Date getFecha_limite() {
+    public Timestamp getFecha_limite() {
         return fecha_limite;
     }
 
-    public void setFecha_limite(@Nullable Date fecha_limite) {
+    public void setFecha_limite(@Nullable Timestamp fecha_limite) {
         this.fecha_limite = fecha_limite;
     }
 
@@ -111,12 +113,12 @@ public class Evento implements Serializable {
         this.idComunidad = idComunidad;
     }
 
-    public List<Asistir> getAsistir() {
-        return asistir;
+    public List<Asistir> getAsistencia() {
+        return asistencia;
     }
 
-    public void setAsistir(List<Asistir> asistir) {
-        this.asistir = asistir;
+    public void setAsistencia(List<Asistir> asistencia) {
+        this.asistencia = asistencia;
     }
 
     public List<Documento> getDocumentos() {

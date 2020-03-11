@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.meetchrysallis.Models.Evento;
+import com.example.meetchrysallis.Others.Utils;
 import com.example.meetchrysallis.R;
 
 import java.util.ArrayList;
@@ -80,12 +81,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             ubicacion.setText(evento.getUbicacion());
 
             if(evento.getFecha() != null)
-                fecha.setText(evento.getFecha().toString());
+                fecha.setText(Utils.formateadorFechas(evento.getFecha()));
             else
                 fecha.setText("");
 
-            if(evento.getAsistir() != null)
-                asistentes.setText(String.valueOf(evento.getAsistir().size()));
+            if(evento.getAsistencia() != null)
+                asistentes.setText(String.valueOf(evento.getAsistencia().size()));
             else
                 asistentes.setText("0");
         }

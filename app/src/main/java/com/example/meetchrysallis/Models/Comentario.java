@@ -1,21 +1,26 @@
 package com.example.meetchrysallis.Models;
 
-import java.util.Date;
+import com.google.gson.annotations.SerializedName;
 
-public class Comentario {
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+public class Comentario implements Serializable {
     private short idEvento;
     private int idSocio;
     private int id;
     private boolean mostrarNombre;
-    private Date fecha;
+    private Timestamp fecha;
     private boolean activo;
+    @SerializedName("Socios")
     private Socio socio;
+    @SerializedName("Eventos")
     private Evento evento;
     private String body;
 
     //Constructores
     public Comentario(){}
-    public Comentario(short idEvento, int idSocio, int id, boolean mostrarNombre, Date fecha, boolean activo, Socio socio, Evento evento, String body) {
+    public Comentario(short idEvento, int idSocio, int id, boolean mostrarNombre, Timestamp fecha, boolean activo, Socio socio, Evento evento, String body) {
         this.idEvento = idEvento;
         this.idSocio = idSocio;
         this.id = id;
@@ -59,11 +64,11 @@ public class Comentario {
         this.mostrarNombre = mostrarNombre;
     }
 
-    public Date getFecha() {
+    public Timestamp getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(Timestamp fecha) {
         this.fecha = fecha;
     }
 

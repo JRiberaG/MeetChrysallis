@@ -1,5 +1,6 @@
 package com.example.meetchrysallis.Adapters;
 
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.meetchrysallis.Models.Comentario;
+import com.example.meetchrysallis.Others.Utils;
 import com.example.meetchrysallis.R;
 
 import java.util.ArrayList;
@@ -51,12 +53,15 @@ public class RecyclerCommentsAdapter extends RecyclerView.Adapter<RecyclerCommen
         public void asignarDatos(Comentario c) {
             if(c.isMostrarNombre())
                 //FIXME: conseguir el nombre del socio comentante
-                //nombre.setText(c.getSocio().getNombre() + " " + c.getSocio().getApellidos());
-                nombre.setText("prueba prueba");
-            else
+                nombre.setText(c.getSocio().getNombre() + " " + c.getSocio().getApellidos());
+                //nombre.setText("prueba");
+            else{
                 nombre.setText("Anónimo");
-            //FIXME: parsear fecha --> fecha.setText(comentario.getFecha());
-            fecha.setText("01/01/2000");
+                nombre.setTypeface(nombre.getTypeface(), Typeface.ITALIC);
+            }
+
+
+            fecha.setText(Utils.formateadorFechas(c.getFecha()));
             comentario.setText(c.getBody());
         }
     }

@@ -14,6 +14,9 @@ public interface SocioService {
     @GET("api/socios")
     Call<List<Socio>> getSocios();
 
+    @GET("api/socios/{id}")
+    Call<Socio> getSocioByID(@Path("id") int id);
+
     @PUT("api/socios/{id}")
     Call<Socio> updateSocio(@Path("id")int id, @Body Socio socio);
 }

@@ -167,11 +167,11 @@ public class Socio implements Serializable {
         this.comunidadesInteres = comunidadesInteres;
     }
 
-    public ArrayList<com.example.meetchrysallis.Models.Comentario> getComentario() {
+    public ArrayList<Comentario> getComentario() {
         return Comentario;
     }
 
-    public void setComentario(ArrayList<com.example.meetchrysallis.Models.Comentario> comentario) {
+    public void setComentario(ArrayList<Comentario> comentario) {
         Comentario = comentario;
     }
 }

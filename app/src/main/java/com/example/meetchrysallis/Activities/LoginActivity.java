@@ -17,6 +17,7 @@ import com.example.meetchrysallis.API.Api;
 import com.example.meetchrysallis.API.ApiService.SocioService;
 import com.example.meetchrysallis.Models.Socio;
 import com.example.meetchrysallis.Others.CustomToast;
+import com.example.meetchrysallis.Others.DialogProgress;
 import com.example.meetchrysallis.Others.JavaMailAPI;
 import com.example.meetchrysallis.Others.JsonHelper;
 import com.example.meetchrysallis.R;
@@ -75,6 +76,15 @@ public class LoginActivity extends AppCompatActivity {
 
         //Si hay algunas credenciales guardadas...
         if(socio != null){
+
+
+
+            final DialogProgress dp = new DialogProgress(LoginActivity.this);
+            final AlertDialog ad = dp.setProgressDialog("Iniciando sesión...");
+
+
+
+
             //Hacemos una llamada a la API para comprobar que esas credenciales sean válidas
             sociosCall.clone().enqueue(new Callback<List<Socio>>() {
                 @Override
@@ -97,15 +107,18 @@ public class LoginActivity extends AppCompatActivity {
                             CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), response.code() + " - " + response.message());
                             break;
                     }
+
+                    ad.dismiss();
                 }
                 @Override
                 public void onFailure(Call<List<Socio>> call, Throwable t) {
-                    //CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
                     String fallo = t.toString();
                     if (fallo.contains("failed to connect"))
                         CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
                     else
                         CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), t.toString());
+
+                    ad.dismiss();
                 }
             });
         }
@@ -132,6 +145,9 @@ public class LoginActivity extends AppCompatActivity {
                     String contrasenyaEncriptada = encriptarContrasenya(password).toUpperCase();
                     newSocio = new Socio(email, contrasenyaEncriptada);
 
+
+                    final DialogProgress dp = new DialogProgress(LoginActivity.this);
+                    final AlertDialog ad = dp.setProgressDialog("Iniciando sesión...");
                     //Se clonan las calls para poder realizar una tras otra
                     // (por ejemplo, el usuario se equivoca al loguearse +2 veces), de lo contrario
                     // petaría lanzando la siguiente exception:
@@ -143,8 +159,27 @@ public class LoginActivity extends AppCompatActivity {
                                 case 200:
                                     switch(comprobarSocio(newSocio, response)){
                                         case 1: //login ok
-                                            JsonHelper.guardarJsonCredenciales(fileCreds, newSocio);
-                                            devolverSocioLogueado(newSocio);
+                                            //Buscamos el socio al completo
+                                            Call<Socio> socioIndividualCall = socioService.getSocioByID(newSocio.getId());
+                                            socioIndividualCall.clone().enqueue(new Callback<Socio>() {
+                                                @Override
+                                                public void onResponse(Call<Socio> call, Response<Socio> response) {
+                                                    switch(response.code()){
+                                                        case 200:
+                                                        case 202:
+                                                        case 204:
+                                                            newSocio = response.body();
+                                                            JsonHelper.guardarJsonCredenciales(fileCreds, newSocio);
+                                                            devolverSocioLogueado(newSocio);
+                                                            break;
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<Socio> call, Throwable t) {
+                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                }
+                                            });
                                             break;
                                         case 0: //login mal
                                             edCorreo.setText("");
@@ -161,10 +196,12 @@ public class LoginActivity extends AppCompatActivity {
                                     CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), response.code() + " - " + response.message());
                                     break;
                             }
+                            ad.dismiss();
                         }
                         @Override
                         public void onFailure(Call<List<Socio>> call, Throwable t) {
                             CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
+                            ad.dismiss();
                         }
                     });
                 }
@@ -237,14 +274,13 @@ public class LoginActivity extends AppCompatActivity {
                                                 //FIXME: modificar el mail para cuando se acaben de hacer las pruebas
                                                 if (emailEncontrado){
                                                     //Encripta la contraseña generada automáticamente
-                                                    String contrasenyaEncriptada = encriptarContrasenya("prueba").toUpperCase();
+                                                    String contrasenyaEncriptada = encriptarContrasenya(contrasenyaRandom).toUpperCase();
                                                     Socio socioUpdated = socioIterado;
                                                     socioUpdated.setContrasenya(contrasenyaEncriptada);
 
                                                     //Hace una llamada a la API modificando la contraseña del socio
                                                     Call<Socio> callUpdateSocio = socioService.updateSocio(socioUpdated.getId(), socioUpdated);
                                                     callUpdateSocio.enqueue(new Callback<Socio>() {
-                                                        //FIXME: correguir los toasts: se actualiza la  contraseña pero es codigo 200 (cuando debería)
                                                         @Override
                                                         public void onResponse(Call<Socio> call, Response<Socio> response) {
                                                             switch(response.code()){
@@ -270,7 +306,7 @@ public class LoginActivity extends AppCompatActivity {
                                                     JavaMailAPI javaMailAPI = new JavaMailAPI(getApplicationContext(), LoginActivity.this, "jribgomez@gmail.com", asunto, mensaje);
                                                     javaMailAPI.execute();
 
-                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),"Se le ha enviado un correo con su nueva contraseña. En caso de no haberlo recibido, compruebe que su conexión no disponga de proxy");
+                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),"Se le ha enviado un correo con su nueva contraseña. En caso de no haberlo recibido, compruebe su carpeta de 'spam' o su conexión a internet");
                                                 }
                                                 else
                                                     CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),"No hay ningún socio registrado con ese email");

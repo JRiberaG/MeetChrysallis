@@ -21,6 +21,7 @@ import com.example.meetchrysallis.Adapters.RecyclerCommentsAdapter;
 import com.example.meetchrysallis.Models.Comentario;
 import com.example.meetchrysallis.Models.Evento;
 import com.example.meetchrysallis.Others.CustomToast;
+import com.example.meetchrysallis.Others.DialogProgress;
 import com.example.meetchrysallis.R;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+//TODO: ahora ya se ha pasado el evento al completo. Recoger los comentarios del evento
 public class EventoDetalladoActivity extends AppCompatActivity {
 
     private Button btnAsistir;
@@ -37,10 +39,8 @@ public class EventoDetalladoActivity extends AppCompatActivity {
 
     private boolean asistido = false;
     private boolean expandido = false;
-    private boolean comentariosCargados = false;
 
     private Evento evento;
-    //private ArrayList<Comentario> comentarios;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +69,10 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         //Cargamos los comentarios del evento ----------------------
         ComentarioService comentarioService = Api.getApi().create(ComentarioService.class);
         Call<ArrayList<Comentario>> comentariosCall = comentarioService.getComentariosByEvento(evento.getId());
+
+        DialogProgress dp = new DialogProgress(EventoDetalladoActivity.this);
+        final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.cargando_comentarios));
+
         comentariosCall.clone().enqueue(new Callback<ArrayList<Comentario>>() {
             @Override
             public void onResponse(Call<ArrayList<Comentario>> call, Response<ArrayList<Comentario>> response) {
@@ -84,14 +88,17 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                             tvNumComentarios.setText("0");
                         break;
                     default:
-                        //FIXME: pendiente de programar
+                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
                         break;
                 }
+
+                ad.dismiss();
             }
 
             @Override
             public void onFailure(Call<ArrayList<Comentario>> call, Throwable t) {
-                //FIXME: pendiente de programar
+                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                ad.dismiss();
             }
         });
         //------------------------------------------------------------------
@@ -108,11 +115,10 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         else
             //FIXME: formatear este float
             tvValoracionMedia.setText(String.valueOf(evento.getValoracionMedia()));
-        //FIXME: conseguir los comentarios del evento
-        /*if(evento.getComentarios() != null)
-            //tvNumComentarios.setText(evento.getComentarios().size());
+        if(evento.getComentarios() != null)
+            tvNumComentarios.setText(String.valueOf(evento.getComentarios().size()));
         else
-            tvNumComentarios.setText("0");*/
+            tvNumComentarios.setText("0");
         tvDescripcion.setText(evento.getDescripcion());
 
         //TODO:
@@ -195,7 +201,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                                 boolean mostrarNombre = cbMostrarNombre.isChecked();
 
                                 //FIXME: indicar el número máx de carácteres
-                                int maxCaracteres = 5;
+                                int maxCaracteres = 140;
                                 if (comment.length() > maxCaracteres){
                                     CustomToast.mostrarWarning(EventoDetalladoActivity.this,getLayoutInflater(),"El  comentario excede el número máximo de carácteres permitidos");
                                 }
