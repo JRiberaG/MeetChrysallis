@@ -19,7 +19,7 @@ import com.example.meetchrysallis.Models.Socio;
 import com.example.meetchrysallis.Others.CustomToast;
 import com.example.meetchrysallis.Others.DialogProgress;
 import com.example.meetchrysallis.Others.JavaMailAPI;
-import com.example.meetchrysallis.Others.JsonHelper;
+import com.example.meetchrysallis.Others.Archivador;
 import com.example.meetchrysallis.R;
 
 import java.io.File;
@@ -72,19 +72,12 @@ public class LoginActivity extends AppCompatActivity {
         fileCreds = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.json");
 
         //Intentamos leer el archivo de credenciales y pasamos los datos del archivo a un objeto Socio
-        socio = JsonHelper.leerJsonCredenciales(fileCreds.getPath());
+        socio = Archivador.leerJsonCredenciales(fileCreds.getPath());
 
         //Si hay algunas credenciales guardadas...
         if(socio != null){
-
-
-
             final DialogProgress dp = new DialogProgress(LoginActivity.this);
             final AlertDialog ad = dp.setProgressDialog("Iniciando sesión...");
-
-
-
-
             //Hacemos una llamada a la API para comprobar que esas credenciales sean válidas
             sociosCall.clone().enqueue(new Callback<List<Socio>>() {
                 @Override
@@ -169,7 +162,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         case 202:
                                                         case 204:
                                                             newSocio = response.body();
-                                                            JsonHelper.guardarJsonCredenciales(fileCreds, newSocio);
+                                                            Archivador.guardarJsonCredenciales(fileCreds, newSocio);
                                                             devolverSocioLogueado(newSocio);
                                                             break;
                                                     }
@@ -235,8 +228,7 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //Busca en la base de datos el email facilitado por el usuario,
-                                //si lo está, envía una nueva contraseña al email, si no lo está,
-                                //informa al usuario
+                                //si lo está, envía una nueva contraseña al email
                                 EditText etEmail = view.findViewById(R.id.dialog_olvide_etEmail);
                                 final String email = etEmail.getText().toString();
 
@@ -247,8 +239,9 @@ public class LoginActivity extends AppCompatActivity {
                                     final String mensaje = "¡Hola!\n\n" +
                                             "Esta es su nueva contraseña: \n" +
                                             contrasenyaRandom + "\n\n" +
-                                            "Si lo desea, puede modificarla accediendo a la pestaña" +
-                                            "de \"Perfil\" > \"Modificar Datos personales\". \n" +
+                                            "Si lo desea, puede modificarla accediendo a la app y, " +
+                                            "en la pestaña" +
+                                            "de \"Opciones\" > \"Modificar Datos personales\". \n" +
                                             "\nMuchas gracias.\n\n" +
                                             "** Mensaje generado automáticamente. " +
                                             "Por favor, no responda a este email. **";
@@ -271,7 +264,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         emailEncontrado = true;
                                                     }
                                                 }
-                                                //FIXME: modificar el mail para cuando se acaben de hacer las pruebas
+
                                                 if (emailEncontrado){
                                                     //Encripta la contraseña generada automáticamente
                                                     String contrasenyaEncriptada = encriptarContrasenya(contrasenyaRandom).toUpperCase();
@@ -289,7 +282,7 @@ public class LoginActivity extends AppCompatActivity {
                                                                 case 202:
                                                                 case 203:
                                                                 case 204:
-                                                                    System.out.println("Se actualizó el usuario");
+                                                                    //se actualizó el usuario
                                                                     break;
                                                                 default:
                                                                     System.out.println(response.code() + " - " + response.message());
@@ -298,12 +291,13 @@ public class LoginActivity extends AppCompatActivity {
 
                                                         @Override
                                                         public void onFailure(Call<Socio> call, Throwable t) {
-                                                            CustomToast.mostrarInfo(getApplicationContext(), getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                            CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
                                                         }
                                                     });
 
-                                                    //Enviamos el mail al usuario con la nueva contraseña (sin encriptar)
-                                                    JavaMailAPI javaMailAPI = new JavaMailAPI(getApplicationContext(), LoginActivity.this, "jribgomez@gmail.com", asunto, mensaje);
+                                                    //FIXME: modificar el mail para cuando se acaben de hacer las pruebas
+                                                    //Enviamos el mail al usuario con la nueva contraseña
+                                                    JavaMailAPI javaMailAPI = new JavaMailAPI(LoginActivity.this, LoginActivity.this, "jribgomez@gmail.com", asunto, mensaje);
                                                     javaMailAPI.execute();
 
                                                     CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),"Se le ha enviado un correo con su nueva contraseña. En caso de no haberlo recibido, compruebe su carpeta de 'spam' o su conexión a internet");

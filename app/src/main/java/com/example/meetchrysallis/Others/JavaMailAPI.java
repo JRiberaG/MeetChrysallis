@@ -79,7 +79,6 @@ public class JavaMailAPI extends AsyncTask<Void,Void,Void>  {
             //Sending email
             Transport.send(mm);
 
-            CustomToast.mostrarSuccess(mContext, activity.getLayoutInflater(),"Email enviado con éxito");
 //            BodyPart messageBodyPart = new MimeBodyPart();
 //
 //            messageBodyPart.setText(message);

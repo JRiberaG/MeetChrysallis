@@ -27,7 +27,9 @@ import com.example.meetchrysallis.Others.CustomToast;
 import com.example.meetchrysallis.Others.DialogProgress;
 import com.example.meetchrysallis.R;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -52,8 +54,6 @@ public class HomeFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        //FIXME: recuperar sólo los eventosDelSocio de las comunidades en las que el socio muestra interes
-        //      o recuperar todo los eventosDelSocio y mostrar solo los que el socio quiera ver
         final EventoService eventoService = Api.getApi().create(EventoService.class);
         final Call<List<Evento>> eventosCall = eventoService.getEventos();
         eventosCall.enqueue(new Callback<List<Evento>>() {
@@ -64,19 +64,7 @@ public class HomeFragment extends Fragment {
                     case 204:
                         ArrayList<Evento> eventosRecogidos = (ArrayList<Evento>)response.body();
 
-                        //Buscamos de entre todos los eventos recogidos y guardamos sólo aquellos
-                        //que le vaya a interesar al socio
-                        if(eventosRecogidos != null){
-                            //Cogemos las comunidades interesadas del socio
-                            if (MainActivity.socio != null){
-                                for(Comunidad comunidad : MainActivity.socio.getComunidadesInteres()){
-                                    for(Evento eve : eventosRecogidos){
-                                        if (eve.getIdComunidad() == comunidad.getId())
-                                            eventosDelSocio.add(eve);
-                                    }
-                                }
-                            }
-                        }
+                        actualizarRecycler(eventosRecogidos);
 
                         TextView tv_noEventos = getView().findViewById(R.id.fragment_home_tvNoEventos);
                         final RecyclerView recycler = getView().findViewById(R.id.recyclerHome);
@@ -98,7 +86,8 @@ public class HomeFragment extends Fragment {
                                                 ArrayList<Evento> eventosRecogidos = (ArrayList<Evento>)response.body();
                                                 eventosDelSocio.clear();
 
-                                                //Buscamos de entre todos los eventos recogidos y guardamos sólo aquellos
+                                                actualizarRecycler(eventosRecogidos);
+                                                /*//Buscamos de entre todos los eventos recogidos y guardamos sólo aquellos
                                                 //que le vaya a interesar al socio
                                                 if(eventosRecogidos != null){
                                                     //Cogemos las comunidades interesadas del socio
@@ -110,7 +99,7 @@ public class HomeFragment extends Fragment {
                                                             }
                                                         }
                                                     }
-                                                }
+                                                }*/
 
                                                 adapter.notifyDataSetChanged();
                                                 swipeRefreshLayout.setRefreshing(false);
@@ -270,7 +259,26 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void actualizarRecycler() {
-
+    private void actualizarRecycler(ArrayList<Evento> eventosRecogidos) {
+        //Buscamos de entre todos los eventos recogidos y guardamos sólo aquellos
+        //que le vaya a interesar al socio
+        if(eventosRecogidos != null){
+            //Cogemos las comunidades interesadas del socio
+            if (MainActivity.socio != null){
+                for(Comunidad comunidad : MainActivity.socio.getComunidadesInteres()){
+                    for(Evento eve : eventosRecogidos){
+                        if (eve.getIdComunidad() == comunidad.getId()){
+                            //Cogemos la fecha de hoy
+                            Date date = new Date();
+                            long time = date.getTime();
+                            Timestamp ts = new Timestamp(time);
+                            //Se añade a la lista si el evento es después a la fecha actual (no se ha celebrado)
+                            if (eve.getFecha().after(ts))
+                                eventosDelSocio.add(eve);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

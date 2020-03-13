@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.meetchrysallis.Activities.DatosPersonalesActivity;
 import com.example.meetchrysallis.Activities.LoginActivity;
 import com.example.meetchrysallis.Others.CustomToast;
 import com.example.meetchrysallis.R;
@@ -39,7 +40,8 @@ public class OpcionesFragment extends Fragment {
         llModificarDatos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CustomToast.mostrarSuccess(context, getLayoutInflater(), "Modificar datos");
+                Intent intent = new Intent(context, DatosPersonalesActivity.class);
+                startActivity(intent);
             }
         });
 

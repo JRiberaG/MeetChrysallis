@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MeetChrysallis</string>
     <string name="iniciar_sesion">Iniciar Sesión</string>
-    <string name="correo">Correo</string>
+    <string name="correo">Correo eletrónico</string>
     <string name="contrasenya">Contraseña</string>
     <string name="loginincorrecto">Usuario/contraseña incorrectos</string>
     <string name="acceder">Acceder</string>
@@ -14,4 +14,23 @@
     <string name="error_conexion_db">No se ha podido conectar con la base de datos. Pruebe más tarde</string>
     <string name="cargando_comentarios">Cargando comentarios...</string>
     <string name="cargando_evento">Cargando evento...</string>
+    <string name="telefono">Teléfono</string>
+    <string name="modificar">Modificar</string>
+    <string name="comunidades_interes">Comunidades interesadas</string>
+    <string name="idioma">Idioma</string>
+    <string name="contrasenyaAntigua">Contraseña antigua</string>
+    <string name="contrasenyaNueva">Contraseña nueva</string>
+    <string name="contrasenyaConfirmar">Repita la contraseña nueva</string>
+    <string name="seleccione_idioma">Seleccione el idioma</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="castellano">Castellano</string>
+    <string name="catalan">Catalán</string>
+    <string name="ingles">Inglés</string>
+    <string name="pulsar_para_salir">Pulse otra vez para salir</string>
+    <string-array name="idiomas">
+        <item>Castellano</item>
+        <item>Catalán</item>
+        <item>Inglés</item>
+    </string-array>
 </resources>

@@ -51,15 +51,13 @@ public class RecyclerCommentsAdapter extends RecyclerView.Adapter<RecyclerCommen
         }
 
         public void asignarDatos(Comentario c) {
-            if(c.isMostrarNombre())
-                //FIXME: conseguir el nombre del socio comentante
+            if(c.isMostrarNombre()){
                 nombre.setText(c.getSocio().getNombre() + " " + c.getSocio().getApellidos());
-                //nombre.setText("prueba");
+            }
             else{
                 nombre.setText("Anónimo");
                 nombre.setTypeface(nombre.getTypeface(), Typeface.ITALIC);
             }
-
 
             fecha.setText(Utils.formateadorFechas(c.getFecha()));
             comentario.setText(c.getBody());

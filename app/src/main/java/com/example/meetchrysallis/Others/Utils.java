@@ -1,6 +1,7 @@
 package com.example.meetchrysallis.Others;
 
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 public class Utils {
@@ -14,5 +15,11 @@ public class Utils {
     public static String formateadorFechas(Timestamp fecha){
         String str = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(fecha);
         return str;
+    }
+
+    public static String formatearFloat(float valoracionMedia){
+        String result = new DecimalFormat("###,###.##").format(valoracionMedia);
+
+        return result;
     }
 }

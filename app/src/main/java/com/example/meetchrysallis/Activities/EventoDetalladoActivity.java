@@ -4,11 +4,13 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,21 +18,26 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.meetchrysallis.API.Api;
+import com.example.meetchrysallis.API.ApiService.AsistirService;
 import com.example.meetchrysallis.API.ApiService.ComentarioService;
 import com.example.meetchrysallis.Adapters.RecyclerCommentsAdapter;
+import com.example.meetchrysallis.Models.Asistir;
 import com.example.meetchrysallis.Models.Comentario;
 import com.example.meetchrysallis.Models.Evento;
+import com.example.meetchrysallis.Models.Socio;
 import com.example.meetchrysallis.Others.CustomToast;
 import com.example.meetchrysallis.Others.DialogProgress;
+import com.example.meetchrysallis.Others.Utils;
 import com.example.meetchrysallis.R;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-//TODO: ahora ya se ha pasado el evento al completo. Recoger los comentarios del evento
 public class EventoDetalladoActivity extends AppCompatActivity {
 
     private Button btnAsistir;
@@ -59,15 +66,16 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         final TextView tvNumComentarios = findViewById(R.id.eve_det_tvNumComments);
         TextView tvDescripcion = findViewById(R.id.eve_det_tvDescripcion);
 
-        LinearLayout ratingMedio = findViewById(R.id.eve_det_linearLayout_ratingMedio);
-        LinearLayout ratingEstrellas = findViewById(R.id.eve_det_linearLayout_rating);
+        LinearLayout linearFechaLim = findViewById(R.id.eve_det_linearlayout_fechaLim);
+        LinearLayout linearRatingMedio = findViewById(R.id.eve_det_linearLayout_ratingMedio);
+        LinearLayout linearRatear = findViewById(R.id.eve_det_linearLayout_rating);
 
         btnComentar = findViewById(R.id.eve_det_btnComentar);
         btnAsistir = findViewById(R.id.eve_det_btnAsistire);
         //------------------------------------------------------------------------------
 
         //Cargamos los comentarios del evento ----------------------
-        ComentarioService comentarioService = Api.getApi().create(ComentarioService.class);
+        final ComentarioService comentarioService = Api.getApi().create(ComentarioService.class);
         Call<ArrayList<Comentario>> comentariosCall = comentarioService.getComentariosByEvento(evento.getId());
 
         DialogProgress dp = new DialogProgress(EventoDetalladoActivity.this);
@@ -91,7 +99,6 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                         CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
                         break;
                 }
-
                 ad.dismiss();
             }
 
@@ -104,21 +111,32 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         //------------------------------------------------------------------
 
 
+        //titulo
         tvTitulo.setText(evento.getTitulo());
-        //FIXME: parsear la fecha --> tvFecha.setText(evento.getFecha());
+        //fecha
+        tvFecha.setText(Utils.formateadorFechas(evento.getFecha()));
+        //ubicacion
         tvUbicacion.setText(evento.getUbicacion());
-        //if(evento.getFecha_limite() != null)
-            //FIXME: parsear la fecha --> tvFechaLimite.setText(evento.getFecha_limite());
-        tvComunidad.setText(evento.getComunidad().getNombre());
-        if(evento.getValoracionMedia() == 0)
-            ratingMedio.setVisibility(View.GONE);
+        //fecha límite
+        if(evento.getFecha_limite() != null)
+            tvFechaLimite.setText(Utils.formateadorFechas(evento.getFecha_limite()));
         else
-            //FIXME: formatear este float
-            tvValoracionMedia.setText(String.valueOf(evento.getValoracionMedia()));
+            linearFechaLim.setVisibility(View.GONE);
+        //nombre comunidad
+        tvComunidad.setText(evento.getComunidad().getNombre());
+        //TODO: si el evento no se ha realizado, esconder la valoración media (??)
+        //      o no porque si no se ha realizado no es posible comentar
+        //valoracion media
+        if(evento.getValoracionMedia() == 0)
+            linearRatingMedio.setVisibility(View.GONE);
+        else
+            tvValoracionMedia.setText(Utils.formatearFloat(evento.getValoracionMedia()));
+        //núm comentarios
         if(evento.getComentarios() != null)
             tvNumComentarios.setText(String.valueOf(evento.getComentarios().size()));
         else
             tvNumComentarios.setText("0");
+        //descripción
         tvDescripcion.setText(evento.getDescripcion());
 
         //TODO:
@@ -129,6 +147,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         //FIXME: descomentar y solucionar
 //        comprobarAsistido(evento.getAsistir().contains(MainActivity.socio));
 
+        // ---------------------- BOTÓN ASISTIR ----------------------
         btnAsistir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,12 +159,81 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                 }
                 else{
                     //TODO:
-                    //  Añadir a la base de datos la asistencia del socio
-                    asistido = true;
-                    comprobarAsistido(asistido);
+                    //  Mostrar alert y añadir a la base de datos
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(EventoDetalladoActivity.this);
+                    final View view = getLayoutInflater().inflate(R.layout.dialog_asistir, null);
+                    builder.setView(view)
+                            .setTitle("Confirmar asistencia")
+                            .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            })
+                            .setPositiveButton("Confirmar", null);
+                    AlertDialog dialog = builder.create();
+
+                    //Rellenamos de valores el spinner
+                    ArrayList<Short> spinnerArray = rellenarSpinner();
+                    //Cogemos su id del layout
+                    final Spinner spinner = view.findViewById(R.id.asistir_spinner);
+                    //Creamos un adaptador
+                    ArrayAdapter<Short> spinnerAdapter = new ArrayAdapter<>(EventoDetalladoActivity.this,
+                            android.R.layout.simple_spinner_item, spinnerArray);
+                    //Indicamos el tipo de DropDown
+                    spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    //Asignamos el adaptador
+                    spinner.setAdapter(spinnerAdapter);
+
+                    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                        @Override
+                        public void onShow(final DialogInterface dialog) {
+                            Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if(spinner.getSelectedItem() != null){
+                                        int idSocio = MainActivity.socio.getId();
+                                        short idEvento = evento.getId();
+                                        short numAsistentes = (short) spinner.getSelectedItem();
+                                        Socio socio = MainActivity.socio;
+                                        Asistir asistir = new Asistir(idSocio, idEvento, numAsistentes, socio, evento);
+
+                                        AsistirService asistirService = Api.getApi().create(AsistirService.class);
+                                        Call<Asistir> asistirCall = asistirService.insertAsistir(asistir);
+                                        asistirCall.clone().enqueue(new Callback<Asistir>() {
+                                            @Override
+                                            public void onResponse(Call<Asistir> call, Response<Asistir> response) {
+                                                switch(response.code()){
+                                                    case 200:
+                                                        CustomToast.mostrarSuccess(EventoDetalladoActivity.this, getLayoutInflater(), "OK");
+                                                        //marcamos como asistido y cambiamos colores y texto del boton
+                                                        asistido = true;
+                                                        comprobarAsistido(asistido);
+                                                        break;
+                                                    default:
+                                                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                                                        break;
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<Asistir> call, Throwable t) {
+                                                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                            }
+                                        });
+                                        dialog.dismiss();
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    dialog.show();
                 }
             }
         });
+        // ----------------------------------------------------
 
         // ---------------------- BOTÓN EXPAND (COMENTARIOS) ----------------------
         expand = findViewById(R.id.eve_det_ivExpand);
@@ -200,15 +288,48 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                                 String comment = etComent.getText().toString();
                                 boolean mostrarNombre = cbMostrarNombre.isChecked();
 
-                                //FIXME: indicar el número máx de carácteres
                                 int maxCaracteres = 140;
                                 if (comment.length() > maxCaracteres){
                                     CustomToast.mostrarWarning(EventoDetalladoActivity.this,getLayoutInflater(),"El  comentario excede el número máximo de carácteres permitidos");
                                 }
                                 else{
                                     //TODO: añadir el comentario
+                                    //short idEvento, int idSocio, int id, boolean mostrarNombre, Timestamp fecha, boolean activo, Socio socio, Evento evento, String body
+                                    short idEvento = evento.getId();
+                                    int idSocio = MainActivity.socio.getId();
+                                    int id = (evento.getComentarios().size() + 1);
+                                    Date date = new Date();
+                                    long time = date.getTime();
+                                    Timestamp timestamp = new Timestamp(time);
+                                    boolean activo = true;
+                                    Socio socio = MainActivity.socio;
+                                    String body = comment;
+                                    Comentario c = new Comentario(idEvento, idSocio, id, mostrarNombre, timestamp, activo, socio, evento, body);
+                                    //TODO: 409 CONFLICT. Ya se ha probado:
+                                    //      - Crear otro objeto ComentarioService en lugar del que ya había
+                                    //      - Cambiar el ID del comentario a eventos.size() + 1
+                                    Call<Comentario> comentarioCall = comentarioService.insertComentario(c);
+                                    comentarioCall.clone().enqueue(new Callback<Comentario>() {
+                                        @Override
+                                        public void onResponse(Call<Comentario> call, Response<Comentario> response) {
+                                            switch(response.code()){
+                                                case 200:
+                                                case 204:
+                                                    //comentario añadido
+                                                    break;
+                                                default:
+                                                    CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                                                    break;
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<Comentario> call, Throwable t) {
+                                            CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                        }
+                                    });
+
                                     dialog.dismiss();
-                                    CustomToast.mostrarInfo(EventoDetalladoActivity.this,getLayoutInflater(),"Comentario añadido");
                                 }
                             }
                         });
@@ -218,9 +339,6 @@ public class EventoDetalladoActivity extends AppCompatActivity {
             }
         });
         //----------------------------------------------------------------
-
-        LinearLayout linearRatingMedio = findViewById(R.id.eve_det_linearLayout_ratingMedio);
-        LinearLayout linearRating = findViewById(R.id.eve_det_linearLayout_rating);
         //Si el evento no se ha realizado, esconder el layout de ratingMedio
         //linearRatingMedio.setVisibility(View.GONE);
         //Si el evento no se ha realizado y el usuario no ha participado, escoonder el layout
@@ -259,5 +377,14 @@ public class EventoDetalladoActivity extends AppCompatActivity {
             btnAsistir.setBackground(this.getResources().getDrawable(R.drawable.selector_custom_button_green));
             btnComentar.setVisibility(View.GONE);
         }
+    }
+
+    private ArrayList<Short> rellenarSpinner() {
+        ArrayList<Short> list = new ArrayList<Short>();
+        for(int i=1; i<11; i++){
+            list.add(new Short((short) i));
+        }
+
+        return list;
     }
 }
