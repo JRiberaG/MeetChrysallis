@@ -17,6 +17,23 @@ import java.io.IOException;
  */
 public class Archivador {
     /**
+     * Lee un fichero JSON en el que recogerá (en caso de que las haya) las credenciales del usuario.
+     * @param path  El archivo a leer
+     * @return      Los datos del socio. De no existir las credenciales devolverá null
+     */
+    public static Socio leerJsonCredenciales(String path) {
+        Socio socio = null;
+
+        Gson gson = new Gson();
+        try {
+            socio = gson.fromJson(new FileReader(path), Socio.class);
+        } catch (FileNotFoundException e) {
+            //no se encontró el archivo y por tanto, no hay credenciales registradas
+        }
+        return socio;
+    }
+
+    /**
      * Guarda (escribe) en un JSON las credenciales del usuario (email y contraseña)
      * @param fileCreds El archivo donde se escribirá
      * @param socio     Los datos del socio
@@ -43,23 +60,6 @@ public class Archivador {
                 }
             }
         }
-    }
-
-    /**
-     * Lee un fichero JSON en el que recogerá (en caso de que las haya) las credenciales del usuario.
-     * @param path  El archivo a leer
-     * @return      Los datos del socio. De no existir las credenciales devolverá null
-     */
-    public static Socio leerJsonCredenciales(String path) {
-        Socio socio = null;
-
-        Gson gson = new Gson();
-        try {
-            socio = gson.fromJson(new FileReader(path), Socio.class);
-        } catch (FileNotFoundException e) {
-            //no se encontró el archivo y por tanto, no hay credenciales registradas
-        }
-        return socio;
     }
 
     public static void guardarConfig(File file, String idioma) {

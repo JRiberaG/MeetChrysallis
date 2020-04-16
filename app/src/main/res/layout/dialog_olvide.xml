@@ -8,13 +8,13 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="15dp"
         android:paddingTop="5dp"
-        android:text="Es necesario que indique su email de soci@ para que así podamos enviarle la nueva contraseña."/>
+        android:text="@string/indique_email_recuperacion"/>
 
     <EditText
         android:id="@+id/dialog_olvide_etEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:hint="Correo"
+        android:hint="@string/correo"
         android:inputType="textEmailAddress"/>
 </LinearLayout>

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,16 +17,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.meetchrysallis.API.Api;
 import com.example.meetchrysallis.API.ApiService.SocioService;
 import com.example.meetchrysallis.Models.Socio;
+import com.example.meetchrysallis.Others.Archivador;
 import com.example.meetchrysallis.Others.CustomToast;
 import com.example.meetchrysallis.Others.DialogProgress;
 import com.example.meetchrysallis.Others.JavaMailAPI;
-import com.example.meetchrysallis.Others.Archivador;
+import com.example.meetchrysallis.Others.Utils;
 import com.example.meetchrysallis.R;
 
 import java.io.File;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -44,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     private Socio newSocio;
 
     private File fileCreds;
+    private File fileConfig;
 
     private SocioService socioService = Api.getApi().create(SocioService.class);
     private Call<List<Socio>> sociosCall = socioService.getSocios();
@@ -68,56 +68,74 @@ public class LoginActivity extends AppCompatActivity {
         //(Si no se entiende en el drive hay un FlowChart explicándolo)
         //----------------------------------------
 
+        leerFicheroCreds();
+
+        //Si hay algunas credenciales guardadas se intenta el login con ellas
+        if(socio != null){
+            loguearseConCredenciales();
+        }
+
+        //Si no hay credenciales guardadas (o la que había es errónea), el socio procederá
+        // a intentar loguearse manualmente
+        configurarBotonAcceder();
+
+        configurarRecuperacionContrasenya();
+
+        configurarBotonesIdiomas();
+    }
+
+    private void loguearseConCredenciales() {
+        final DialogProgress dp = new DialogProgress(LoginActivity.this);
+        final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.iniciando_sesion));
+        //Hacemos una llamada a la API para comprobar que esas credenciales sean válidas
+        sociosCall.clone().enqueue(new Callback<List<Socio>>() {
+            @Override
+            public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
+                switch(response.code()){
+                    case 200:
+                        switch(comprobarSocio(socio, response)){
+                            case 1: //login ok
+                                devolverSocioLogueado(socio);
+                                break;
+                            case 0: //login mal
+                                fileCreds.delete(); //borramos las credenciales (son erroneas)
+                                break;
+                            default: //no hay socios en la bd
+                                CustomToast.mostrarWarning(LoginActivity.this,getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado));
+                                break;
+                        }
+                        break;
+                    default:
+                        CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), response.code() + " - " + response.message());
+                        break;
+                }
+
+                ad.dismiss();
+            }
+            @Override
+            public void onFailure(Call<List<Socio>> call, Throwable t) {
+                String fallo = t.toString();
+                if (fallo.contains("failed to connect"))
+                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
+                else
+                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), t.toString());
+
+                fileCreds.delete();
+
+                ad.dismiss();
+            }
+        });
+    }
+
+    private void leerFicheroCreds() {
         //este path es '/storage/emulated/0/Android/data/com.example.meetchrysallis/files/cred.json'
         fileCreds = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.json");
 
         //Intentamos leer el archivo de credenciales y pasamos los datos del archivo a un objeto Socio
         socio = Archivador.leerJsonCredenciales(fileCreds.getPath());
+    }
 
-        //Si hay algunas credenciales guardadas...
-        if(socio != null){
-            final DialogProgress dp = new DialogProgress(LoginActivity.this);
-            final AlertDialog ad = dp.setProgressDialog("Iniciando sesión...");
-            //Hacemos una llamada a la API para comprobar que esas credenciales sean válidas
-            sociosCall.clone().enqueue(new Callback<List<Socio>>() {
-                @Override
-                public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
-                    switch(response.code()){
-                        case 200:
-                            switch(comprobarSocio(socio, response)){
-                                case 1: //login ok
-                                    devolverSocioLogueado(socio);
-                                    break;
-                                case 0: //login mal
-                                    fileCreds.delete(); //borramos las credenciales (son erroneas)
-                                    break;
-                                default: //no hay socios en la bd
-                                    CustomToast.mostrarWarning(LoginActivity.this,getLayoutInflater(), "No hay ningún socio registrado en la base de datos");
-                                    break;
-                            }
-                            break;
-                        default:
-                            CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), response.code() + " - " + response.message());
-                            break;
-                    }
-
-                    ad.dismiss();
-                }
-                @Override
-                public void onFailure(Call<List<Socio>> call, Throwable t) {
-                    String fallo = t.toString();
-                    if (fallo.contains("failed to connect"))
-                        CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
-                    else
-                        CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), t.toString());
-
-                    ad.dismiss();
-                }
-            });
-        }
-
-        //Si no hay ninguna credencial guardada en el JSON (o la que había es errónea),
-        //el socio procederá a intentar loguearse manualmente
+    private void configurarBotonAcceder() {
         Button btnAcceder = findViewById(R.id.BtnAcceder);
         btnAcceder.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,12 +153,12 @@ public class LoginActivity extends AppCompatActivity {
                     linearEmail.setBackgroundResource(R.drawable.background_edittext_login);
                     linearPW.setBackgroundResource(R.drawable.background_edittext_login);
                     //Encriptamos la contraseña para poder comparar con las que hay en la BD
-                    String contrasenyaEncriptada = encriptarContrasenya(password).toUpperCase();
+                    String contrasenyaEncriptada = Utils.encriptarContrasenya(password);
                     newSocio = new Socio(email, contrasenyaEncriptada);
 
 
                     final DialogProgress dp = new DialogProgress(LoginActivity.this);
-                    final AlertDialog ad = dp.setProgressDialog("Iniciando sesión...");
+                    final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.iniciando_sesion));
                     //Se clonan las calls para poder realizar una tras otra
                     // (por ejemplo, el usuario se equivoca al loguearse +2 veces), de lo contrario
                     // petaría lanzando la siguiente exception:
@@ -153,7 +171,7 @@ public class LoginActivity extends AppCompatActivity {
                                     switch(comprobarSocio(newSocio, response)){
                                         case 1: //login ok
                                             //Buscamos el socio al completo
-                                            Call<Socio> socioIndividualCall = socioService.getSocioByID(newSocio.getId());
+                                            Call<Socio> socioIndividualCall = socioService.getSocioByID(newSocio.getId(), true);
                                             socioIndividualCall.clone().enqueue(new Callback<Socio>() {
                                                 @Override
                                                 public void onResponse(Call<Socio> call, Response<Socio> response) {
@@ -181,7 +199,7 @@ public class LoginActivity extends AppCompatActivity {
                                             CustomToast.mostrarError(LoginActivity.this,getLayoutInflater(), getString(R.string.loginincorrecto));
                                             break;
                                         default: //no hay socios en la bd
-                                            CustomToast.mostrarWarning(LoginActivity.this,getLayoutInflater(), "No hay ningún socio registrado en la base de datos");
+                                            CustomToast.mostrarWarning(LoginActivity.this,getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado));
                                             break;
                                     }
                                     break;
@@ -210,7 +228,9 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
+    private void configurarRecuperacionContrasenya() {
         TextView tvOlvide = findViewById(R.id.TextViewOlvide);
         tvOlvide.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,13 +238,13 @@ public class LoginActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                 final View view = getLayoutInflater().inflate(R.layout.dialog_olvide, null);
                 builder.setView(view)
-                        .setTitle("Escriba su correo").setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        })
-                        .setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
+                        .setTitle(getResources().getString(R.string.escriba_su_email)).setNegativeButton(getResources().getString(R.string.cancelar), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                        .setPositiveButton(getResources().getString(R.string.enviar), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //Busca en la base de datos el email facilitado por el usuario,
@@ -235,16 +255,42 @@ public class LoginActivity extends AppCompatActivity {
                                 if (!email.isEmpty()){
                                     //Genera una nueva contraseña aleatorio de 6 carácteres alfabéticos
                                     final String contrasenyaRandom = generarContrasenya();
-                                    final String asunto = "MeetChrysallis - Recuperación de contraseña";
-                                    final String mensaje = "¡Hola!\n\n" +
-                                            "Esta es su nueva contraseña: \n" +
-                                            contrasenyaRandom + "\n\n" +
-                                            "Si lo desea, puede modificarla accediendo a la app y, " +
-                                            "en la pestaña" +
-                                            "de \"Opciones\" > \"Modificar Datos personales\". \n" +
-                                            "\nMuchas gracias.\n\n" +
-                                            "** Mensaje generado automáticamente. " +
-                                            "Por favor, no responda a este email. **";
+                                    final String asunto = getResources().getString(R.string.recuperacion_asunto);
+                                    final String mensaje;
+                                    switch(MainActivity.idioma) {
+                                        case "es":
+                                            mensaje = "¡Hola!\n\n" +
+                                                    "Esta es su nueva contraseña: \n" +
+                                                    contrasenyaRandom + "\n\n" +
+                                                    "Si lo desea, puede modificarla accediendo a la app y, " +
+                                                    "una vez dentro, en la pestaña" +
+                                                    "de \"Opciones\" > \"Modificar Datos personales\". \n" +
+                                                    "\nMuchas gracias.\n\n" +
+                                                    "** Mensaje generado automáticamente. " +
+                                                    "Por favor, no responda a este email. **";
+                                            break;
+                                        case "ca":
+                                            mensaje = "Hola!\n\n" +
+                                                    "Aquesta és la seva nova contrasenya: \n" +
+                                                    contrasenyaRandom + "\n\n" +
+                                                    "Si ho desitja, pot modificar-la accedint a l'App i, " +
+                                                    "un cop dins, en la pestanya d'\"Opcions\" > \"Modificar dades personals\". \n" +
+                                                    "\nMoltes gràcies.\n\n" +
+                                                    "** Missatge generat automàticament. " +
+                                                    "Si us plau, no respongui a aquest email. **";
+                                            break;
+                                        default:
+                                            mensaje = "Hi!\n\n" +
+                                                    "This is your new password: \n" +
+                                                    contrasenyaRandom + "\n\n" +
+                                                    "If you wish, you may change it through the app, and " +
+                                                    "once you are logged in, " +
+                                                    "\"Options\" > \"Modify personal data\". \n" +
+                                                    "\nThanks.\n\n" +
+                                                    "** Message generated automatically. " +
+                                                    "Please, do not reply to this email. **";
+                                            break;
+                                    }
 
                                     sociosCall.clone().enqueue(new Callback<List<Socio>>() {
                                         @Override
@@ -266,8 +312,8 @@ public class LoginActivity extends AppCompatActivity {
                                                 }
 
                                                 if (emailEncontrado){
-                                                    //Encripta la contraseña generada automáticamente
-                                                    String contrasenyaEncriptada = encriptarContrasenya(contrasenyaRandom).toUpperCase();
+                                                    // Encripta la contraseña que hemos generado automáticamente
+                                                    String contrasenyaEncriptada = Utils.encriptarContrasenya(contrasenyaRandom);
                                                     Socio socioUpdated = socioIterado;
                                                     socioUpdated.setContrasenya(contrasenyaEncriptada);
 
@@ -285,6 +331,7 @@ public class LoginActivity extends AppCompatActivity {
                                                                     //se actualizó el usuario
                                                                     break;
                                                                 default:
+                                                                    //error al intentar actualizar el socio
                                                                     System.out.println(response.code() + " - " + response.message());
                                                             }
                                                         }
@@ -298,12 +345,13 @@ public class LoginActivity extends AppCompatActivity {
                                                     //FIXME: modificar el mail para cuando se acaben de hacer las pruebas
                                                     //Enviamos el mail al usuario con la nueva contraseña
                                                     JavaMailAPI javaMailAPI = new JavaMailAPI(LoginActivity.this, LoginActivity.this, "jribgomez@gmail.com", asunto, mensaje);
+                                                    //JavaMailAPI javaMailAPI = new JavaMailAPI(LoginActivity.this, LoginActivity.this, email, asunto, mensaje);
                                                     javaMailAPI.execute();
 
-                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),"Se le ha enviado un correo con su nueva contraseña. En caso de no haberlo recibido, compruebe su carpeta de 'spam' o su conexión a internet");
+                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),getResources().getString(R.string.se_ha_enviado_correo));
                                                 }
                                                 else
-                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),"No hay ningún socio registrado con ese email");
+                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado));
                                             }
                                         }
 
@@ -317,6 +365,37 @@ public class LoginActivity extends AppCompatActivity {
                         });
                 AlertDialog dialog = builder.create();
                 dialog.show();
+            }
+        });
+    }
+
+    private void configurarBotonesIdiomas() {
+        fileConfig = new File(getExternalFilesDir(null).getPath() + File.separator + "config.cfg");
+        ImageButton btnEsp = findViewById(R.id.BtnEsp);
+        ImageButton btnCat = findViewById(R.id.BtnCat);
+        ImageButton btnEng = findViewById(R.id.BtnEng);
+
+        btnEsp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.idioma = "es";
+                actualizarIdiomaApp();
+            }
+        });
+
+        btnCat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.idioma = "ca";
+                actualizarIdiomaApp();
+            }
+        });
+
+        btnEng.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.idioma = "en";
+                actualizarIdiomaApp();
             }
         });
     }
@@ -383,44 +462,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * Encripta con el sistema SHA5-512 un string que se le pasará por parámetro.
-     * @param contrasenya   El string a encriptar
-     * @return              El string encriptado
-     */
-    private String encriptarContrasenya(String contrasenya){
-        String result;
-        try {
-            // getInstance() method is called with algorithm SHA-512
-            MessageDigest md = MessageDigest.getInstance("SHA-512");
-
-            // digest() method is called
-            // to calculate message digest of the input string
-            // returned as array of byte
-            byte[] messageDigest = md.digest(contrasenya.getBytes());
-
-            // Convert byte array into signum representation
-            BigInteger no = new BigInteger(1, messageDigest);
-
-            // Convert message digest into hex value
-            String hashtext = no.toString(16);
-
-            // Add preceding 0s to make it 32 bit
-            while (hashtext.length() < 32) {
-                hashtext = "0" + hashtext;
-            }
-
-            result = hashtext;
-        }
-
-        // For specifying wrong message digest algorithms
-        catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-
-        return result;
-    }
-
-    /**
      * Vuelve a la MainActivity pasándole el socio logueado como 'Extra'.
      * @param socio     El socio logueado
      */
@@ -429,6 +470,15 @@ public class LoginActivity extends AppCompatActivity {
         returnIntent.putExtra("socio", socio);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
+    }
+
+    private void actualizarIdiomaApp() {
+        if (!MainActivity.idioma.equalsIgnoreCase("")) {
+            Archivador.guardarConfig(fileConfig, MainActivity.idioma);
+            Utils.configurarIdioma(LoginActivity.this, MainActivity.idioma);
+            recreate();
+//            MainActivity.idiomaCambiado = true;
+        }
     }
 
     @Override

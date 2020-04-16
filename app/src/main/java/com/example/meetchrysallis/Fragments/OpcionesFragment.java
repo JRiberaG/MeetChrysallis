@@ -36,6 +36,18 @@ public class OpcionesFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        // Configuración de los distintos layouts
+        configurarModificarDatos();
+        configurarNotificaciones();
+        configurarContactar();
+        configurarLogout();
+    }
+
+    /**
+     * Abre una nueva activity en la que el usuario podrá modificar sus datos, tales como
+     * correo, contraseña, idioma, ...
+     */
+    private void configurarModificarDatos() {
         LinearLayout llModificarDatos = getView().findViewById(R.id.opciones_layout_modificarDatos);
         llModificarDatos.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,15 +56,29 @@ public class OpcionesFragment extends Fragment {
                 startActivity(intent);
             }
         });
+    }
 
+    /**
+     * Abre una nueva activity en la que se podrá configurar las notificaciones
+     */
+    private void configurarNotificaciones() {
         LinearLayout layoutNotis = getView().findViewById(R.id.opciones_layout_notificaciones);
         layoutNotis.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO:
+                //  Pendiente de programar
                 CustomToast.mostrarInfo(context, getLayoutInflater(), "Configurar las notificaciones");
             }
         });
+    }
 
+    /**
+     * En caso de que el usuario clicke en el layout, se abrirá un Dialog en el que, poniendo
+     * sus datos y un mensaje, podrá comunicarse con el equipo de desarrolladores para cualquier
+     * sugerencia, duda, queja, etc.
+     */
+    private void configurarContactar() {
         LinearLayout llContactar = getView().findViewById(R.id.opciones_layout_contactar);
         llContactar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +86,13 @@ public class OpcionesFragment extends Fragment {
                 CustomToast.mostrarError(context, getLayoutInflater(), "Contactar con el equipo");
             }
         });
+    }
 
+    /**
+     * En caso de que el usuario clicke en el layout, cerrará sesión, enviándolo a la activity del login
+     * y borrando sus credenciales
+     */
+    private void configurarLogout() {
         LinearLayout llLogout = getView().findViewById(R.id.opciones_layout_cerrarSesion);
         llLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,13 +100,13 @@ public class OpcionesFragment extends Fragment {
                 File fileCreds = new File(context.getExternalFilesDir(null).getPath() + File.separator + "cred.json");
                 try{
                     fileCreds.delete();
-                    Intent intent = new Intent(context, LoginActivity.class);
-                    startActivity(intent);
-
                 }
                 catch(Exception e){
                     //No se pudieron borrar las credenciales
                 }
+
+                Intent intent = new Intent(context, LoginActivity.class);
+                startActivity(intent);
             }
         });
     }

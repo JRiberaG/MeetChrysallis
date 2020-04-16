@@ -4,12 +4,86 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="MIS EVENTOS"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerMisEventos"
+
+    <!-- EEVNTOS PENDIENTES -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:orientation="vertical">
+
+        <!-- HEADER -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gradient_background_darker"
+            android:paddingVertical="10dp"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:text="@string/eventos_pendientes"
+                android:padding="10dp"
+                style="@style/Text_BigHeader"/>
+        </LinearLayout>
+
+        <!-- RECYCLER -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerEventosPendientes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </ScrollView>
+
+        <!-- TEXTVIEW ERROR -->
+        <TextView
+            android:id="@+id/fragment_eventos_tvNoPendientes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
+            android:text="@string/error_no_eventos_pendientes"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+    <!-- EEVNTOS ASISTIDOS -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:orientation="vertical">
+
+        <!-- HEADER -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gradient_background_darker"
+            android:paddingVertical="10dp"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:padding="10dp"
+                style="@style/Text_BigHeader"
+                android:text="@string/eventos_asistidos" />
+        </LinearLayout>
+
+        <!-- RECYCLER -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerEventosAsistidos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </ScrollView>
+
+        <!-- TEXTVIEW ERROR -->
+        <TextView
+            android:id="@+id/fragment_eventos_tvNoAsistidos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
+            android:text="@string/error_no_eventos_asistidos"
+            android:visibility="gone"/>
+    </LinearLayout>
 </LinearLayout>

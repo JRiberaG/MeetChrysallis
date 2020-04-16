@@ -20,16 +20,17 @@ import com.example.meetchrysallis.API.Api;
 import com.example.meetchrysallis.API.ApiService.EventoService;
 import com.example.meetchrysallis.Activities.EventoDetalladoActivity;
 import com.example.meetchrysallis.Activities.MainActivity;
-import com.example.meetchrysallis.Adapters.RecyclerAdapter;
+import com.example.meetchrysallis.Adapters.RecyclerEventoAdapter;
+import com.example.meetchrysallis.Models.Asistir;
 import com.example.meetchrysallis.Models.Comunidad;
 import com.example.meetchrysallis.Models.Evento;
 import com.example.meetchrysallis.Others.CustomToast;
 import com.example.meetchrysallis.Others.DialogProgress;
+import com.example.meetchrysallis.Others.Utils;
 import com.example.meetchrysallis.R;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -39,6 +40,9 @@ import retrofit2.Response;
 public class HomeFragment extends Fragment {
     private Context context;
     private ArrayList<Evento> eventosDelSocio = new ArrayList<>();
+    private RecyclerView recycler;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private View view;
 
     //Constructor
     public HomeFragment(Context context) {
@@ -47,7 +51,8 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        view = inflater.inflate(R.layout.fragment_home, container, false);
+        return view;
     }
 
     @Override
@@ -66,14 +71,14 @@ public class HomeFragment extends Fragment {
 
                         actualizarRecycler(eventosRecogidos);
 
-                        TextView tv_noEventos = getView().findViewById(R.id.fragment_home_tvNoEventos);
-                        final RecyclerView recycler = getView().findViewById(R.id.recyclerHome);
+                        TextView tvNoEventos = view.findViewById(R.id.fragment_home_tvNoEventos);
+                        recycler = view.findViewById(R.id.recyclerHome);
 
                         recycler.setLayoutManager(new GridLayoutManager(context,1));
-                        final RecyclerAdapter adapter = new RecyclerAdapter(eventosDelSocio);
+                        final RecyclerEventoAdapter adapter = new RecyclerEventoAdapter(eventosDelSocio);
                         recycler.setAdapter(adapter);
 
-                        final SwipeRefreshLayout swipeRefreshLayout = getView().findViewById(R.id.fragment_home_pullToRefresh);
+                        swipeRefreshLayout = view.findViewById(R.id.fragment_home_pullToRefresh);
                         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                             @Override
                             public void onRefresh() {
@@ -121,12 +126,18 @@ public class HomeFragment extends Fragment {
 
                         if(eventosDelSocio != null){
                             if(adapter.getItemCount() <= 0){
-                                tv_noEventos.setVisibility(View.VISIBLE);
+                                // FIXME
+                                //  Si no hay eventos disponibles no se muestra error cuando sí debería.
+                                //  En el layout, antes estaba el linear del error fuera del swipeRefresh
+                                //  pero queremos que se actualice al hacer swipe, asi que tiene uqe estar dentro
+                                tvNoEventos.setVisibility(View.VISIBLE);
+                                recycler.setVisibility(View.GONE);
                             }
                             else{
-                                tv_noEventos.setVisibility(View.GONE);
+                                tvNoEventos.setVisibility(View.GONE);
+                                recycler.setVisibility(View.VISIBLE);
 
-                                adapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
+                                adapter.setOnItemClickListener(new RecyclerEventoAdapter.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(int position) {
                                         Evento e = eventosDelSocio.get(position);
@@ -162,89 +173,10 @@ public class HomeFragment extends Fragment {
                                                 ad.dismiss();
                                             }
                                         });
-                                        /*//Buscamos la comunidad del evento
-                                        Iterator ite = comunidades.iterator();
-                                        Comunidad c = null;
-                                        boolean encontrado = false;
-                                        while (ite.hasNext() && !encontrado){
-                                            c = (Comunidad)ite.next();
-                                            if (c.getId() == e.getIdComunidad())
-                                                encontrado = true;
-                                        }
-                                        //Añadimos la comunidad al evento
-                                        if (c != null)
-                                            e.setComunidad(c);*/
-
-                                        /*Intent intent = new Intent(context, EventoDetalladoActivity.class);
-                                        intent.putExtra("evento", e);
-                                        startActivity(intent);*/
                                     }
                                 });
                             }
                         }
-
-
-
-/*
-                        //Ahora, llamamos a la API para recoger las comunidades
-                        ComunidadService comunidadService = Api.getApi().create(ComunidadService.class);
-                        Call<ArrayList<Comunidad>> comunidadesCall = comunidadService.getComunidades();
-                        comunidadesCall.clone().enqueue(new Callback<ArrayList<Comunidad>>() {
-                            @Override
-                            public void onResponse(Call<ArrayList<Comunidad>> call2, Response<ArrayList<Comunidad>> response2) {
-                                switch(response2.code()){
-                                    case 200:
-                                    case 204:
-                                        comunidades = response2.body();
-
-                                        TextView tv_noEventos = getView().findViewById(R.id.fragment_home_tvNoEventos);
-                                        RecyclerView recycler = getView().findViewById(R.id.recyclerHome);
-
-                                        recycler.setLayoutManager(new GridLayoutManager(context,1));
-                                        RecyclerAdapter adapter = new RecyclerAdapter(eventosDelSocio);
-                                        recycler.setAdapter(adapter);
-
-                                        if(adapter.getItemCount() <= 0){
-                                            tv_noEventos.setVisibility(View.VISIBLE);
-                                        }
-                                        else{
-                                            tv_noEventos.setVisibility(View.GONE);
-
-                                            adapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
-                                                @Override
-                                                public void onItemClick(int position) {
-                                                    Evento e = eventosDelSocio.get(position);
-                                                    //Buscamos la comunidad del evento
-                                                    Iterator ite = comunidades.iterator();
-                                                    Comunidad c = null;
-                                                    boolean encontrado = false;
-                                                    while (ite.hasNext() && !encontrado){
-                                                        c = (Comunidad)ite.next();
-                                                        if (c.getId() == e.getIdComunidad())
-                                                            encontrado = true;
-                                                    }
-                                                    //Añadimos la comunidad al evento
-                                                    if (c != null)
-                                                        e.setComunidad(c);
-
-                                                    Intent intent = new Intent(context, EventoDetalladoActivity.class);
-                                                    intent.putExtra("evento", e);
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                        }
-                                        break;
-                                    default:
-                                        CustomToast.mostrarWarning(context, getLayoutInflater(), response2.code() + " - " + response2.message());
-                                        break;
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<ArrayList<Comunidad>> call2, Throwable t2) {
-                                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
-                            }
-                        });*/
                         break;
                     default:
                         CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
@@ -268,13 +200,20 @@ public class HomeFragment extends Fragment {
                 for(Comunidad comunidad : MainActivity.socio.getComunidadesInteres()){
                     for(Evento eve : eventosRecogidos){
                         if (eve.getIdComunidad() == comunidad.getId()){
-                            //Cogemos la fecha de hoy
-                            Date date = new Date();
-                            long time = date.getTime();
-                            Timestamp ts = new Timestamp(time);
                             //Se añade a la lista si el evento es después a la fecha actual (no se ha celebrado)
-                            if (eve.getFecha().after(ts))
-                                eventosDelSocio.add(eve);
+                            if (eve.getFecha().after(Utils.capturarTimestampActual())) {
+                                boolean asistido = false;
+                                Iterator ite = eve.getAsistencia().iterator();
+                                while (!asistido && ite.hasNext()) {
+                                    Asistir asistir = (Asistir)ite.next();
+                                    if (asistir.getIdSocio() == MainActivity.socio.getId()) {
+                                        asistido = true;
+                                    }
+                                }
+                                if (!asistido) {
+                                    eventosDelSocio.add(eve);
+                                }
+                            }
                         }
                     }
                 }

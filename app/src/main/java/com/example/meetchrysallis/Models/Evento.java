@@ -21,6 +21,7 @@ public class Evento implements Serializable {
     @SerializedName("Comunidades")
     private Comunidad comunidad;
     private byte idComunidad;
+    private byte idAdmin;
     //private Administrador admin;
     @SerializedName("Asistir")
     private List<Asistir> asistencia;
@@ -32,7 +33,7 @@ public class Evento implements Serializable {
 
     public Evento(){}
 
-    public Evento(short id, String titulo, Timestamp fecha, String ubicacion, String descripcion, @Nullable Timestamp fecha_limite, Comunidad comunidad, byte idComunidad, List<Asistir> asistencia, List<Documento> documentos, List<Notificacion> notificaciones, float valoracionMedia, ArrayList<Comentario> comentarios) {
+    public Evento(short id, String titulo, Timestamp fecha, String ubicacion, String descripcion, @Nullable Timestamp fecha_limite, Comunidad comunidad, byte idComunidad, byte idAdmin, List<Asistir> asistencia, List<Documento> documentos, List<Notificacion> notificaciones, float valoracionMedia, ArrayList<Comentario> comentarios) {
         this.id = id;
         this.titulo = titulo;
         this.fecha = fecha;
@@ -40,12 +41,25 @@ public class Evento implements Serializable {
         this.descripcion = descripcion;
         this.fecha_limite = fecha_limite;
         this.comunidad = comunidad;
+        this.idAdmin = idAdmin;
         this.idComunidad = idComunidad;
         this.asistencia = asistencia;
         this.documentos = documentos;
         this.notificaciones = notificaciones;
         this.valoracionMedia = valoracionMedia;
         this.comentarios = comentarios;
+    }
+
+    public Evento(short id, String titulo, Timestamp fecha, String ubicacion, String descripcion, @Nullable Timestamp fecha_limite, byte idComunidad, byte idAdmin, float valoracionMedia) {
+        this.id = id;
+        this.titulo = titulo;
+        this.fecha = fecha;
+        this.ubicacion = ubicacion;
+        this.descripcion = descripcion;
+        this.fecha_limite = fecha_limite;
+        this.idComunidad = idComunidad;
+        this.idAdmin = idAdmin;
+        this.valoracionMedia = valoracionMedia;
     }
 
     public short getId() {
@@ -151,5 +165,9 @@ public class Evento implements Serializable {
 
     public void setComentarios(ArrayList<Comentario> comentarios) {
         this.comentarios = comentarios;
+    }
+
+    public byte getIdAdmin() {
+        return idAdmin;
     }
 }

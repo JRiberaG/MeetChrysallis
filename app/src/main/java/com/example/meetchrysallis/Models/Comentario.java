@@ -20,7 +20,7 @@ public class Comentario implements Serializable {
 
     //Constructores
     public Comentario(){}
-    public Comentario(short idEvento, int idSocio, int id, boolean mostrarNombre, Timestamp fecha, boolean activo, Socio socio, Evento evento, String body) {
+    public Comentario(short idEvento, int idSocio, int id, boolean mostrarNombre, Timestamp fecha, boolean activo, String body) {
         this.idEvento = idEvento;
         this.idSocio = idSocio;
         this.id = id;

@@ -1,5 +1,6 @@
 package com.example.meetchrysallis.Adapters;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,51 +17,54 @@ import com.example.meetchrysallis.R;
 import java.util.ArrayList;
 
 public class RecyclerCommentsAdapter extends RecyclerView.Adapter<RecyclerCommentsAdapter.ViewHolder>{
-    private ArrayList<Comentario> comentarios;
+    private ArrayList<Comentario> listComentarios;
+    private Context context;
 
-    public RecyclerCommentsAdapter(ArrayList<Comentario> comentarios) {
-        this.comentarios = comentarios;
+    public RecyclerCommentsAdapter(ArrayList<Comentario> listComentarios, Context context) {
+        this.listComentarios = listComentarios;
+        this.context = context;
     }
 
     @Override
     public RecyclerCommentsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_comment, null, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card_comment, null, false);
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerCommentsAdapter.ViewHolder holder, int position) {
-        holder.asignarDatos(comentarios.get(position));
+        holder.asignarDatos(listComentarios.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return comentarios.size();
+        return listComentarios.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView nombre;
-        TextView fecha;
-        TextView comentario;
+        TextView tvNombre;
+        TextView tvFecha;
+        TextView tvComentario;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            nombre = itemView.findViewById(R.id.item_comentario_tvNombre);
-            fecha = itemView.findViewById(R.id.item_comentario_tvFecha);
-            comentario = itemView.findViewById(R.id.item_comentario_tvComent);
+            tvNombre = itemView.findViewById(R.id.item_comentario_tvNombre);
+            tvFecha = itemView.findViewById(R.id.item_comentario_tvFecha);
+            tvComentario = itemView.findViewById(R.id.item_comentario_tvComent);
         }
 
-        public void asignarDatos(Comentario c) {
-            if(c.isMostrarNombre()){
-                nombre.setText(c.getSocio().getNombre() + " " + c.getSocio().getApellidos());
+        public void asignarDatos(Comentario coment) {
+            if(coment.isMostrarNombre()){
+                tvNombre.setText(coment.getSocio().getNombre() + " " + coment.getSocio().getApellidos());
+                tvNombre.setTypeface(tvNombre.getTypeface(), Typeface.BOLD);
             }
             else{
-                nombre.setText("Anónimo");
-                nombre.setTypeface(nombre.getTypeface(), Typeface.ITALIC);
+                tvNombre.setText(context.getResources().getString(R.string.anonimo));
+                tvNombre.setTypeface(tvNombre.getTypeface(), Typeface.ITALIC);
             }
 
-            fecha.setText(Utils.formateadorFechas(c.getFecha()));
-            comentario.setText(c.getBody());
+            tvFecha.setText(Utils.formateadorFechas(coment.getFecha()));
+            tvComentario.setText(coment.getBody());
         }
     }
 }

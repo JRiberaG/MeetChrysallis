@@ -6,20 +6,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Socio implements Serializable {
-/*"Asistir": [],
-        "Comunidades": null,
-        "Comunidades1": [],
-        "Comentario": [],
-        "id": 1,
-        "dni": "46144809R",
-        "nombre": "Jorge",
-        "apellidos": "Ribera",
-        "email": "jorge@jorge.com",
-        "contrasenya": "contrasenya",
-        "telefono": "670000000",
-        "poblacion": "Barcelona",
-        "idComunidad": 7,
-        "activo": true*/
     private int id;
     private String dni;
     private String nombre;
@@ -30,7 +16,6 @@ public class Socio implements Serializable {
     private String poblacion;
     private byte idComunidad;
     private boolean activo;
-    //private Comunidad idComunidad;
     @SerializedName("Asistir")
     private ArrayList<Asistir> asistencias;
     private Comunidad Comunidades;
@@ -40,6 +25,12 @@ public class Socio implements Serializable {
 
     //Constructores
     public Socio(){}
+
+    public Socio(int id, String email, String contrasenya) {
+        this.id = id;
+        this.email = email;
+        this.contrasenya = contrasenya;
+    }
 
     public Socio(String email, String contrasenya) {
         this.email = email;

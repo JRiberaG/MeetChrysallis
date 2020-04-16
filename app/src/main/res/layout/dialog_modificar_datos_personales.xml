@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="15dp">
+    <!--
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -50,12 +53,67 @@
             android:layout_height="wrap_content"
             android:text="@string/contrasenyaConfirmar"
             android:layout_gravity="center"/>
-        <EditText
-            android:id="@+id/dialog_modificar_datos_etConfirmar"
+        <LinearLayout
+            android:id="@+id/dialog_modificar_datos_llConfirmar"
             android:layout_weight="7"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:hint="*********"/>
+            android:background="@drawable/background_edittext_login_empty">
+            <EditText
+                android:id="@+id/dialog_modificar_datos_etConfirmar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:inputType="textPassword"
+                android:hint="*********"
+                android:textIsSelectable="false"
+                android:longClickable="false"/>
+        </LinearLayout>
     </LinearLayout>
+    -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dialog_modificar_datos_layoutActual"
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:errorEnabled="true"
+        android:hint="@string/email_actual"
+        app:helperTextEnabled="true"
+        app:startIconDrawable="@drawable/ic_email_black_24dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/dialog_modificar_datos_etActual"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dialog_modificar_datos_layoutNuevo"
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:errorEnabled="true"
+        android:hint="@string/email_nuevo"
+        app:helperTextEnabled="true"
+        app:startIconDrawable="@drawable/ic_email_black_24dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/dialog_modificar_datos_etNuevo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dialog_modificar_datos_layoutConfirmar"
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:errorEnabled="true"
+        android:hint="@string/email_confirmar"
+        app:helperTextEnabled="true"
+        app:startIconDrawable="@drawable/ic_email_black_24dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/dialog_modificar_datos_etConfirmar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:longClickable="false"/>
+    </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

@@ -19,12 +19,10 @@ public class Asistir implements Serializable {
     public Asistir() {
     }
 
-    public Asistir(int idSocio, short idEvento, short numAsistentes, Socio socio, Evento evento) {
+    public Asistir(int idSocio, short idEvento, short numAsistentes) {
         this.idSocio = idSocio;
         this.idEvento = idEvento;
         this.numAsistentes = numAsistentes;
-        this.socio = socio;
-        this.evento = evento;
     }
 
     public int getIdSocio() {

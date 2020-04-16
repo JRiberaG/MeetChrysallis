@@ -158,7 +158,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:paddingLeft="2dp"
-                            android:text="4.68" />
+                            android:text="X.XX" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -179,7 +179,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:paddingLeft="3dp"
-                            android:text="62" />
+                            android:text="XX" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -199,7 +199,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="35dp"
                 android:layout_marginVertical="15dp"
                 android:orientation="vertical">
 
@@ -207,6 +206,7 @@
                     android:id="@+id/eve_det_tvDescripcion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="25dp"
                     android:text="Lorem ipsum dolor sit amet consectetur adipiscing elit proin inceptos nibh, neque mus justo in ac dictumst dapibus nullam diam tincidunt volutpat, lacus natoque mi pretium malesuada erat placerat maecenas ultrices. Fermentum nostra natoque et viverra ut nam sociosqu nulla taciti vitae urna orci sollicitudin quis pharetra, quisque mollis interdum dapibus porta mus imperdiet neque himenaeos fringilla netus odio ridiculus ac. Vitae facilisis purus fames id venenatis vivamus eros convallis sapien urna est, pellentesque facilisi aliquet lectus orci conubia litora dignissim ridiculus pharetra aliquam sociis, a sodales ut faucibus tristique sed malesuada enim arcu eu. Nullam a penatibus cubilia molestie tempor nisl urna vivamus praesent bibendum platea fusce hendrerit velit, in placerat consequat cras eu vitae sollicitudin sociosqu nunc est duis commodo.
                             Lorem ipsum dolor sit amet consectetur adipiscing elit proin inceptos nibh, neque mus justo in ac dictumst dapibus nullam diam tincidunt volutpat, lacus natoque mi pretium malesuada erat placerat maecenas ultrices. Fermentum nostra natoque et viverra ut nam sociosqu nulla taciti vitae urna orci sollicitudin quis pharetra, quisque mollis interdum dapibus porta mus imperdiet neque himenaeos fringilla ..." />
                 <LinearLayout
@@ -218,18 +218,18 @@
                     <!-- LAYOUT DIVISIORIO -->
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:layout_marginHorizontal="35dp"
+                        android:layout_height="4dp"
                         android:background="@color/colorPrimaryDark_light"/>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="10dp">
+                        android:layout_marginTop="10dp"
+                        android:gravity="center">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="Comentarios"
+                            android:text="@string/comentarios"
                             android:textSize="@dimen/txt_subHeader"
                             android:textStyle="bold" />
 
@@ -240,35 +240,42 @@
                             android:layout_gravity="center"
                             android:layout_marginLeft="3dp"
                             app:srcCompat="@drawable/ic_expand_more_black_24dp" />
-
-                        <Button
-                            android:id="@+id/eve_det_btnComentar"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="15dp"
-                            android:gravity="right"
-                            android:paddingHorizontal="25dp"
-                            android:paddingVertical="15dp"
-                            android:text="Comentar" />
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- LAYOUT COMENTARIOS -->
                 <LinearLayout
+                    android:id="@+id/eve_det_linearLayoutComentarios"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone">
+                    <Button
+                        android:id="@+id/eve_det_btnComentar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="5dp"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:text="@string/comentar"
+                        android:textAllCaps="false"
+
+                        android:drawableLeft="@drawable/ic_edit_black_24dp"
+                        android:drawablePadding="10dp"
+                        android:background="@drawable/selector_custom_button_comentario"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/eve_det_recyclerComments"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:visibility="gone" />
+                        android:layout_height="match_parent" />
 
                     <TextView
                         android:id="@+id/eve_det_tvNoComments"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="No hay ningún comentario aun. ¡Sé el primero!"
+                        android:text="@string/no_hay_comentarios"
                         android:textSize="@dimen/txt_error"
                         android:visibility="gone" />
                 </LinearLayout>
@@ -281,13 +288,21 @@
                     android:orientation="vertical"
                     android:visibility="visible"
                     android:gravity="center">
+                    <!-- LAYOUT DIVISIORIO -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="4dp"
+                        android:background="@color/colorPrimaryDark_light"/>
                     <TextView
+                        android:id="@+id/eve_det_tvValoraElEvento"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Valora el evento ¡Ayúdanos a mejorar!"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/valora_el_evento"
                         android:textSize="@dimen/txt_body"
                         android:gravity="center"/>
                     <RatingBar
+                        android:id="@+id/eve_det_ratingBar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
@@ -310,7 +325,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/selector_custom_button_green"
-            android:text="ASISTIRÉ" />
+            android:text="@string/asistire" />
 
     </LinearLayout>
 </LinearLayout>

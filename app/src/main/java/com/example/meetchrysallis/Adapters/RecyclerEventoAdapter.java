@@ -15,17 +15,17 @@ import com.example.meetchrysallis.R;
 
 import java.util.ArrayList;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>{
+public class RecyclerEventoAdapter extends RecyclerView.Adapter<RecyclerEventoAdapter.ViewHolder>{
     private ArrayList<Evento> eventos;
     private OnItemClickListener onItemClickListener;
 
-    public RecyclerAdapter(ArrayList<Evento> eventos) {
+    public RecyclerEventoAdapter(ArrayList<Evento> eventos) {
         this.eventos = eventos;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card, null, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card_evento, null, false);
         return new ViewHolder(view, onItemClickListener);
     }
 
