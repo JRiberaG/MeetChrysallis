@@ -88,4 +88,9 @@
     <string name="no_eventos_disponibles">No hay eventos disponibles que le puedan interesar.</string>
     <string name="valoracion_enviada">Valoración enviada. ¡Gracias!</string>
     <string name="gracias_por_valorar">Muchas gracias por su valoración.</string>
+    <string name="error_ccaa_minima">Se ha de seleccionar como mínimo una Comunidad Autónoma</string>
+    <string name="indique_num_asistentes">Indique el número de personas que van a asistir al evento, por favor.</string>
+    <string name="num_personas">"Número de personas: "</string>
+    <string name="escriba_aqui_su_comentario">Escriba aquí su comentario</string>
+    <string name="mostrar_nombre">Mostrar nombre</string>
 </resources>

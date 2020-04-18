@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="15dp"
         android:paddingTop="5dp"
-        android:text="Indique el número de personas que van a asistir al evento, por favor."/>
+        android:text="@string/indique_num_asistentes"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -20,7 +20,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Número de personas: "
+            android:text="@string/num_personas"
             android:layout_gravity="center"/>
         <Spinner
             android:id="@+id/asistir_spinner"

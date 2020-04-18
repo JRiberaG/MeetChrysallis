@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,10 +11,30 @@
         android:background="@drawable/gradient_background_darker"
         android:paddingVertical="10dp"
         android:layout_marginBottom="10dp">
-        <TextView
-            android:padding="10dp"
-            style="@style/Text_BigHeader"
-            android:text="@string/fragmentHome_header" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:padding="10dp"
+                style="@style/Text_BigHeader"
+                android:text="@string/fragmentHome_header" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="end">
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_refresh_black_24dp"
+                android:background="@null"
+                android:paddingLeft="15dp"
+                android:paddingRight="5dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="5dp"
+                android:layout_marginRight="10dp"/>
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -21,6 +42,7 @@
         android:id="@+id/fragment_home_pullToRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerHome"
             android:layout_marginLeft="10dp"

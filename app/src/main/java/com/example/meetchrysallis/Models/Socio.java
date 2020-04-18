@@ -26,12 +26,6 @@ public class Socio implements Serializable {
     //Constructores
     public Socio(){}
 
-    public Socio(int id, String email, String contrasenya) {
-        this.id = id;
-        this.email = email;
-        this.contrasenya = contrasenya;
-    }
-
     public Socio(String email, String contrasenya) {
         this.email = email;
         this.contrasenya = contrasenya;

@@ -8,14 +8,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
-        android:hint="Escriba aquí su comentario"/>
+        android:hint="@string/escriba_aqui_su_comentario"/>
     <CheckBox
         android:id="@+id/dialog_coment_cbNombre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="13dp"
-        android:text="Mostrar nombre"
+        android:text="@string/mostrar_nombre"
         android:checked="true"
         android:textSize="@dimen/txt_subHeader"/>
 </LinearLayout>

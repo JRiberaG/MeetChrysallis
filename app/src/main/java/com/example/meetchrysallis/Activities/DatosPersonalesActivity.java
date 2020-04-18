@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -84,7 +85,7 @@ public class DatosPersonalesActivity extends AppCompatActivity {
      * Una vez se crea la activity, se asignan valores a los textViews del correo, idioma y CCAA
      */
     private void inicializacionDatos(TextView tvCorreo, TextView tvIdioma, TextView tvComunidades) {
-        actualizarEmail(tvCorreo);
+        actualizarTvEmail(tvCorreo);
         actualizarTvComunidades(tvComunidades);
         asignarTvIdioma(tvIdioma, MainActivity.idioma);
         asignarPosicionIdioma();
@@ -204,9 +205,6 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                 if(correctoActual &&
                                         correctoNuevo &&
                                         correctoConfirmar){
-//                                   final Socio[] socio = {MainActivity.socio};
-                                    //socio.setEmail(nuevo);
-                                    //MainActivity.socio.setEmail(nuevo);
 
                                     // Nuevo dialog 'Cargando...'
                                     DialogProgress dp = new DialogProgress(context);
@@ -225,40 +223,41 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                                 case 204:
                                                     // Recogemos el socio y le cambiamos el email al nuevo
                                                     socio = response.body();
-                                                    socio.setEmail(nuevo);
-
-                                                    // Llamada a la API para actualizar el socio con el nuevo email en la base de datos
-                                                    Call<Socio> callUpdateSocio = socioService.updateSocio(socio.getId(), socio);
-                                                    callUpdateSocio.enqueue(new Callback<Socio>() {
-                                                        @Override
-                                                        public void onResponse(Call<Socio> call, Response<Socio> response) {
-                                                            switch(response.code()){
-                                                                case 200:
-                                                                case 201:
-                                                                case 202:
-                                                                case 203:
-                                                                case 204: //se actualizó con éxito el usuario
-                                                                    CustomToast.mostrarSuccess(context, getLayoutInflater(), getResources().getString(R.string.email_actualizado));
-                                                                    // Cambiamos el email del socio de la MainActivity y actualizamos el campo Email del layout
-                                                                    MainActivity.socio.setEmail(nuevo);
-                                                                    actualizarEmail(tvCorreo);
-                                                                    break;
-                                                                default: //error al intentar actualizar el socio
-                                                                    CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
-                                                                    break;
+                                                    if (socio != null) {
+                                                        socio.setEmail(nuevo);
+                                                        // Llamada a la API para actualizar el socio con el nuevo email en la base de datos
+                                                        Call<Socio> callUpdateSocio = socioService.updateSocio(socio.getId(), socio);
+                                                        callUpdateSocio.enqueue(new Callback<Socio>() {
+                                                            @Override
+                                                            public void onResponse(Call<Socio> call, Response<Socio> response) {
+                                                                switch(response.code()){
+                                                                    case 200:
+                                                                    case 201:
+                                                                    case 202:
+                                                                    case 203:
+                                                                    case 204: //se actualizó con éxito el usuario
+                                                                        CustomToast.mostrarSuccess(context, getLayoutInflater(), getResources().getString(R.string.email_actualizado));
+                                                                        // Cambiamos el email del socio de la MainActivity y actualizamos el campo Email del layout
+                                                                        MainActivity.socio.setEmail(nuevo);
+                                                                        actualizarTvEmail(tvCorreo);
+                                                                        break;
+                                                                    default: //error al intentar actualizar el socio
+                                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                                                                        break;
+                                                                }
+                                                                // Cerramos tanto el dialog de 'Cargando..' como el de 'Modificar Email'
+                                                                alertDialog.dismiss();
+                                                                dialog.dismiss();
                                                             }
-                                                            // Cerramos tanto el dialog de 'Cargando..' como el de 'Modificar Email'
-                                                            alertDialog.dismiss();
-                                                            dialog.dismiss();
-                                                        }
 
-                                                        @Override
-                                                        public void onFailure(Call<Socio> call, Throwable t) {
-                                                            alertDialog.dismiss();
-                                                            CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
-                                                            dialog.dismiss();
-                                                        }
-                                                    });
+                                                            @Override
+                                                            public void onFailure(Call<Socio> call, Throwable t) {
+                                                                alertDialog.dismiss();
+                                                                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                                dialog.dismiss();
+                                                            }
+                                                        });
+                                                    }
                                                     break;
                                                 default:
                                                     CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
@@ -325,7 +324,7 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                 final String confirmar = inputEditText_Confirmar.getText().toString().trim();
 
                                 //CONTRASEÑA ACTUAL
-                                if (Utils.encriptarContrasenya(actual).equals(MainActivity.socio.getContrasenya())){
+                                if (Utils.encriptarString(actual).equals(MainActivity.socio.getContrasenya())){
                                     correctoActual = true;
                                     inputLayout_Actual.setErrorEnabled(false);
                                     inputLayout_Actual.setErrorIconDrawable(null);
@@ -342,7 +341,7 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                     }
                                 } // contraseña actual
 
-                                //CONTARSEÑA NUEVA
+                                //CONTRASEÑA NUEVA
                                 Pattern password_patern = Pattern.compile("^" +
                                         "(?=.*[0-9])" +     	//al menos 1 número
                                         "(?=.*[a-z])" +     	//al menos 1 letra minúscula
@@ -387,11 +386,10 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                 if(correctoActual &&
                                     correctoNuevo &&
                                     correctoConfirmar){
-//                                   final Socio[] socio = {MainActivity.socio};
-                                    //socio.setEmail(nuevo);
-                                    //MainActivity.socio.setEmail(nuevo);
-                                    final String contrasenyaEncriptada = Utils.encriptarContrasenya(nuevo);
+                                    // Encriptamos la contraseña
+                                    final String contrasenyaEncriptada = Utils.encriptarString(nuevo);
 
+                                    // Abrimos AlertDialog 'Cargando...'
                                     DialogProgress dp = new DialogProgress(context);
                                     final AlertDialog alertDialog = dp.setProgressDialog("Actualizando base de datos...");
 
@@ -440,37 +438,39 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                                     case 204:
                                                         // Recogemos el socio y le cambiamos la contraseña a la nueva
                                                         socio = response.body();
-                                                        socio.setContrasenya(contrasenyaEncriptada);
+                                                        if (socio != null) {
+                                                            socio.setContrasenya(contrasenyaEncriptada);
 
-                                                        // Llamada a la API para actualizar el socio con el nuevo email en la base de datos
-                                                        Call<Socio> socioCall = socioService.updateSocio(socio.getId(), socio);
-                                                        socioCall.clone().enqueue(new Callback<Socio>() {
-                                                            @Override
-                                                            public void onResponse(Call<Socio> call, Response<Socio> response) {
-                                                                switch(response.code()){
-                                                                    case 200:
-                                                                    case 201:
-                                                                    case 202:
-                                                                    case 203:
-                                                                    case 204: //se actualizó con éxito el usuario
-                                                                        CustomToast.mostrarSuccess(context, getLayoutInflater(), getResources().getString(R.string.contrasenya_actualizada));
-                                                                        MainActivity.socio.setContrasenya(contrasenyaEncriptada);
-                                                                        break;
-                                                                    default:
-                                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
-                                                                        break;
+                                                            // Llamada a la API para actualizar el socio con el nuevo email en la base de datos
+                                                            Call<Socio> socioCall = socioService.updateSocio(socio.getId(), socio);
+                                                            socioCall.clone().enqueue(new Callback<Socio>() {
+                                                                @Override
+                                                                public void onResponse(Call<Socio> call, Response<Socio> response) {
+                                                                    switch(response.code()){
+                                                                        case 200:
+                                                                        case 201:
+                                                                        case 202:
+                                                                        case 203:
+                                                                        case 204: //se actualizó con éxito el usuario
+                                                                            CustomToast.mostrarSuccess(context, getLayoutInflater(), getResources().getString(R.string.contrasenya_actualizada));
+                                                                            MainActivity.socio.setContrasenya(contrasenyaEncriptada);
+                                                                            break;
+                                                                        default:
+                                                                            CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                                                                            break;
+                                                                    }
+                                                                    alertDialog.dismiss();
+                                                                    dialog.dismiss();
                                                                 }
-                                                                alertDialog.dismiss();
-                                                                dialog.dismiss();
-                                                            }
 
-                                                            @Override
-                                                            public void onFailure(Call<Socio> call, Throwable t) {
-                                                                alertDialog.dismiss();
-                                                                dialog.dismiss();
-                                                                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
-                                                            }
-                                                        });
+                                                                @Override
+                                                                public void onFailure(Call<Socio> call, Throwable t) {
+                                                                    alertDialog.dismiss();
+                                                                    dialog.dismiss();
+                                                                    CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                                }
+                                                            });
+                                                        }
                                                         break;
                                                     default:
                                                         CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
@@ -498,14 +498,16 @@ public class DatosPersonalesActivity extends AppCompatActivity {
      * las cuales le interesan, para luego poder recibir notificaciones. Se actualiza la base de datos
      * @param tvComunidades     El TextView que cambiará con las nuevas comunidades
      */
-    private void modificarComunidades(TextView tvComunidades) {
+    private void modificarComunidades(final TextView tvComunidades) {
         LinearLayout llComunidades = findViewById(R.id.datos_personales_layout_comunidades);
         llComunidades.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Abrimos AlertDialog 'Cargando...'
                 DialogProgress dp = new DialogProgress(context);
                 final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.cargando));
 
+                // Llamamos a la API para recuperar todas las CCAA
                 ComunidadService comunidadService = Api.getApi().create(ComunidadService.class);
                 Call<ArrayList<Comunidad>> comunidadesCall = comunidadService.getComunidades();
                 comunidadesCall.enqueue(new Callback<ArrayList<Comunidad>>() {
@@ -554,9 +556,16 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                                     dialog.cancel();
                                                 }
                                             })
-                                            .setPositiveButton(getResources().getString(R.string.aceptar), new DialogInterface.OnClickListener() {
+                                            .setPositiveButton(getResources().getString(R.string.aceptar), null);
+                                    AlertDialog dialog = builder.create();
+                                    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                                        @Override
+                                        public void onShow(final DialogInterface dialog) {
+                                            Button btn = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                                            btn.setOnClickListener(new View.OnClickListener() {
                                                 @Override
-                                                public void onClick(DialogInterface dialog, int which) {
+                                                public void onClick(View v) {
+                                                    // Limpiamos las CCAA interesadas que hubiese
                                                     socio.getComunidadesInteres().clear();
                                                     for (int i = 0; i < arrayBooleans.length; i++){
                                                         if (arrayBooleans[i]){
@@ -564,17 +573,88 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                                         }
                                                     }
 
-                                                    //FIXME
-                                                    // No se puede actualizar las comunidades que le interesan al socio
-                                                    // porque no se actualizar el socio con las nuevas comunidades tal cual,
-                                                    //  se tiene que actualizar la tabla de ComunidadesInteres y no sé cómo hacerlo
+                                                    if  (socio.getComunidadesInteres().size() < 1) {
+                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), getResources().getString(R.string.error_ccaa_minima));
+                                                    } else {
+                                                        //FIXME
+                                                        //  Problema 1 - no se actualiza la tabla de comunidadesInteresadas
+                                                        //  Problema 2 - no deja marcar la CCAA que tiene como comunidad del socio
+                                                        //      Es decir, si la CCAA de donde es el socio es de Andalucia, si se marca
+                                                        //      Andalucia como CCAA interesada, tira error 500
+                                                        Call<Socio> callUpdateSocio = socioService.updateSocio(MainActivity.socio.getId(), MainActivity.socio);
+                                                        callUpdateSocio.enqueue(new Callback<Socio>() {
+                                                            @Override
+                                                            public void onResponse(Call<Socio> call, Response<Socio> response) {
+                                                                switch(response.code()) {
+                                                                    case 204:
+                                                                        actualizarTvComunidades(tvComunidades);
+                                                                        Toast.makeText(DatosPersonalesActivity.this, "Todo ok, se actualizó la bd", Toast.LENGTH_SHORT).show();
+                                                                        // pendiente --> modificar las CCAA interes del socio en el MainActivity
+                                                                        //MainActivity.socio.setComunidadesInteres(socio.getComunidadesInteres());
+                                                                        break;
+                                                                    default:
+                                                                        Toast.makeText(DatosPersonalesActivity.this, response.code() + " - " + response.message(), Toast.LENGTH_SHORT).show();
+                                                                        break;
+                                                                }
+                                                            }
 
-
-                                                    CustomToast.mostrarInfo(context, getLayoutInflater(), socio.getComunidadesInteres().toString());
+                                                            @Override
+                                                            public void onFailure(Call<Socio> call, Throwable t) {
+                                                                Toast.makeText(DatosPersonalesActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
+                                                        dialog.dismiss();
+                                                    }
                                                 }
-                                            })
-                                            .create();
-                                    builder.show();
+                                            });
+                                        }
+                                    });
+                                    dialog.show();
+//                                        @Override
+//                                        public void onShow(final DialogInterface dialog) {
+//                                            Button btn = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+//                                            .setPositiveButton(getResources().getString(R.string.aceptar), new DialogInterface.OnClickListener() {
+//                                                @Override
+//                                                public void onClick(DialogInterface dialog, int which) {
+//                                                    // Limpiamos las CCAA interesadas que hubiese
+//                                                    socio.getComunidadesInteres().clear();
+//                                                    for (int i = 0; i < arrayBooleans.length; i++){
+//                                                        if (arrayBooleans[i]){
+//                                                            socio.getComunidadesInteres().add(comunidades.get(i));
+//                                                        }
+//                                                    }
+//
+//                                                    //FIXME
+//                                                    // No se puede actualizar las comunidades que le interesan al socio
+//                                                    // porque no se actualizar el socio con las nuevas comunidades tal cual,
+//                                                    //  se tiene que actualizar la tabla de ComunidadesInteres y no sé cómo hacerlo
+//                                                    Call<Socio> callUpdateSocio = socioService.updateSocio(MainActivity.socio.getId(), MainActivity.socio);
+//                                                    callUpdateSocio.enqueue(new Callback<Socio>() {
+//                                                        @Override
+//                                                        public void onResponse(Call<Socio> call, Response<Socio> response) {
+//                                                            switch(response.code()) {
+//                                                                case 204:
+//                                                                    Toast.makeText(DatosPersonalesActivity.this, "Todo ok, se actualizó la bd", Toast.LENGTH_SHORT).show();
+//                                                                    // pendiente --> modificar las CCAA interes del socio en el MainActivity
+//                                                                    //MainActivity.socio.setComunidadesInteres(socio.getComunidadesInteres());
+//                                                                    break;
+//                                                                default:
+//                                                                    Toast.makeText(DatosPersonalesActivity.this, response.code() + " - " + response.message(), Toast.LENGTH_SHORT).show();
+//                                                                    break;
+//                                                            }
+//                                                        }
+//
+//                                                        @Override
+//                                                        public void onFailure(Call<Socio> call, Throwable t) {
+//                                                            Toast.makeText(DatosPersonalesActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+//                                                        }
+//                                                    });
+//
+//                                                    //CustomToast.mostrarInfo(context, getLayoutInflater(), socio.getComunidadesInteres().toString());
+//                                                }
+//                                            })
+//                                            .create();
+//                                    builder.show();
                                 }
                                 break;
                             default:
@@ -587,7 +667,6 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<ArrayList<Comunidad>> call, Throwable t) {
                         CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
-
                     }
                 });
             }
@@ -671,7 +750,7 @@ public class DatosPersonalesActivity extends AppCompatActivity {
         inputEditText_Confirmar.setFilters(filterArray);
     }
 
-    private void actualizarEmail(TextView tvCorreo) {
+    private void actualizarTvEmail(TextView tvCorreo) {
         tvCorreo.setText(MainActivity.socio.getEmail());
     }
 

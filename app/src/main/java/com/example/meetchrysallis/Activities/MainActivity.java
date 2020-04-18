@@ -29,7 +29,6 @@ import java.io.File;
 
 //TODO:
 //  Pendiente de hacer:
-//      - Que se actualicen eventos disponibles/mis eventos cuando se inserta/elimina asistir
 //      - Evento Detallado:
 //          - Descargar los documentos que el evento pueda tener
 //      - Programar funcionalidad 'Contactar equipo desarrolladores'
@@ -40,9 +39,8 @@ import java.io.File;
 //          y recuperarlo entero (y almacenarlo en la MainActivity), no tal y como está hecho ahora
 //      - Mejorar el fragment de mis eventos: cada vez que se accede se llaman dos veces a la API,
 //          buscar un modo para que sólo llame dos veces (al abrir la app y al refrescar)
-//      - Arreglar el cambio de idiomas: cuando se cambia el idioma y se vuelve a atrás,
-//            la pantalla de 'Opciones' no se ve modificada, ni tampoco los textos
-//            del menú
+//      - Correguir métodos UPDATE/DELETE de la API (y de las clases Android 'xService')
+//      - Completar traducciones
 
 //Tutorial Navigation Bottom Bar https://www.youtube.com/watch?v=tPV8xA7m-iw
 public class MainActivity extends AppCompatActivity {
@@ -65,8 +63,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Antes de cargar el layout, configuramos el idioma
         configurarIdioma();
         Utils.configurarIdioma(MainActivity.this, idioma);
+
+        // Cargamos el layout
         setContentView(R.layout.activity_main);
 
         pedirPermisos();
@@ -80,6 +82,13 @@ public class MainActivity extends AppCompatActivity {
         //Iniciamos la Activity del login
         Intent intent = new Intent(this, LoginActivity.class);
         startActivityForResult(intent, 1);
+
+        try {
+            socio = (Socio)getIntent().getExtras().getSerializable("socio");
+        } catch (Exception e) {
+            // Error al recoger el extra
+            System.err.println(e.toString());
+        }
 
         botNavBar = findViewById(R.id.bottom_nav_bar);
         botNavBar.setOnNavigationItemSelectedListener(navListener);
@@ -115,12 +124,16 @@ public class MainActivity extends AppCompatActivity {
         //Venimos de la Activity Login
         if (requestCode == 1){
             if (resultCode == Activity.RESULT_OK) {
-                socio = (Socio)data.getExtras().getSerializable("socio");
+                if (data.getExtras() != null) {
+                    socio = (Socio)data.getExtras().getSerializable("socio");
 
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new HomeFragment(MainActivity.this)).commit();
-            }
-            else{
+                    cargarFragment(new HomeFragment(this));
+//
+//                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+//                            new HomeFragment(MainActivity.this)).commit();
+
+                }
+            } else {
                 finish();
             }
         }

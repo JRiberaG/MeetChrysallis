@@ -48,10 +48,10 @@ public class Utils {
 
     /**
      * Encripta con el sistema SHA5-512 un string que se le pasará por parámetro.
-     * @param contrasenya   El string a encriptar
+     * @param str   El string a encriptar
      * @return              El string encriptado
      */
-    public static String encriptarContrasenya(String contrasenya){
+    public static String encriptarString(String str){
         String result;
         try {
             // getInstance() method is called with algorithm SHA-512
@@ -60,7 +60,7 @@ public class Utils {
             // digest() method is called
             // to calculate message digest of the input string
             // returned as array of byte
-            byte[] messageDigest = md.digest(contrasenya.getBytes());
+            byte[] messageDigest = md.digest(str.getBytes());
 
             // Convert byte array into signum representation
             BigInteger no = new BigInteger(1, messageDigest);

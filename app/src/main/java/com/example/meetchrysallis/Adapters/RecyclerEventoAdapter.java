@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.meetchrysallis.Models.Asistir;
 import com.example.meetchrysallis.Models.Evento;
 import com.example.meetchrysallis.Others.Utils;
 import com.example.meetchrysallis.R;
@@ -85,10 +86,16 @@ public class RecyclerEventoAdapter extends RecyclerView.Adapter<RecyclerEventoAd
             else
                 fecha.setText("");
 
-            if(evento.getAsistencia() != null)
-                asistentes.setText(String.valueOf(evento.getAsistencia().size()));
-            else
+            if(evento.getAsistencia() != null) {
+                int numAsistentes = 0;
+                for (Asistir a : evento.getAsistencia()) {
+                    numAsistentes += a.getNumAsistentes();
+                }
+                asistentes.setText(String.valueOf(numAsistentes));
+            }
+            else {
                 asistentes.setText("0");
+            }
         }
     }
 }

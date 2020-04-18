@@ -26,8 +26,10 @@ import com.example.meetchrysallis.R;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import retrofit2.Call;
@@ -38,19 +40,26 @@ import retrofit2.Response;
 //https://dribbble.com/shots/6787415-Meet-Up-Login-App-UI-Design
 public class LoginActivity extends AppCompatActivity {
 
-    private ArrayList<Socio> listaSocios = new ArrayList<>();
-    private Socio socio;
+    //private ArrayList<Socio> listaSocios = new ArrayList<>();
+    //private Socio socio = new Socio();
     private Socio newSocio;
 
-    private File fileCreds;
-    private File fileConfig;
+    //private File fileCreds  = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.cfg");
+    //private File fileConfig;
 
     private SocioService socioService = Api.getApi().create(SocioService.class);
-    private Call<List<Socio>> sociosCall = socioService.getSocios();
+    //private Call<List<Socio>> sociosCall = socioService.getSocios();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        /**
+         * ACTUALIZACIÓN 18/04:
+         *   Parece que los cambios con las nuevas Creds funcionan.
+         *   Queda pendiente de hacer más pruebas y, en caso de que funcionen, borrar los comentarios
+         *   antiguos.
+         */
 
         // --------- PASOS PARA EL LOGIN ---------
         //OPCIÓN A: Hay credenciales guardadas
@@ -68,52 +77,75 @@ public class LoginActivity extends AppCompatActivity {
         //(Si no se entiende en el drive hay un FlowChart explicándolo)
         //----------------------------------------
 
-        leerFicheroCreds();
+        //fileCreds = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.cfg");
+
+        // En caso de que accedamos desde el logout...
+        boolean sesionCerrada = false;
+        try {
+            sesionCerrada = getIntent().getExtras().getBoolean("bool");
+        } catch(Exception e) {
+            // Error al recoger el Extra
+        }
+
+        //leerFicheroCreds();
+        File fileCreds = Archivador.recuperarFicheroCreds(LoginActivity.this);
+        // Lee el fichero de las creds y, en caso de haberlas, las guarda en un objeto Socio
+        Socio socioCredenciales = Archivador.leerFicheroCreds(fileCreds);
 
         //Si hay algunas credenciales guardadas se intenta el login con ellas
-        if(socio != null){
-            loguearseConCredenciales();
+        if(socioCredenciales != null){
+            loguearseConCredenciales(socioCredenciales, fileCreds);
         }
 
         //Si no hay credenciales guardadas (o la que había es errónea), el socio procederá
         // a intentar loguearse manualmente
-        configurarBotonAcceder();
+        configurarBotonAcceder(fileCreds, sesionCerrada);
 
         configurarRecuperacionContrasenya();
 
         configurarBotonesIdiomas();
     }
 
-    private void loguearseConCredenciales() {
+    private void loguearseConCredenciales(final Socio socioCredenciales, final File fileCreds) {
         final DialogProgress dp = new DialogProgress(LoginActivity.this);
         final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.iniciando_sesion));
-        //Hacemos una llamada a la API para comprobar que esas credenciales sean válidas
-        sociosCall.clone().enqueue(new Callback<List<Socio>>() {
+        //Hacemos una llamada a la API (socio completo) para comprobar que esas credenciales sean válidas
+        Call<Socio> socioCall = socioService.getSocioByID(socioCredenciales.getId(), true);
+        socioCall.enqueue(new Callback<Socio>() {
             @Override
-            public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
-                switch(response.code()){
+            public void onResponse(Call<Socio> call, Response<Socio> response) {
+                switch (response.code()) {
                     case 200:
-                        switch(comprobarSocio(socio, response)){
+                        switch (comprobarSocio(socioCredenciales, response, true)) {
                             case 1: //login ok
-                                devolverSocioLogueado(socio);
+                                //devolverSocioCompleto(fileCreds);
+                                devolverSocioLogueado();
                                 break;
-                            case 0: //login mal
-                                fileCreds.delete(); //borramos las credenciales (son erroneas)
-                                break;
-                            default: //no hay socios en la bd
-                                CustomToast.mostrarWarning(LoginActivity.this,getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado));
+//                            case 0: //login mal
+//                                fileCreds.delete(); //borramos las credenciales (son erroneas)
+//                                break;
+//                            default: //no hay socios en la bd
+//                                CustomToast.mostrarWarning(LoginActivity.this, getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado));
+//                                break;
+                            case 0:
+                            default: // socio inactivo o error --> borramos creds, son erroneas
+                                fileCreds.delete();
                                 break;
                         }
                         break;
+                    case 404: // not found --> borramos creds, son erroneas
+                        fileCreds.delete();
+                        break;
                     default:
-                        CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
                         break;
                 }
 
                 ad.dismiss();
             }
+
             @Override
-            public void onFailure(Call<List<Socio>> call, Throwable t) {
+            public void onFailure(Call<Socio> call, Throwable t) {
                 String fallo = t.toString();
                 if (fallo.contains("failed to connect"))
                     CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
@@ -125,17 +157,57 @@ public class LoginActivity extends AppCompatActivity {
                 ad.dismiss();
             }
         });
+//        sociosCall.clone().enqueue(new Callback<List<Socio>>() {
+//            @Override
+//            public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
+//                switch(response.code()){
+//                    case 200:
+//                        switch(comprobarSocio(socio, response)){
+//                            case 1: //login ok
+//                                devolverSocioCompleto();
+//                                //devolverSocioLogueado(socio);
+//                                break;
+//                            case 0: //login mal
+//                                fileCreds.delete(); //borramos las credenciales (son erroneas)
+//                                break;
+//                            default: //no hay socios en la bd
+//                                CustomToast.mostrarWarning(LoginActivity.this,getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado));
+//                                break;
+//                        }
+//                        break;
+//                    default:
+//                        CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), response.code() + " - " + response.message());
+//                        break;
+//                }
+//
+//                ad.dismiss();
+//            }
+//            @Override
+//            public void onFailure(Call<List<Socio>> call, Throwable t) {
+//                String fallo = t.toString();
+//                if (fallo.contains("failed to connect"))
+//                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
+//                else
+//                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), t.toString());
+//
+//                fileCreds.delete();
+//
+//                ad.dismiss();
+//            }
+//        });
     }
 
     private void leerFicheroCreds() {
         //este path es '/storage/emulated/0/Android/data/com.example.meetchrysallis/files/cred.json'
-        fileCreds = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.json");
+        //fileCreds = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.json");
+//        fileCreds = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.cfg");
 
         //Intentamos leer el archivo de credenciales y pasamos los datos del archivo a un objeto Socio
-        socio = Archivador.leerJsonCredenciales(fileCreds.getPath());
+        //socio = Archivador.leerJsonCredenciales(fileCreds.getPath());
+//        socio = Archivador.leerFicheroCreds(fileCreds);
     }
 
-    private void configurarBotonAcceder() {
+    private void configurarBotonAcceder(final File fileCreds, final boolean sesionCerrada) {
         Button btnAcceder = findViewById(R.id.BtnAcceder);
         btnAcceder.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,8 +225,9 @@ public class LoginActivity extends AppCompatActivity {
                     linearEmail.setBackgroundResource(R.drawable.background_edittext_login);
                     linearPW.setBackgroundResource(R.drawable.background_edittext_login);
                     //Encriptamos la contraseña para poder comparar con las que hay en la BD
-                    String contrasenyaEncriptada = Utils.encriptarContrasenya(password);
-                    newSocio = new Socio(email, contrasenyaEncriptada);
+                    String contrasenyaEncriptada = Utils.encriptarString(password);
+//                    newSocio = new Socio(email, contrasenyaEncriptada);
+                    final Socio socioTemp = new Socio(email, contrasenyaEncriptada);
 
 
                     final DialogProgress dp = new DialogProgress(LoginActivity.this);
@@ -163,14 +236,17 @@ public class LoginActivity extends AppCompatActivity {
                     // (por ejemplo, el usuario se equivoca al loguearse +2 veces), de lo contrario
                     // petaría lanzando la siguiente exception:
                     //      IllegalStateException: Already executed
+                    Call<List<Socio>> sociosCall = socioService.getSocios();
                     sociosCall.clone().enqueue(new Callback<List<Socio>>(){
                         @Override
                         public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
                             switch(response.code()){
                                 case 200:
-                                    switch(comprobarSocio(newSocio, response)){
+                                    switch(comprobarSocio(socioTemp, response, false)){
                                         case 1: //login ok
+                                            //devolverSocioCompleto();
                                             //Buscamos el socio al completo
+//                                            Call<Socio> socioIndividualCall = socioService.getSocioByID(newSocio.getId(), true);
                                             Call<Socio> socioIndividualCall = socioService.getSocioByID(newSocio.getId(), true);
                                             socioIndividualCall.clone().enqueue(new Callback<Socio>() {
                                                 @Override
@@ -180,8 +256,35 @@ public class LoginActivity extends AppCompatActivity {
                                                         case 202:
                                                         case 204:
                                                             newSocio = response.body();
-                                                            Archivador.guardarJsonCredenciales(fileCreds, newSocio);
-                                                            devolverSocioLogueado(newSocio);
+                                                            //Archivador.guardarJsonCredenciales(fileCreds, newSocio);
+
+                                                            // Encriptamos el email para poder guardarlo en el fichero de Creds
+                                                            String emailEncriptado = Utils.encriptarString(newSocio.getEmail());
+
+                                                            // Creamos un objeto Map, en el que almacenaremos los datos a guardar en el fichero Creds
+                                                            Map<String, String> datosMap = new HashMap<>();
+                                                            // Primera fila: id del socio
+                                                            datosMap.put("0", String.valueOf(newSocio.getId()));
+                                                            // Segunda fila: contraseña del socio (encriptada)
+                                                            datosMap.put("1", newSocio.getContrasenya());
+                                                            // Tercera fila: email del socio (encriptado)
+                                                            datosMap.put("2", emailEncriptado);
+
+                                                            Archivador.guardarCredenciales(fileCreds, datosMap);
+//                                                            Socio socioAGuardar = newSocio;
+//                                                            socioAGuardar.setEmail(Utils.encriptarString(newSocio.getEmail()));
+//                                                            Archivador.guardarFicheroCreds(fileCreds, socioAGuardar);
+                                                            //devolverSocioLogueado(newSocio);
+                                                            if (sesionCerrada) {
+                                                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                                intent.putExtra("socio", newSocio);
+                                                                // Elimina esta activity del stack, así si desde el Main se presiona 'back',
+                                                                // no se volverá a esta activity
+                                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                                startActivity(intent);
+                                                            } else {
+                                                                devolverSocioLogueado();
+                                                            }
                                                             break;
                                                     }
                                                 }
@@ -230,6 +333,33 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+//    private void devolverSocioCompleto(final File fileCreds) {
+//        Archivador.guardarFicheroCreds(fileCreds, newSocio);
+//        devolverSocioLogueado();
+////
+////        //Buscamos el socio al completo
+////        Call<Socio> socioIndividualCall = socioService.getSocioByID(newSocio.getId(), true);
+////        socioIndividualCall.clone().enqueue(new Callback<Socio>() {
+////            @Override
+////            public void onResponse(Call<Socio> call, Response<Socio> response) {
+////                switch(response.code()){
+////                    case 200:
+////                    case 202:
+////                    case 204:
+////                        newSocio = response.body();
+////                        Archivador.guardarJsonCredenciales(fileCreds, newSocio);
+////                        devolverSocioLogueado(newSocio);
+////                        break;
+////                }
+////            }
+////
+////            @Override
+////            public void onFailure(Call<Socio> call, Throwable t) {
+////                CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
+////            }
+////        });
+//    }
+
     private void configurarRecuperacionContrasenya() {
         TextView tvOlvide = findViewById(R.id.TextViewOlvide);
         tvOlvide.setOnClickListener(new View.OnClickListener() {
@@ -239,11 +369,11 @@ public class LoginActivity extends AppCompatActivity {
                 final View view = getLayoutInflater().inflate(R.layout.dialog_olvide, null);
                 builder.setView(view)
                         .setTitle(getResources().getString(R.string.escriba_su_email)).setNegativeButton(getResources().getString(R.string.cancelar), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
                         .setPositiveButton(getResources().getString(R.string.enviar), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -292,13 +422,14 @@ public class LoginActivity extends AppCompatActivity {
                                             break;
                                     }
 
+                                    Call<List<Socio>> sociosCall = socioService.getSocios();
                                     sociosCall.clone().enqueue(new Callback<List<Socio>>() {
                                         @Override
                                         public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
-                                            listaSocios = (ArrayList<Socio>)response.body();
+                                            ArrayList<Socio> listaSocios = (ArrayList<Socio>)response.body();
                                             boolean emailEncontrado = false;
 
-                                            if(listaSocios != null || listaSocios.size() < 1) {
+                                            if(listaSocios != null || listaSocios.size() > 0) {
                                                 Iterator ite = listaSocios.iterator();
                                                 Socio socioIterado = null;
 
@@ -313,7 +444,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                                 if (emailEncontrado){
                                                     // Encripta la contraseña que hemos generado automáticamente
-                                                    String contrasenyaEncriptada = Utils.encriptarContrasenya(contrasenyaRandom);
+                                                    String contrasenyaEncriptada = Utils.encriptarString(contrasenyaRandom);
                                                     Socio socioUpdated = socioIterado;
                                                     socioUpdated.setContrasenya(contrasenyaEncriptada);
 
@@ -370,7 +501,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void configurarBotonesIdiomas() {
-        fileConfig = new File(getExternalFilesDir(null).getPath() + File.separator + "config.cfg");
+        final File fileConfig = new File(getExternalFilesDir(null).getPath() + File.separator + "config.cfg");
         ImageButton btnEsp = findViewById(R.id.BtnEsp);
         ImageButton btnCat = findViewById(R.id.BtnCat);
         ImageButton btnEng = findViewById(R.id.BtnEng);
@@ -379,7 +510,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 MainActivity.idioma = "es";
-                actualizarIdiomaApp();
+                actualizarIdiomaApp(fileConfig);
             }
         });
 
@@ -387,7 +518,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 MainActivity.idioma = "ca";
-                actualizarIdiomaApp();
+                actualizarIdiomaApp(fileConfig);
             }
         });
 
@@ -395,7 +526,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 MainActivity.idioma = "en";
-                actualizarIdiomaApp();
+                actualizarIdiomaApp(fileConfig);
             }
         });
     }
@@ -407,37 +538,84 @@ public class LoginActivity extends AppCompatActivity {
      * 1 = Socio existente y activo, LOGIN CORRECTO<br/>
      * 0 = Socio inexistente o inactivo, LOGIN INCORRECTO<br/>
      * -1 = Datos recuperados null o insuficientes (lista vacía)
-     * @param s         El Socio a comprobar
+     * @param socio         El Socio a comprobar
      * @param response      La Response que se recupera de la API
+     * @param esSocioSimple True si solo se espera un unico resultado del response, false si se espera un ArrayList
      * @return              El resultado de la comprobación
      */
-    private int comprobarSocio(Socio s, Response response) {
-        int resultado;
-        listaSocios = (ArrayList<Socio>)response.body();
+    private int comprobarSocio(Socio socio, Response response, boolean esSocioSimple) {
+        int resultado = -1;
 
-        if(listaSocios != null || listaSocios.size() < 1){
-            Iterator ite = listaSocios.iterator();
-            Socio socioIterado;
-            boolean encontrado = false;
+        if (esSocioSimple)  {
+            Socio socioRecuperado = (Socio)response.body();
 
-            while(ite.hasNext() && !encontrado){
-                socioIterado = (Socio) ite.next();
+            // Si se recupera un socio válido...
+            if (socioRecuperado != null) {
+                // Encriptamos su email para comprobarlo con el de las credenciales
+                String emailRecuperadoEncriptado = Utils.encriptarString(socioRecuperado.getEmail());
 
-                if(socioIterado.getEmail().equals(s.getEmail())
-                        && socioIterado.getContrasenya().equals(s.getContrasenya())
-                        && socioIterado.isActivo()) {
-                    encontrado = true;
-                    newSocio = socioIterado;
+                // Si tanto el email, como la contraseña coinciden y además, el socio está marcado como activo,
+                // guardamos el socioRecuperado
+                if (socio.getEmail().equals(emailRecuperadoEncriptado) &&
+                        socio.getContrasenya().equals(socioRecuperado.getContrasenya()) &&
+                        socioRecuperado.isActivo()) {
+                    resultado = 1;
+                    newSocio = socioRecuperado;
+                } else {
+                    resultado = 0;
                 }
             }
+        } else {
+            ArrayList<Socio> listaSocios = (ArrayList<Socio>) response.body();
 
-            if(encontrado)
-                resultado = 1;
-            else
-                resultado = 0;
+            if (listaSocios != null || listaSocios.size() > 0) {
+                Iterator ite = listaSocios.iterator();
+                Socio socioIterado;
+                boolean encontrado = false;
+
+                while (ite.hasNext() && !encontrado) {
+                    socioIterado = (Socio) ite.next();
+
+                    if (socioIterado.getEmail().equals(socio.getEmail())
+                            && socioIterado.getContrasenya().equals(socio.getContrasenya())
+                            && socioIterado.isActivo()) {
+                        encontrado = true;
+                        newSocio = socioIterado;
+                    }
+                }
+
+                if (encontrado)
+                    resultado = 1;
+                else
+                    resultado = 0;
+            }
         }
-        else
-            resultado = -1;
+
+//        listaSocios = (ArrayList<Socio>)response.body();
+//
+//        if(listaSocios != null || listaSocios.size() < 1){
+//            Iterator ite = listaSocios.iterator();
+//            Socio socioIterado;
+//            boolean encontrado = false;
+//
+//            while(ite.hasNext() && !encontrado){
+//                socioIterado = (Socio) ite.next();
+//
+//                if(socioIterado.getEmail().equals(s.getEmail())
+//                        && socioIterado.getContrasenya().equals(s.getContrasenya())
+//                        && socioIterado.isActivo()) {
+//                    encontrado = true;
+//                    newSocio = socioIterado;
+//                }
+//            }
+//
+//            if(encontrado)
+//                resultado = 1;
+//            else
+//                resultado = 0;
+//        }
+//        else
+//            resultado = -1;
 
         return resultado;
     }
@@ -463,16 +641,15 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Vuelve a la MainActivity pasándole el socio logueado como 'Extra'.
-     * @param socio     El socio logueado
      */
-    private void devolverSocioLogueado(Socio socio) {
+    private void devolverSocioLogueado() {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("socio", socio);
+        returnIntent.putExtra("socio", newSocio);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }
 
-    private void actualizarIdiomaApp() {
+    private void actualizarIdiomaApp(File fileConfig) {
         if (!MainActivity.idioma.equalsIgnoreCase("")) {
             Archivador.guardarConfig(fileConfig, MainActivity.idioma);
             Utils.configurarIdioma(LoginActivity.this, MainActivity.idioma);

@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.meetchrysallis.Activities.DatosPersonalesActivity;
 import com.example.meetchrysallis.Activities.LoginActivity;
+import com.example.meetchrysallis.Others.Archivador;
 import com.example.meetchrysallis.Others.CustomToast;
 import com.example.meetchrysallis.R;
 
@@ -97,16 +98,18 @@ public class OpcionesFragment extends Fragment {
         llLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                File fileCreds = new File(context.getExternalFilesDir(null).getPath() + File.separator + "cred.json");
+                //File fileCreds = new File(context.getExternalFilesDir(null).getPath() + File.separator + "cred.json");
+                File fileCreds = Archivador.recuperarFicheroCreds(context);
+
                 try{
                     fileCreds.delete();
-                }
-                catch(Exception e){
+                    Intent intent = new Intent(context, LoginActivity.class);
+                    // Añadimos esta flag para indicar que venimos desde el Logout
+                    intent.putExtra("bool", true);
+                    startActivity(intent);
+                } catch (Exception e) {
                     //No se pudieron borrar las credenciales
                 }
-
-                Intent intent = new Intent(context, LoginActivity.class);
-                startActivity(intent);
             }
         });
     }

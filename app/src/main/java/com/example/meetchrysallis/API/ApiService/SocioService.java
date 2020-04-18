@@ -7,7 +7,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
-import retrofit2.http.PUT;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface SocioService {
@@ -32,6 +32,8 @@ public interface SocioService {
     @GET("api/socios/{email}")
     Call<Socio> getSocioByEmail(@Path("email") String email);
 
-    @PUT("api/socios/{id}")
+//    @PUT("api/socios/{id}")
+//    Call<Socio> updateSocio(@Path("id")int id, @Body Socio socio);
+    @POST("api/socios/update/{id}")
     Call<Socio> updateSocio(@Path("id")int id, @Body Socio socio);
 }

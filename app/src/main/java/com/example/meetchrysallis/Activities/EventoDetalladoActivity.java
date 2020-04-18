@@ -501,7 +501,6 @@ public class EventoDetalladoActivity extends AppCompatActivity {
 
         //FIXME
         //  Funciona, cumple su cometido pero se va por el onFailure
-        //short id, String titulo, Timestamp fecha, String ubicacion, String descripcion, @Nullable Timestamp fecha_limite, byte idComunidad, float valoracionMedia
         Evento e = new Evento(evento.getId(), evento.getTitulo(), evento.getFecha(), evento.getUbicacion(), evento.getDescripcion(), evento.getFecha_limite(), evento.getIdComunidad(), evento.getIdAdmin(), evento.getValoracionMedia());
         Call<Evento> callEvento = eventoService.updateEvento(e.getId(), e);
         callEvento.enqueue(new Callback<Evento>() {
