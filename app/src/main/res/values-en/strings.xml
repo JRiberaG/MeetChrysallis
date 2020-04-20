@@ -1,0 +1,113 @@
+<resources>
+    <string name="app_name">MeetChrysallis</string>
+    <string name="iniciar_sesion">Log In</string>
+    <string name="correo">Email</string>
+    <string name="contrasenya">Password</string>
+    <string name="loginincorrecto">User/password incorrect</string>
+    <string name="acceder">Access</string>
+    <string name="contrasenyaolvidada"><u>Forgot your password?</u></string>
+    <string name="nav_opciones">Options</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_eventos">My events</string>
+    <string name="fragmentHome_header">Available events</string>
+    <string name="error_conexion_db">Couldn\'t connect to the database. Try again later</string>
+    <string name="cargando_comentarios">Loading comments...</string>
+    <string name="cargando_evento">Loading event...</string>
+    <string name="telefono">Phone</string>
+    <string name="modificar">Modify</string>
+    <string name="comunidades_interes">Communities subscribed to</string>
+    <string name="idioma">Language</string>
+    <string name="contrasenya_actual">Current password</string>
+    <string name="contrasenya_nueva">New password</string>
+    <string name="contrasenya_confirmar">Confirm new password</string>
+    <string name="seleccione_idioma">Choose language</string>
+    <string name="aceptar">Accept</string>
+    <string name="cancelar">Cancel</string>
+    <string name="castellano">Spanish</string>
+    <string name="catalan">Catalan</string>
+    <string name="ingles">English</string>
+    <string name="pulsar_para_salir">Tap again to exit</string>
+    <string-array name="idiomas">
+        <item>Spanish</item>
+        <item>Catalan</item>
+        <item>English</item>
+    </string-array>
+    <string name="title_activity_tab">TabActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="enviar">Send</string>
+    <string name="se_actualizo_email">Your email has been updated</string>
+    <string name="email_actual">Current email</string>
+    <string name="hint_email">hi@hi.com</string>
+    <string name="email_nuevo">New email</string>
+    <string name="email_confirmar">Confirm new email</string>
+    <string name="buscando_email">Looking for the email in the database...</string>
+    <string name="campo_confirmar_error">Both fields (\'New\' and \'Confirm\') must coincide</string>
+    <string name="email_invalido">Invalid email</string>
+    <string name="email_incorrecto">Incorrect email</string>
+    <string name="campo_invalido_vacio">This field can\'t be empty</string>
+    <string name="email_actualizado">Email updated</string>
+    <string name="contrasenya_incorrecta">Incorrect password</string>
+    <string name="contrasenya_invalida">This password is not valid: it must have at least 1 number, 1 uppercase, 1 lowercase and a length of 6-16 characters</string>
+    <string name="contrasenya_actualizada">Password updated</string>
+    <string name="indique_comunidades">Select the Communities that you are interested in</string>
+    <string name="eventos_pendientes">Pending events</string>
+    <string name="error_no_eventos_pendientes">You have no pending events.</string>
+    <string name="error_no_eventos_asistidos">You have not attended to any event.</string>
+    <string name="eventos_asistidos">Events attended</string>
+    <string name="modificar_datos_personales">Modify your personal data</string>
+    <string name="cerrar_sesion">Logout</string>
+    <string name="contactar_equipo">Contact the developer team</string>
+    <string name="notificaciones">Notifications</string>
+    <string name="cargando">Loading...</string>
+    <string name="asistire">I will attend</string>
+    <string name="valora_el_evento">Rate the event. Help us to improve!</string>
+    <string name="no_hay_comentarios">There are no comments yet. Be the first one!</string>
+    <string name="comentar">Write a comment</string>
+    <string name="comentarios">Comments</string>
+    <string name="email">Email</string>
+    <string name="iniciando_sesion">Logging in...</string>
+    <string name="no_hay_socio_registrado">There is not any member registered with that email</string>
+    <string name="escriba_su_email">Type your email</string>
+    <string name="recuperacion_asunto">MeetChrysallis - Password recovery</string>
+    <string name="se_ha_enviado_correo">An email has been sent to you with your new password. In case you have not received it, check your spam folder and or your internet connection</string>
+    <string name="confirmar_asistencia">Confirm attendance</string>
+    <string name="confirmar">Confirm</string>
+    <string name="nuevo_comentario">New comment</string>
+    <string name="error_comentario_excede">The comment exceeds the maximum characters allowed</string>
+    <string name="no_asistir">I will not attend</string>
+    <string name="comentario_anadido">Comment added</string>
+    <string name="anonimo">Anonymus</string>
+    <string name="indique_email_recuperacion">It is necessary that you type your member email to send the new password.</string>
+    <string name="error_comentario_demasiado_corto">The comment contains less that the minimum characters allowed</string>
+    <string name="valorar">Rate</string>
+    <string name="si_enviar">Yes, send</string>
+    <string name="confirmar_valoracion">Confirm rating</string>
+    <string name="msj_enviar_valoracion1">You have rated the event with</string>
+    <string name="msj_enviar_valoracion2">Once the rating is sent, you will not be allowed to modify it.\nSend it?</string>
+    <string name="no_eventos_disponibles">There are not any events available that you may be interested in.</string>
+    <string name="valoracion_enviada">Rating sent. Thanks!</string>
+    <string name="gracias_por_valorar">Thanks for rating the event.</string>
+    <string name="error_ccaa_minima">You have to select at least one Community</string>
+    <string name="indique_num_asistentes">Please, select the number of the attendants.</string>
+    <string name="num_personas">"Number of attendants: "</string>
+    <string name="escriba_aqui_su_comentario">Type here your comment</string>
+    <string name="mostrar_nombre">Show name</string>
+    <string name="formulario_contacto">Contact form</string>
+    <string name="indique_su_nombre">Type here your name</string>
+    <string name="indique_su_email">Type here your email (*)</string>
+    <string name="asunto">Type here the subject</string>
+    <string name="mensaje">Type here your message (*)</string>
+    <string name="error_campo_minimo_caracteres">Invalid field: insufficient characters</string>
+    <string name="datos_del_mensaje">Message information</string>
+    <string name="datos_de_contacto">Contact information</string>
+    <string name="mensaje_enviado">Message sent</string>
+    <string name="no_se_envio_mensaje">The message could not be sent</string>
+    <string-array name="motivos">
+        <item>-- Select a motive --</item>
+        <item>Question</item>
+        <item>Problem</item>
+        <item>Suggestion</item>
+        <item>Other</item>
+    </string-array>
+</resources>

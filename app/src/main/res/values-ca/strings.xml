@@ -1,0 +1,113 @@
+<resources>
+    <string name="app_name">MeetChrysallis</string>
+    <string name="iniciar_sesion">Iniciar Sessió</string>
+    <string name="correo">Correu electrònic</string>
+    <string name="contrasenya">Contrasenya</string>
+    <string name="loginincorrecto">Usuari/contrasenya incorrectes</string>
+    <string name="acceder">Accedir</string>
+    <string name="contrasenyaolvidada"><u>No recorda la contrasenya?</u></string>
+    <string name="nav_opciones">Opcions</string>
+    <string name="nav_home">Principal</string>
+    <string name="nav_eventos">Els meus events</string>
+    <string name="fragmentHome_header">Events disponibles</string>
+    <string name="error_conexion_db">No s\'ha pogut connectar a la base de dades. Provi més tard</string>
+    <string name="cargando_comentarios">Carregant comentaris...</string>
+    <string name="cargando_evento">Carregant event...</string>
+    <string name="telefono">Telèfon</string>
+    <string name="modificar">Modificar</string>
+    <string name="comunidades_interes">Comunitats suscrites</string>
+    <string name="idioma">Idioma</string>
+    <string name="contrasenya_actual">Contrasenya actual</string>
+    <string name="contrasenya_nueva">Contrasenya nova</string>
+    <string name="contrasenya_confirmar">Repeteixi la contrasenya nova</string>
+    <string name="seleccione_idioma">Seleccioni l\'idioma</string>
+    <string name="aceptar">Acceptar</string>
+    <string name="cancelar">Cancel·lar</string>
+    <string name="castellano">Castellà</string>
+    <string name="catalan">Català</string>
+    <string name="ingles">Anglès</string>
+    <string name="pulsar_para_salir">Premi un altre cop per sortir</string>
+    <string-array name="idiomas">
+        <item>Castellà</item>
+        <item>Català</item>
+        <item>Anglès</item>
+    </string-array>
+    <string name="title_activity_tab">TabActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="enviar">Enviar</string>
+    <string name="se_actualizo_email">S\'ha actualitzat correctament l\'email</string>
+    <string name="email_actual">Email actual</string>
+    <string name="hint_email">hola@hola.com</string>
+    <string name="email_nuevo">Email nou</string>
+    <string name="email_confirmar">Confirmar email nou</string>
+    <string name="buscando_email">Buscant l\'email a la base de dades...</string>
+    <string name="campo_confirmar_error">Tant el camp \'Nou\' com el camp de \'Confirmació\' (aquest) han de coincidir</string>
+    <string name="email_invalido">Email invàlid</string>
+    <string name="email_incorrecto">Email incorrecte</string>
+    <string name="campo_invalido_vacio">Aquest camp no pot estar buit</string>
+    <string name="email_actualizado">Email actualitzat</string>
+    <string name="contrasenya_incorrecta">Contrasenya incorrecta</string>
+    <string name="contrasenya_invalida">Aquesta contrasenya no és vàlida: ha de tenir al menys 1 número, 1 lletra majúscula, 1 lletra minúscula i un tamany de 6-16 caràcters</string>
+    <string name="contrasenya_actualizada">Contrasenya actualizada</string>
+    <string name="indique_comunidades">Marqui les Comunitats que li interessen</string>
+    <string name="eventos_pendientes">Events pendents</string>
+    <string name="error_no_eventos_pendientes">No té cap event pendent.</string>
+    <string name="error_no_eventos_asistidos">Encara no ha assistit a cap event.</string>
+        <string name="eventos_asistidos">Events assistits</string>
+    <string name="modificar_datos_personales">Modificar dades personales</string>
+    <string name="cerrar_sesion">Tancar sessió</string>
+    <string name="contactar_equipo">Contactar amb l\'equip de desenvolupadors</string>
+    <string name="notificaciones">Notificacions</string>
+    <string name="cargando">Carregant...</string>
+    <string name="asistire">Assistiré</string>
+    <string name="valora_el_evento">Valora l\'event. Ajuda\'ns a millorar!</string>
+    <string name="no_hay_comentarios">No hi ha cap comentari encara.</string>
+    <string name="comentar">Escriure comentari</string>
+    <string name="comentarios">Comentaris</string>
+    <string name="email">Email</string>
+    <string name="iniciando_sesion">Iniciant sessió...</string>
+    <string name="no_hay_socio_registrado">No hi ha cap soci registrat amb aquest email</string>
+    <string name="escriba_su_email">Escrigui el seu email</string>
+    <string name="recuperacion_asunto">MeetChrysallis - Recuperació de contrasenya</string>
+    <string name="se_ha_enviado_correo">Se l\'hi ha enviat un email amb la seva nombra contrasenya. En cas de no haver-lo rebut, comprovi la seva carpeta d\'spam o la seva connexió a internet</string>
+    <string name="confirmar_asistencia">Confirmar assistència</string>
+    <string name="confirmar">Confirmar</string>
+    <string name="nuevo_comentario">Nou comentari</string>
+    <string name="error_comentario_excede">El comentari excedeix el número màxim de caràcters permès</string>
+    <string name="no_asistir">No assistiré</string>
+    <string name="comentario_anadido">Comentari afegit</string>
+    <string name="anonimo">Anònim</string>
+    <string name="indique_email_recuperacion">És necessari que indiqui el seu email de soci per tal de que puguem enviar-li la nova contrasenya.</string>
+    <string name="error_comentario_demasiado_corto">El comentari conté menys caràcters del mínim permès</string>
+    <string name="valorar">Valorar</string>
+    <string name="si_enviar">Sí, enviar</string>
+    <string name="confirmar_valoracion">Confirmar valoració</string>
+    <string name="msj_enviar_valoracion1">Ha valorat l\'event amb un</string>
+    <string name="msj_enviar_valoracion2">Un cop s\'enviï la valoració no podrà ser modificada.\nEnviar?</string>
+    <string name="no_eventos_disponibles">No hi ha events disponibles que li puguin interessar.</string>
+    <string name="valoracion_enviada">Valoració enviada. Gracies!</string>
+    <string name="gracias_por_valorar">Moltes gràcies per la seva valoració.</string>
+    <string name="error_ccaa_minima">S\'ha de seleccionar, com a mínim, una Comunitat Autònoma</string>
+    <string name="indique_num_asistentes">Indiqui el número de persones que assistiran a l\'event, si us plau.</string>
+    <string name="num_personas">"Número de persones: "</string>
+    <string name="escriba_aqui_su_comentario">Escrigui aquí el seu comentari</string>
+    <string name="mostrar_nombre">Mostrar nom</string>
+    <string name="formulario_contacto">Formulari de contacte</string>
+    <string name="indique_su_nombre">Indique el seu nome</string>
+    <string name="indique_su_email">Indique el seu email (*)</string>
+    <string name="asunto">Indique l\'assumpte</string>
+    <string name="mensaje">Escrigui el seu missatge (*)</string>
+    <string name="error_campo_minimo_caracteres">Camp invàlid: caràcters insuficients</string>
+    <string name="datos_del_mensaje">Dades del missatge</string>
+    <string name="datos_de_contacto">Dades de contacte</string>
+    <string name="mensaje_enviado">Missatge enviat</string>
+    <string name="no_se_envio_mensaje">No s\'ha pogut enviar el missatge</string>
+    <string-array name="motivos">
+        <item>-- Seleccioni el motiu --</item>
+        <item>Dubte</item>
+        <item>Problema</item>
+        <item>Suggeriment</item>
+        <item>Altre</item>
+    </string-array>
+</resources>
