@@ -27,11 +27,6 @@
     <string name="catalan">Catalán</string>
     <string name="ingles">Inglés</string>
     <string name="pulsar_para_salir">Pulse otra vez para salir</string>
-    <string-array name="idiomas">
-        <item>Castellano</item>
-        <item>Catalán</item>
-        <item>Inglés</item>
-    </string-array>
     <string name="title_activity_tab">TabActivity</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
@@ -89,8 +84,30 @@
     <string name="valoracion_enviada">Valoración enviada. ¡Gracias!</string>
     <string name="gracias_por_valorar">Muchas gracias por su valoración.</string>
     <string name="error_ccaa_minima">Se ha de seleccionar como mínimo una Comunidad Autónoma</string>
+    <string-array name="idiomas">
+        <item>Castellano</item>
+        <item>Catalán</item>
+        <item>Inglés</item>
+    </string-array>
     <string name="indique_num_asistentes">Indique el número de personas que van a asistir al evento, por favor.</string>
     <string name="num_personas">"Número de personas: "</string>
     <string name="escriba_aqui_su_comentario">Escriba aquí su comentario</string>
     <string name="mostrar_nombre">Mostrar nombre</string>
+    <string name="formulario_contacto">Formulario de contacto</string>
+    <string name="indique_su_nombre">Indique su nombre</string>
+    <string name="indique_su_email">Indique su email (*)</string>
+    <string name="asunto">Indique el asunto</string>
+    <string name="mensaje">Escriba su mensaje (*)</string>
+    <string name="error_campo_minimo_caracteres">Campo inválido: carácteres insuficientes</string>
+    <string name="datos_del_mensaje">Datos del mensaje</string>
+    <string name="datos_de_contacto">Datos de contacto</string>
+    <string name="mensaje_enviado">Mensaje enviado</string>
+    <string name="no_se_envio_mensaje">No se pudo enviar el mensaje</string>
+    <string-array name="motivos">
+        <item>-- Seleccione el motivo --</item>
+        <item>Duda</item>
+        <item>Problema</item>
+        <item>Sugerencia</item>
+        <item>Otro</item>
+    </string-array>
 </resources>

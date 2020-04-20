@@ -14,15 +14,15 @@ public interface AsistirService {
     @GET("api/asistirs/{idSocio}")
     Call<ArrayList<Asistir>> getAsistirBySocio(@Path("idSocio")int idSocio);
 
-    // Añadir asistir
+    // INSERT
     @POST("api/Asistirs")
     Call<Asistir> insertAsistir(@Body Asistir asistir);
 
-    // Update
+    // UPDATE
     @POST("api/Asistirs/update/{idSocio}/{idEvento}")
     Call<Asistir> updateAsistir(@Path("idSocio")int idSocio, @Path("idEvento")short idEvento, @Body Asistir asistir);
 
-    // Eliminar asistir
+    // DELETE
     @POST("api/Asistirs/delete/{idSocio}/{idEvento}")
     Call<Asistir> deleteAsistir(@Path("idSocio")int idSocio, @Path("idEvento")short idEvento);
 }

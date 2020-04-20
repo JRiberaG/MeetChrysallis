@@ -31,16 +31,12 @@ import java.io.File;
 //  Pendiente de hacer:
 //      - Evento Detallado:
 //          - Descargar los documentos que el evento pueda tener
-//      - Programar funcionalidad 'Contactar equipo desarrolladores'
-//      - Arreglar el capturar timestamp: captura la hora del movil, no la hora real
-//          (la hora del movil puede ser las 12:00 pero la real 14:00)
 //      - Buscar una fuente y aplicarla a los textos
-//      - Mejorar las credenciales: no guardar el socio entero. Una vez logueado, llamar a la api
-//          y recuperarlo entero (y almacenarlo en la MainActivity), no tal y como está hecho ahora
-//      - Mejorar el fragment de mis eventos: cada vez que se accede se llaman dos veces a la API,
+//      - Mejorar el fragment de 'mis eventos': cada vez que se accede se llaman dos veces a la API,
 //          buscar un modo para que sólo llame dos veces (al abrir la app y al refrescar)
 //      - Correguir métodos UPDATE/DELETE de la API (y de las clases Android 'xService')
 //      - Completar traducciones
+//      - Fecha limite evento -> no mostrar evento disponible
 
 //Tutorial Navigation Bottom Bar https://www.youtube.com/watch?v=tPV8xA7m-iw
 public class MainActivity extends AppCompatActivity {

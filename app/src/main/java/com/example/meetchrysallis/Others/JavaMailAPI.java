@@ -1,6 +1,5 @@
 package com.example.meetchrysallis.Others;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -14,7 +13,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class JavaMailAPI extends AsyncTask<Void,Void,Void>  {
+public class JavaMailAPI extends AsyncTask<Void,Void,Void> {
 
     //Add those line in dependencies
     //implementation files('libs/activation.jar')
@@ -27,16 +26,13 @@ public class JavaMailAPI extends AsyncTask<Void,Void,Void>  {
     private Context mContext;
     private Session mSession;
 
-    private Activity activity;
-
     private String mEmail;
     private String mSubject;
     private String mMessage;
 
     //Constructor
-    public JavaMailAPI(Context mContext, Activity activity, String mEmail, String mSubject, String mMessage) {
+    public JavaMailAPI(Context mContext, String mEmail, String mSubject, String mMessage) {
         this.mContext = mContext;
-        this.activity = activity;
         this.mEmail = mEmail;
         this.mSubject = mSubject;
         this.mMessage = mMessage;
@@ -100,7 +96,14 @@ public class JavaMailAPI extends AsyncTask<Void,Void,Void>  {
 //            mm.setContent(multipart);
 
         } catch (MessagingException e) {
-            System.out.println(e.getCause());
+            System.out.println("Error al enviar mensaje: " + e.toString());
+            // -- AÑADIDO --
+            try {
+                throw new MessagingException();
+            } catch (MessagingException ex) {
+                ex.printStackTrace();
+            }
+            // -- AÑADIDO --
         }
         return null;
     }

@@ -11,6 +11,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface SocioService {
+    // SELECT
     @GET("api/socios")
     Call<List<Socio>> getSocios();
 
@@ -29,11 +30,14 @@ public interface SocioService {
     @GET("api/socios/{id}/{completo}")
     Call<Socio> getSocioByID(@Path("id") int id, @Path("completo") boolean completo);
 
+    // SELECT
     @GET("api/socios/{email}")
     Call<Socio> getSocioByEmail(@Path("email") String email);
 
 //    @PUT("api/socios/{id}")
 //    Call<Socio> updateSocio(@Path("id")int id, @Body Socio socio);
+
+    // UPDATE
     @POST("api/socios/update/{id}")
     Call<Socio> updateSocio(@Path("id")int id, @Body Socio socio);
 }

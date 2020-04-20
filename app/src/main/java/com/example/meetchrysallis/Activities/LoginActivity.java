@@ -23,6 +23,8 @@ import com.example.meetchrysallis.Others.DialogProgress;
 import com.example.meetchrysallis.Others.JavaMailAPI;
 import com.example.meetchrysallis.Others.Utils;
 import com.example.meetchrysallis.R;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -361,140 +363,290 @@ public class LoginActivity extends AppCompatActivity {
 //    }
 
     private void configurarRecuperacionContrasenya() {
-        TextView tvOlvide = findViewById(R.id.TextViewOlvide);
-        tvOlvide.setOnClickListener(new View.OnClickListener() {
+        final TextView tvOlvide = findViewById(R.id.TextViewOlvide);
+
+        final View view                             = getLayoutInflater().inflate(R.layout.dialog_olvide, null);
+        final TextInputLayout inputLayoutEmail      = view.findViewById(R.id.dialog_olvide_layoutEmail);
+        final TextInputEditText inputEditTextEmail  = view.findViewById(R.id.dialog_olvide_etEmail);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+        builder.setView(view)
+                .setTitle(getResources().getString(R.string.escriba_su_email))
+                .setNegativeButton(getResources().getString(R.string.cancelar), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setPositiveButton(getResources().getString(R.string.enviar), null);
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
-            public void onClick(final View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                final View view = getLayoutInflater().inflate(R.layout.dialog_olvide, null);
-                builder.setView(view)
-                        .setTitle(getResources().getString(R.string.escriba_su_email)).setNegativeButton(getResources().getString(R.string.cancelar), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
+            public void onShow(final DialogInterface dialog) {
+                Button btn = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //Busca en la base de datos el email facilitado por el usuario,
+                        //si lo está, envía una nueva contraseña al email
+                        //EditText etEmail = view.findViewById(R.id.dialog_olvide_etEmail);
+                        final String email = inputEditTextEmail.getText().toString();
+
+                        if (!email.isEmpty() ) {// FIXME && Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+                            inputLayoutEmail.setErrorEnabled(false);
+                            inputLayoutEmail.setErrorIconDrawable(null);
+
+                            //Genera una nueva contraseña aleatorio de 6 carácteres alfabéticos
+                            final String contrasenyaRandom = generarContrasenya();
+                            final String asunto = getResources().getString(R.string.recuperacion_asunto);
+                            final String mensaje;
+                            switch (MainActivity.idioma) {
+                                case "es":
+                                    mensaje = "¡Hola!\n\n" +
+                                            "Esta es su nueva contraseña: \n" +
+                                            contrasenyaRandom + "\n\n" +
+                                            "Si lo desea, puede modificarla accediendo a la app y, " +
+                                            "una vez dentro, en la pestaña" +
+                                            "de \"Opciones\" > \"Modificar Datos personales\". \n" +
+                                            "\nMuchas gracias.\n\n" +
+                                            "** Mensaje generado automáticamente. " +
+                                            "Por favor, no responda a este email. **";
+                                    break;
+                                case "ca":
+                                    mensaje = "Hola!\n\n" +
+                                            "Aquesta és la seva nova contrasenya: \n" +
+                                            contrasenyaRandom + "\n\n" +
+                                            "Si ho desitja, pot modificar-la accedint a l'App i, " +
+                                            "un cop dins, en la pestanya d'\"Opcions\" > \"Modificar dades personals\". \n" +
+                                            "\nMoltes gràcies.\n\n" +
+                                            "** Missatge generat automàticament. " +
+                                            "Si us plau, no respongui a aquest email. **";
+                                    break;
+                                default:
+                                    mensaje = "Hi!\n\n" +
+                                            "This is your new password: \n" +
+                                            contrasenyaRandom + "\n\n" +
+                                            "If you wish, you may change it through the app, and " +
+                                            "once you are logged in, " +
+                                            "\"Options\" > \"Modify personal data\". \n" +
+                                            "\nThanks.\n\n" +
+                                            "** Message generated automatically. " +
+                                            "Please, do not reply to this email. **";
+                                    break;
                             }
-                        })
-                        .setPositiveButton(getResources().getString(R.string.enviar), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                //Busca en la base de datos el email facilitado por el usuario,
-                                //si lo está, envía una nueva contraseña al email
-                                EditText etEmail = view.findViewById(R.id.dialog_olvide_etEmail);
-                                final String email = etEmail.getText().toString();
+                            Call<List<Socio>> sociosCall = socioService.getSocios();
+                            sociosCall.clone().enqueue(new Callback<List<Socio>>() {
+                                @Override
+                                public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
+                                    ArrayList<Socio> listaSocios = (ArrayList<Socio>) response.body();
+                                    boolean emailEncontrado = false;
 
-                                if (!email.isEmpty()){
-                                    //Genera una nueva contraseña aleatorio de 6 carácteres alfabéticos
-                                    final String contrasenyaRandom = generarContrasenya();
-                                    final String asunto = getResources().getString(R.string.recuperacion_asunto);
-                                    final String mensaje;
-                                    switch(MainActivity.idioma) {
-                                        case "es":
-                                            mensaje = "¡Hola!\n\n" +
-                                                    "Esta es su nueva contraseña: \n" +
-                                                    contrasenyaRandom + "\n\n" +
-                                                    "Si lo desea, puede modificarla accediendo a la app y, " +
-                                                    "una vez dentro, en la pestaña" +
-                                                    "de \"Opciones\" > \"Modificar Datos personales\". \n" +
-                                                    "\nMuchas gracias.\n\n" +
-                                                    "** Mensaje generado automáticamente. " +
-                                                    "Por favor, no responda a este email. **";
-                                            break;
-                                        case "ca":
-                                            mensaje = "Hola!\n\n" +
-                                                    "Aquesta és la seva nova contrasenya: \n" +
-                                                    contrasenyaRandom + "\n\n" +
-                                                    "Si ho desitja, pot modificar-la accedint a l'App i, " +
-                                                    "un cop dins, en la pestanya d'\"Opcions\" > \"Modificar dades personals\". \n" +
-                                                    "\nMoltes gràcies.\n\n" +
-                                                    "** Missatge generat automàticament. " +
-                                                    "Si us plau, no respongui a aquest email. **";
-                                            break;
-                                        default:
-                                            mensaje = "Hi!\n\n" +
-                                                    "This is your new password: \n" +
-                                                    contrasenyaRandom + "\n\n" +
-                                                    "If you wish, you may change it through the app, and " +
-                                                    "once you are logged in, " +
-                                                    "\"Options\" > \"Modify personal data\". \n" +
-                                                    "\nThanks.\n\n" +
-                                                    "** Message generated automatically. " +
-                                                    "Please, do not reply to this email. **";
-                                            break;
-                                    }
+                                    if (listaSocios != null || listaSocios.size() > 0) {
+                                        Iterator ite = listaSocios.iterator();
+                                        Socio socioIterado = null;
 
-                                    Call<List<Socio>> sociosCall = socioService.getSocios();
-                                    sociosCall.clone().enqueue(new Callback<List<Socio>>() {
-                                        @Override
-                                        public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
-                                            ArrayList<Socio> listaSocios = (ArrayList<Socio>)response.body();
-                                            boolean emailEncontrado = false;
+                                        while (ite.hasNext() && !emailEncontrado) {
+                                            socioIterado = (Socio) ite.next();
 
-                                            if(listaSocios != null || listaSocios.size() > 0) {
-                                                Iterator ite = listaSocios.iterator();
-                                                Socio socioIterado = null;
-
-                                                while (ite.hasNext() && !emailEncontrado) {
-                                                    socioIterado = (Socio) ite.next();
-
-                                                    if (socioIterado.getEmail().equals(email) &&
-                                                            socioIterado.isActivo()) {
-                                                        emailEncontrado = true;
-                                                    }
-                                                }
-
-                                                if (emailEncontrado){
-                                                    // Encripta la contraseña que hemos generado automáticamente
-                                                    String contrasenyaEncriptada = Utils.encriptarString(contrasenyaRandom);
-                                                    Socio socioUpdated = socioIterado;
-                                                    socioUpdated.setContrasenya(contrasenyaEncriptada);
-
-                                                    //Hace una llamada a la API modificando la contraseña del socio
-                                                    Call<Socio> callUpdateSocio = socioService.updateSocio(socioUpdated.getId(), socioUpdated);
-                                                    callUpdateSocio.enqueue(new Callback<Socio>() {
-                                                        @Override
-                                                        public void onResponse(Call<Socio> call, Response<Socio> response) {
-                                                            switch(response.code()){
-                                                                case 200:
-                                                                case 201:
-                                                                case 202:
-                                                                case 203:
-                                                                case 204:
-                                                                    //se actualizó el usuario
-                                                                    break;
-                                                                default:
-                                                                    //error al intentar actualizar el socio
-                                                                    System.out.println(response.code() + " - " + response.message());
-                                                            }
-                                                        }
-
-                                                        @Override
-                                                        public void onFailure(Call<Socio> call, Throwable t) {
-                                                            CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
-                                                        }
-                                                    });
-
-                                                    //FIXME: modificar el mail para cuando se acaben de hacer las pruebas
-                                                    //Enviamos el mail al usuario con la nueva contraseña
-                                                    JavaMailAPI javaMailAPI = new JavaMailAPI(LoginActivity.this, LoginActivity.this, "jribgomez@gmail.com", asunto, mensaje);
-                                                    //JavaMailAPI javaMailAPI = new JavaMailAPI(LoginActivity.this, LoginActivity.this, email, asunto, mensaje);
-                                                    javaMailAPI.execute();
-
-                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),getResources().getString(R.string.se_ha_enviado_correo));
-                                                }
-                                                else
-                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado));
+                                            if (socioIterado.getEmail().equals(email) &&
+                                                    socioIterado.isActivo()) {
+                                                emailEncontrado = true;
                                             }
                                         }
 
-                                        @Override
-                                        public void onFailure(Call<List<Socio>> call, Throwable t) {
-                                            CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
-                                        }
-                                    });
+                                        if (emailEncontrado) {
+                                            // Encripta la contraseña que hemos generado automáticamente
+                                            //FIXME
+                                            // String contrasenyaEncriptada = Utils.encriptarString(contrasenyaRandom);
+                                            String contrasenyaEncriptada = Utils.encriptarString("prueba");
+                                            Socio socioUpdated = socioIterado;
+                                            socioUpdated.setContrasenya(contrasenyaEncriptada);
+
+                                            //Hace una llamada a la API modificando la contraseña del socio
+                                            Call<Socio> callUpdateSocio = socioService.updateSocio(socioUpdated.getId(), socioUpdated);
+                                            callUpdateSocio.enqueue(new Callback<Socio>() {
+                                                @Override
+                                                public void onResponse(Call<Socio> call, Response<Socio> response) {
+                                                    switch (response.code()) {
+                                                        case 200:
+                                                        case 201:
+                                                        case 202:
+                                                        case 203:
+                                                        case 204:
+                                                            //se actualizó el usuario
+                                                            break;
+                                                        default:
+                                                            //error al intentar actualizar el socio
+                                                            System.out.println(response.code() + " - " + response.message());
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<Socio> call, Throwable t) {
+                                                    CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                }
+                                            });
+
+                                            //FIXME: modificar el mail para cuando se acaben de hacer las pruebas
+                                            //Enviamos el mail al usuario con la nueva contraseña
+                                            JavaMailAPI javaMailAPI = new JavaMailAPI(LoginActivity.this, Utils.EMAIL, asunto, mensaje);
+                                            //JavaMailAPI javaMailAPI = new JavaMailAPI(LoginActivity.this, LoginActivity.this, email, asunto, mensaje);
+                                            javaMailAPI.execute();
+
+                                            CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getResources().getString(R.string.se_ha_enviado_correo));
+                                        } else
+                                            CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado));
+                                    }
                                 }
-                            }
-                        });
-                AlertDialog dialog = builder.create();
+
+                                @Override
+                                public void onFailure(Call<List<Socio>> call, Throwable t) {
+                                    CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                }
+                            });
+
+                            inputEditTextEmail.setText("");
+                            dialog.dismiss();
+                        } else {
+                            inputLayoutEmail.setErrorEnabled(true);
+                            inputLayoutEmail.setErrorIconDrawable(R.drawable.ic_error_red_24dp);
+                            inputLayoutEmail.setError(getResources().getString(R.string.email_invalido));
+                        }
+                    }
+                });
+            }
+        });
+
+        tvOlvide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+
+//                        })
+//                        .setPositiveButton(getResources().getString(R.string.enviar), new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                //Busca en la base de datos el email facilitado por el usuario,
+//                                //si lo está, envía una nueva contraseña al email
+//                                EditText etEmail = view.findViewById(R.id.dialog_olvide_etEmail);
+//                                final String email = etEmail.getText().toString();
+//
+//                                //TODO se cierra al 'enviar'. Reprogramar como los otros alerts,
+//                                //  eliminar el listener del positive y programarlo
+//                                if (!email.isEmpty() ){// FIXME && Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+//                                    //Genera una nueva contraseña aleatorio de 6 carácteres alfabéticos
+//                                    final String contrasenyaRandom = generarContrasenya();
+//                                    final String asunto = getResources().getString(R.string.recuperacion_asunto);
+//                                    final String mensaje;
+//                                    switch(MainActivity.idioma) {
+//                                        case "es":
+//                                            mensaje = "¡Hola!\n\n" +
+//                                                    "Esta es su nueva contraseña: \n" +
+//                                                    contrasenyaRandom + "\n\n" +
+//                                                    "Si lo desea, puede modificarla accediendo a la app y, " +
+//                                                    "una vez dentro, en la pestaña" +
+//                                                    "de \"Opciones\" > \"Modificar Datos personales\". \n" +
+//                                                    "\nMuchas gracias.\n\n" +
+//                                                    "** Mensaje generado automáticamente. " +
+//                                                    "Por favor, no responda a este email. **";
+//                                            break;
+//                                        case "ca":
+//                                            mensaje = "Hola!\n\n" +
+//                                                    "Aquesta és la seva nova contrasenya: \n" +
+//                                                    contrasenyaRandom + "\n\n" +
+//                                                    "Si ho desitja, pot modificar-la accedint a l'App i, " +
+//                                                    "un cop dins, en la pestanya d'\"Opcions\" > \"Modificar dades personals\". \n" +
+//                                                    "\nMoltes gràcies.\n\n" +
+//                                                    "** Missatge generat automàticament. " +
+//                                                    "Si us plau, no respongui a aquest email. **";
+//                                            break;
+//                                        default:
+//                                            mensaje = "Hi!\n\n" +
+//                                                    "This is your new password: \n" +
+//                                                    contrasenyaRandom + "\n\n" +
+//                                                    "If you wish, you may change it through the app, and " +
+//                                                    "once you are logged in, " +
+//                                                    "\"Options\" > \"Modify personal data\". \n" +
+//                                                    "\nThanks.\n\n" +
+//                                                    "** Message generated automatically. " +
+//                                                    "Please, do not reply to this email. **";
+//                                            break;
+//                                    }
+//
+//                                    Call<List<Socio>> sociosCall = socioService.getSocios();
+//                                    sociosCall.clone().enqueue(new Callback<List<Socio>>() {
+//                                        @Override
+//                                        public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
+//                                            ArrayList<Socio> listaSocios = (ArrayList<Socio>)response.body();
+//                                            boolean emailEncontrado = false;
+//
+//                                            if(listaSocios != null || listaSocios.size() > 0) {
+//                                                Iterator ite = listaSocios.iterator();
+//                                                Socio socioIterado = null;
+//
+//                                                while (ite.hasNext() && !emailEncontrado) {
+//                                                    socioIterado = (Socio) ite.next();
+//
+//                                                    if (socioIterado.getEmail().equals(email) &&
+//                                                            socioIterado.isActivo()) {
+//                                                        emailEncontrado = true;
+//                                                    }
+//                                                }
+//
+//                                                if (emailEncontrado){
+//                                                    // Encripta la contraseña que hemos generado automáticamente
+//                                                    //FIXME
+//                                                    // String contrasenyaEncriptada = Utils.encriptarString(contrasenyaRandom);
+//                                                    String contrasenyaEncriptada = Utils.encriptarString("prueba");
+//                                                    Socio socioUpdated = socioIterado;
+//                                                    socioUpdated.setContrasenya(contrasenyaEncriptada);
+//
+//                                                    //Hace una llamada a la API modificando la contraseña del socio
+//                                                    Call<Socio> callUpdateSocio = socioService.updateSocio(socioUpdated.getId(), socioUpdated);
+//                                                    callUpdateSocio.enqueue(new Callback<Socio>() {
+//                                                        @Override
+//                                                        public void onResponse(Call<Socio> call, Response<Socio> response) {
+//                                                            switch(response.code()){
+//                                                                case 200:
+//                                                                case 201:
+//                                                                case 202:
+//                                                                case 203:
+//                                                                case 204:
+//                                                                    //se actualizó el usuario
+//                                                                    break;
+//                                                                default:
+//                                                                    //error al intentar actualizar el socio
+//                                                                    System.out.println(response.code() + " - " + response.message());
+//                                                            }
+//                                                        }
+//
+//                                                        @Override
+//                                                        public void onFailure(Call<Socio> call, Throwable t) {
+//                                                            CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+//                                                        }
+//                                                    });
+//
+//                                                    //FIXME: modificar el mail para cuando se acaben de hacer las pruebas
+//                                                    //Enviamos el mail al usuario con la nueva contraseña
+//                                                    JavaMailAPI javaMailAPI = new JavaMailAPI(LoginActivity.this, "jribgomez@gmail.com", asunto, mensaje);
+//                                                    //JavaMailAPI javaMailAPI = new JavaMailAPI(LoginActivity.this, LoginActivity.this, email, asunto, mensaje);
+//                                                    javaMailAPI.execute();
+//
+//                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),getResources().getString(R.string.se_ha_enviado_correo));
+//                                                }
+//                                                else
+//                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado));
+//                                            }
+//                                        }
+//
+//                                        @Override
+//                                        public void onFailure(Call<List<Socio>> call, Throwable t) {
+//                                            CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
+//                                        }
+//                                    });
+//                                }
+//                            }
+//                        });
+//                AlertDialog dialog = builder.create();
                 dialog.show();
             }
         });

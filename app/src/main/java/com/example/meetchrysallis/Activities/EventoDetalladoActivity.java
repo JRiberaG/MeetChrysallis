@@ -23,15 +23,19 @@ import com.example.meetchrysallis.API.Api;
 import com.example.meetchrysallis.API.ApiService.AsistirService;
 import com.example.meetchrysallis.API.ApiService.ComentarioService;
 import com.example.meetchrysallis.API.ApiService.EventoService;
+import com.example.meetchrysallis.API.ApiService.TimeService;
+import com.example.meetchrysallis.API.ApiWorldTime;
 import com.example.meetchrysallis.Adapters.RecyclerCommentsAdapter;
 import com.example.meetchrysallis.Models.Asistir;
 import com.example.meetchrysallis.Models.Comentario;
 import com.example.meetchrysallis.Models.Evento;
+import com.example.meetchrysallis.Models.Time;
 import com.example.meetchrysallis.Others.CustomToast;
 import com.example.meetchrysallis.Others.DialogProgress;
 import com.example.meetchrysallis.Others.Utils;
 import com.example.meetchrysallis.R;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -254,7 +258,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                                 EditText etComent = view.findViewById(R.id.dialog_coment_etComment);
                                 CheckBox cbMostrarNombre = view.findViewById(R.id.dialog_coment_cbNombre);
                                 String comment = etComent.getText().toString();
-                                boolean mostrarNombre = cbMostrarNombre.isChecked();
+                                final boolean mostrarNombre = cbMostrarNombre.isChecked();
 
                                 int maxCaracteres = 140;
                                 if (comment.length() > maxCaracteres || comment.length() < 5){
@@ -265,41 +269,78 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                                     }
                                 }
                                 else{
-                                    short idEvento = evento.getId();
-                                    int idSocio = MainActivity.socio.getId();
-                                    int id = (evento.getComentarios().size() + 1);
+                                    final short idEvento = evento.getId();
+                                    final int idSocio = MainActivity.socio.getId();
+                                    final int id = (evento.getComentarios().size() + 1);
 
-                                    String body = comment;
-                                    final Comentario c = new Comentario(idEvento, idSocio, id, mostrarNombre, Utils.capturarTimestampActual(), true, body);
+                                    final String body = comment;
 
-                                    Call<Comentario> comentarioCall = comentarioService.insertComentario(c);
-                                    comentarioCall.clone().enqueue(new Callback<Comentario>() {
+                                    // Llamamos a la API WorldTimeAPI para recoger el tiempo real
+                                    TimeService timeService = ApiWorldTime.getApi().create(TimeService.class);
+                                    Call<Time> timeCall = timeService.getTime();
+                                    timeCall.enqueue(new Callback<Time>() {
                                         @Override
-                                        public void onResponse(Call<Comentario> call, Response<Comentario> response) {
-                                            switch(response.code()){
-                                                case 200:
-                                                case 201:
-                                                case 204:
-                                                    CustomToast.mostrarSuccess(EventoDetalladoActivity.this, getLayoutInflater(), getResources().getString(R.string.comentario_anadido));
-                                                    // Añadimos, al comentario recien creado, el socio para que pete al actualizar el recycler
-                                                    c.setSocio(MainActivity.socio);
-                                                    // Añadimos el comentario al evento
-                                                    evento.getComentarios().add(c);
-                                                    refrescarComentarios(tvNoComments, recyclerComments);
-                                                    // Actualizamos, del header, el # de comentarios
-                                                    tvNumComentarios.setText(String.valueOf(evento.getComentarios().size()));
-                                                    break;
-                                                default:
-                                                    CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
-                                                    break;
+                                        public void onResponse(Call<Time> call, Response<Time> response) {
+                                            if (response.code() == 200) {
+                                                Time tiempo = response.body();
+
+                                                // Se recogió bien el DateTime y se envía por parámetro
+                                                if (tiempo != null) {
+                                                    enviarComentario(tiempo.getDatetime(), idEvento, idSocio, id, mostrarNombre, body, tvNoComments, recyclerComments);
+                                                }
+                                                // Hubo un error y el comentario tendrá el DateTIme capturado del móvil
+                                                else {
+                                                    enviarComentario(Utils.capturarTimestampActual(), idEvento, idSocio, id, mostrarNombre, body, tvNoComments, recyclerComments);
+                                                }
+
+
+                                            } else {
+                                                System.err.println(response.code() + " - " + response.message());
+                                                // Hubo un error y el comentario tendrá el DateTIme capturado del móvil
+                                                enviarComentario(Utils.capturarTimestampActual(), idEvento, idSocio, id, mostrarNombre, body, tvNoComments, recyclerComments);
                                             }
                                         }
 
                                         @Override
-                                        public void onFailure(Call<Comentario> call, Throwable t) {
-                                            CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                        public void onFailure(Call<Time> call, Throwable t) {
+                                            // Hubo un error y el comentario tendrá el DateTIme capturado del móvil
+                                            System.err.println(t.toString());
+                                            enviarComentario(Utils.capturarTimestampActual(), idEvento, idSocio, id, mostrarNombre, body, tvNoComments, recyclerComments);
                                         }
                                     });
+
+
+
+//                                    final Comentario c = new Comentario(idEvento, idSocio, id, mostrarNombre, Utils.capturarTimestampActual(), true, body);
+//
+//                                    Call<Comentario> comentarioCall = comentarioService.insertComentario(c);
+//                                    comentarioCall.clone().enqueue(new Callback<Comentario>() {
+//                                        @Override
+//                                        public void onResponse(Call<Comentario> call, Response<Comentario> response) {
+//                                            switch(response.code()){
+//                                                case 200:
+//                                                case 201:
+//                                                case 204:
+//                                                    CustomToast.mostrarSuccess(EventoDetalladoActivity.this, getLayoutInflater(), getResources().getString(R.string.comentario_anadido));
+//                                                    // Añadimos, al comentario recien creado, el socio para que pete al actualizar el recycler
+//                                                    c.setSocio(MainActivity.socio);
+//                                                    // Añadimos el comentario al evento
+//                                                    evento.getComentarios().add(c);
+//                                                    refrescarComentarios(tvNoComments, recyclerComments);
+//                                                    // Actualizamos, del header, el # de comentarios
+//                                                    tvNumComentarios.setText(String.valueOf(evento.getComentarios().size()));
+//                                                    break;
+//                                                default:
+//                                                    CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+//                                                    break;
+//                                            }
+//                                        }
+//
+//                                        @Override
+//                                        public void onFailure(Call<Comentario> call, Throwable t) {
+//                                            CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+//                                        }
+//                                    });
 
                                     dialog.dismiss();
                                 }
@@ -311,6 +352,39 @@ public class EventoDetalladoActivity extends AppCompatActivity {
             }
         });
         //----------------------------------------------------------------
+    }
+
+    private void enviarComentario(Timestamp datetime, short idEvento, int idSocio, int id, boolean mostrarNombre, String body, final TextView tvNoComments, final RecyclerView recyclerComments){
+        final Comentario c = new Comentario(idEvento, idSocio, id, mostrarNombre, datetime, true, body);
+
+        Call<Comentario> comentarioCall = comentarioService.insertComentario(c);
+        comentarioCall.clone().enqueue(new Callback<Comentario>() {
+            @Override
+            public void onResponse(Call<Comentario> call, Response<Comentario> response) {
+                switch(response.code()){
+                    case 200:
+                    case 201:
+                    case 204:
+                        CustomToast.mostrarSuccess(EventoDetalladoActivity.this, getLayoutInflater(), getResources().getString(R.string.comentario_anadido));
+                        // Añadimos, al comentario recien creado, el socio para que pete al actualizar el recycler
+                        c.setSocio(MainActivity.socio);
+                        // Añadimos el comentario al evento
+                        evento.getComentarios().add(c);
+                        refrescarComentarios(tvNoComments, recyclerComments);
+                        // Actualizamos, del header, el # de comentarios
+                        tvNumComentarios.setText(String.valueOf(evento.getComentarios().size()));
+                        break;
+                    default:
+                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                        break;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Comentario> call, Throwable t) {
+                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+            }
+        });
     }
 
     private void configurarBotonMultifuncion() {

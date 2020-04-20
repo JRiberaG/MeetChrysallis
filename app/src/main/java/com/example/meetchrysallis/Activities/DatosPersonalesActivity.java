@@ -542,6 +542,8 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                     }
                                     ad.dismiss();
 
+                                    //FIXME
+                                    //  Arreglar problema con limpiar seleccion, cancelar
                                     final AlertDialog.Builder builder = new AlertDialog.Builder(DatosPersonalesActivity.this);
                                     builder.setTitle(getResources().getString(R.string.indique_comunidades))
                                             .setMultiChoiceItems(arrayComunidades, arrayBooleans, new DialogInterface.OnMultiChoiceClickListener() {
@@ -556,6 +558,14 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                                     dialog.cancel();
                                                 }
                                             })
+//                                            .setNeutralButton(getResources().getString(R.string.limpiar), null)//new DialogInterface.OnClickListener() {
+//                                                @Override
+//                                                public void onClick(DialogInterface dialog, int which) {
+//                                                    for (int i = 0; i < arrayBooleans.length; i++) {
+//                                                        arrayBooleans[i] = false;
+//                                                    }
+//                                                }
+//                                            })
                                             .setPositiveButton(getResources().getString(R.string.aceptar), null);
                                     AlertDialog dialog = builder.create();
                                     dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -565,17 +575,22 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                             btn.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
-                                                    // Limpiamos las CCAA interesadas que hubiese
-                                                    socio.getComunidadesInteres().clear();
-                                                    for (int i = 0; i < arrayBooleans.length; i++){
+                                                    int ccaaSeleccionadas = 0;
+                                                    for (int i = 0; i < arrayBooleans.length; i++) {
                                                         if (arrayBooleans[i]){
-                                                            socio.getComunidadesInteres().add(comunidades.get(i));
+                                                            ccaaSeleccionadas++;
                                                         }
                                                     }
 
-                                                    if  (socio.getComunidadesInteres().size() < 1) {
-                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), getResources().getString(R.string.error_ccaa_minima));
-                                                    } else {
+                                                    if (ccaaSeleccionadas > 0) {
+                                                        // Limpiamos las CCAA interesadas que hubiese
+                                                        socio.getComunidadesInteres().clear();
+                                                        for (int i = 0; i < arrayBooleans.length; i++){
+                                                            if (arrayBooleans[i]){
+                                                                socio.getComunidadesInteres().add(comunidades.get(i));
+                                                            }
+                                                        }
+
                                                         //FIXME
                                                         //  Problema 1 - no se actualiza la tabla de comunidadesInteresadas
                                                         //  Problema 2 - no deja marcar la CCAA que tiene como comunidad del socio
@@ -587,8 +602,8 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                                             public void onResponse(Call<Socio> call, Response<Socio> response) {
                                                                 switch(response.code()) {
                                                                     case 204:
-                                                                        actualizarTvComunidades(tvComunidades);
-                                                                        Toast.makeText(DatosPersonalesActivity.this, "Todo ok, se actualizó la bd", Toast.LENGTH_SHORT).show();
+//                                                                        actualizarTvComunidades(tvComunidades);
+                                                                        Toast.makeText(DatosPersonalesActivity.this, "Todo ok", Toast.LENGTH_SHORT).show();
                                                                         // pendiente --> modificar las CCAA interes del socio en el MainActivity
                                                                         //MainActivity.socio.setComunidadesInteres(socio.getComunidadesInteres());
                                                                         break;
@@ -596,6 +611,7 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                                                         Toast.makeText(DatosPersonalesActivity.this, response.code() + " - " + response.message(), Toast.LENGTH_SHORT).show();
                                                                         break;
                                                                 }
+                                                                actualizarTvComunidades(tvComunidades);
                                                             }
 
                                                             @Override
@@ -604,9 +620,61 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                                             }
                                                         });
                                                         dialog.dismiss();
+                                                    } else {
+                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), getResources().getString(R.string.error_ccaa_minima));
                                                     }
+
+//                                                    // Limpiamos las CCAA interesadas que hubiese
+//                                                    socio.getComunidadesInteres().clear();
+//                                                    for (int i = 0; i < arrayBooleans.length; i++){
+//                                                        if (arrayBooleans[i]){
+//                                                            socio.getComunidadesInteres().add(comunidades.get(i));
+//                                                        }
+//                                                    }
+//
+//                                                    if  (socio.getComunidadesInteres().size() < 1) {
+//                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), getResources().getString(R.string.error_ccaa_minima));
+//                                                    } else {
+//                                                        //FIXME
+//                                                        //  Problema 1 - no se actualiza la tabla de comunidadesInteresadas
+//                                                        //  Problema 2 - no deja marcar la CCAA que tiene como comunidad del socio
+//                                                        //      Es decir, si la CCAA de donde es el socio es de Andalucia, si se marca
+//                                                        //      Andalucia como CCAA interesada, tira error 500
+//                                                        Call<Socio> callUpdateSocio = socioService.updateSocio(MainActivity.socio.getId(), MainActivity.socio);
+//                                                        callUpdateSocio.enqueue(new Callback<Socio>() {
+//                                                            @Override
+//                                                            public void onResponse(Call<Socio> call, Response<Socio> response) {
+//                                                                switch(response.code()) {
+//                                                                    case 204:
+//                                                                        actualizarTvComunidades(tvComunidades);
+//                                                                        Toast.makeText(DatosPersonalesActivity.this, "Todo ok, se actualizó la bd", Toast.LENGTH_SHORT).show();
+//                                                                        // pendiente --> modificar las CCAA interes del socio en el MainActivity
+//                                                                        //MainActivity.socio.setComunidadesInteres(socio.getComunidadesInteres());
+//                                                                        break;
+//                                                                    default:
+//                                                                        Toast.makeText(DatosPersonalesActivity.this, response.code() + " - " + response.message(), Toast.LENGTH_SHORT).show();
+//                                                                        break;
+//                                                                }
+//                                                            }
+//
+//                                                            @Override
+//                                                            public void onFailure(Call<Socio> call, Throwable t) {
+//                                                                Toast.makeText(DatosPersonalesActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+//                                                            }
+//                                                        });
+//                                                        dialog.dismiss();
+//                                                    }
                                                 }
                                             });
+//                                            Button btnNeutral = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
+//                                            btnNeutral.setOnClickListener(new View.OnClickListener() {
+//                                                @Override
+//                                                public void onClick(View v) {
+//                                                    v.
+//                                                    for (int i = 0; i < arrayBooleans.length; i++) {
+//                                                    }
+//                                                }
+//                                            });
                                         }
                                     });
                                     dialog.show();
