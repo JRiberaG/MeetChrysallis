@@ -375,6 +375,7 @@ public class LoginActivity extends AppCompatActivity {
                 .setNegativeButton(getResources().getString(R.string.cancelar), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        inputEditTextEmail.setText("");
                         dialog.cancel();
                     }
                 })
