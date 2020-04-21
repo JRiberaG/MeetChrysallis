@@ -687,4 +687,5 @@
     <color name="md_falcon_A400_25">#40598bae</color>
 
     <color name="md_statusbar_translucent">#4000</color>
+    <color name="hyperlink">#0000EE</color>
 </resources>

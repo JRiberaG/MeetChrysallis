@@ -42,15 +42,9 @@ import retrofit2.Response;
 //https://dribbble.com/shots/6787415-Meet-Up-Login-App-UI-Design
 public class LoginActivity extends AppCompatActivity {
 
-    //private ArrayList<Socio> listaSocios = new ArrayList<>();
-    //private Socio socio = new Socio();
     private Socio newSocio;
 
-    //private File fileCreds  = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.cfg");
-    //private File fileConfig;
-
     private SocioService socioService = Api.getApi().create(SocioService.class);
-    //private Call<List<Socio>> sociosCall = socioService.getSocios();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,12 +117,6 @@ public class LoginActivity extends AppCompatActivity {
                                 //devolverSocioCompleto(fileCreds);
                                 devolverSocioLogueado();
                                 break;
-//                            case 0: //login mal
-//                                fileCreds.delete(); //borramos las credenciales (son erroneas)
-//                                break;
-//                            default: //no hay socios en la bd
-//                                CustomToast.mostrarWarning(LoginActivity.this, getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado));
-//                                break;
                             case 0:
                             default: // socio inactivo o error --> borramos creds, son erroneas
                                 fileCreds.delete();
@@ -159,54 +147,6 @@ public class LoginActivity extends AppCompatActivity {
                 ad.dismiss();
             }
         });
-//        sociosCall.clone().enqueue(new Callback<List<Socio>>() {
-//            @Override
-//            public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
-//                switch(response.code()){
-//                    case 200:
-//                        switch(comprobarSocio(socio, response)){
-//                            case 1: //login ok
-//                                devolverSocioCompleto();
-//                                //devolverSocioLogueado(socio);
-//                                break;
-//                            case 0: //login mal
-//                                fileCreds.delete(); //borramos las credenciales (son erroneas)
-//                                break;
-//                            default: //no hay socios en la bd
-//                                CustomToast.mostrarWarning(LoginActivity.this,getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado));
-//                                break;
-//                        }
-//                        break;
-//                    default:
-//                        CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), response.code() + " - " + response.message());
-//                        break;
-//                }
-//
-//                ad.dismiss();
-//            }
-//            @Override
-//            public void onFailure(Call<List<Socio>> call, Throwable t) {
-//                String fallo = t.toString();
-//                if (fallo.contains("failed to connect"))
-//                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
-//                else
-//                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), t.toString());
-//
-//                fileCreds.delete();
-//
-//                ad.dismiss();
-//            }
-//        });
-    }
-
-    private void leerFicheroCreds() {
-        //este path es '/storage/emulated/0/Android/data/com.example.meetchrysallis/files/cred.json'
-        //fileCreds = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.json");
-//        fileCreds = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.cfg");
-
-        //Intentamos leer el archivo de credenciales y pasamos los datos del archivo a un objeto Socio
-        //socio = Archivador.leerJsonCredenciales(fileCreds.getPath());
-//        socio = Archivador.leerFicheroCreds(fileCreds);
     }
 
     private void configurarBotonAcceder(final File fileCreds, final boolean sesionCerrada) {
@@ -246,9 +186,7 @@ public class LoginActivity extends AppCompatActivity {
                                 case 200:
                                     switch(comprobarSocio(socioTemp, response, false)){
                                         case 1: //login ok
-                                            //devolverSocioCompleto();
                                             //Buscamos el socio al completo
-//                                            Call<Socio> socioIndividualCall = socioService.getSocioByID(newSocio.getId(), true);
                                             Call<Socio> socioIndividualCall = socioService.getSocioByID(newSocio.getId(), true);
                                             socioIndividualCall.clone().enqueue(new Callback<Socio>() {
                                                 @Override
@@ -273,10 +211,7 @@ public class LoginActivity extends AppCompatActivity {
                                                             datosMap.put("2", emailEncriptado);
 
                                                             Archivador.guardarCredenciales(fileCreds, datosMap);
-//                                                            Socio socioAGuardar = newSocio;
-//                                                            socioAGuardar.setEmail(Utils.encriptarString(newSocio.getEmail()));
-//                                                            Archivador.guardarFicheroCreds(fileCreds, socioAGuardar);
-                                                            //devolverSocioLogueado(newSocio);
+
                                                             if (sesionCerrada) {
                                                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                                                 intent.putExtra("socio", newSocio);
@@ -334,33 +269,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
-//    private void devolverSocioCompleto(final File fileCreds) {
-//        Archivador.guardarFicheroCreds(fileCreds, newSocio);
-//        devolverSocioLogueado();
-////
-////        //Buscamos el socio al completo
-////        Call<Socio> socioIndividualCall = socioService.getSocioByID(newSocio.getId(), true);
-////        socioIndividualCall.clone().enqueue(new Callback<Socio>() {
-////            @Override
-////            public void onResponse(Call<Socio> call, Response<Socio> response) {
-////                switch(response.code()){
-////                    case 200:
-////                    case 202:
-////                    case 204:
-////                        newSocio = response.body();
-////                        Archivador.guardarJsonCredenciales(fileCreds, newSocio);
-////                        devolverSocioLogueado(newSocio);
-////                        break;
-////                }
-////            }
-////
-////            @Override
-////            public void onFailure(Call<Socio> call, Throwable t) {
-////                CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
-////            }
-////        });
-//    }
 
     private void configurarRecuperacionContrasenya() {
         final TextView tvOlvide = findViewById(R.id.TextViewOlvide);

@@ -2,18 +2,21 @@ package com.example.meetchrysallis.Activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -87,9 +90,11 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         linearRatingMedio  = findViewById(R.id.eve_det_linearLayout_ratingMedio);
         LinearLayout linearRatear       = findViewById(R.id.eve_det_linearLayout_rating);
         LinearLayout linearComentarios  = findViewById(R.id.eve_det_linearLayoutComentarios);
+        LinearLayout linearUbicacion    = findViewById(R.id.eve_det_linearlayout_Ubicacion);
 
         btnComentar     = findViewById(R.id.eve_det_btnComentar);
         btnMultifuncion = findViewById(R.id.eve_det_btnAsistire);
+        ImageButton ibBack  = findViewById(R.id.eve_det_btnBack);
 
         ratingBar = findViewById(R.id.eve_det_ratingBar);
 
@@ -100,14 +105,16 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         cargarComentariosAPI();
 
         // A los elementos del layout les asignamos los los valores correspondientes del evento
-        asignarDatos(tvTitulo, tvFecha, tvUbicacion, tvFechaLimite, linearRatear, linearRatingMedio, tvNumComentarios, linearFechaLim, tvComunidad, tvValoracionMedia, tvDescripcion);
+        asignarDatos(tvTitulo, tvFecha, tvUbicacion, tvFechaLimite, linearRatear, linearRatingMedio, tvNumComentarios, linearFechaLim, tvComunidad, tvValoracionMedia, tvDescripcion, linearUbicacion, ibBack);
 
         configurarBotonExpand(linearComentarios, recyclerComments, tvNoComments);
         configurarBotonComentar(recyclerComments, tvNoComments);
         configurarBotonMultifuncion();
     }
 
-    private void asignarDatos(TextView tvTitulo, TextView tvFecha, TextView tvUbicacion, TextView tvFechaLimite, LinearLayout linearRatear, LinearLayout linearRatingMedio, TextView tvNumComentarios, LinearLayout linearFechaLim, TextView tvComunidad, TextView tvValoracionMedia, TextView tvDescripcion) {
+    private void asignarDatos(TextView tvTitulo, TextView tvFecha, TextView tvUbicacion, TextView tvFechaLimite, LinearLayout linearRatear, LinearLayout linearRatingMedio, TextView tvNumComentarios, LinearLayout linearFechaLim, TextView tvComunidad, TextView tvValoracionMedia, TextView tvDescripcion, LinearLayout linearUbicacion, ImageButton ibBack) {
+        configurarIbBack(ibBack);
+
         //titulo
         tvTitulo.setText(evento.getTitulo());
 
@@ -116,6 +123,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
 
         //ubicacion
         tvUbicacion.setText(evento.getUbicacion());
+        configurarIntentMaps(tvUbicacion, linearUbicacion);
 
         //fecha límite
         if(evento.getFecha_limite() != null) {
@@ -161,6 +169,30 @@ public class EventoDetalladoActivity extends AppCompatActivity {
 
         //descripción
         tvDescripcion.setText(evento.getDescripcion());
+    }
+
+    private void configurarIbBack(ImageButton ibBack) {
+        ibBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    private void configurarIntentMaps(TextView tvUbicacion, LinearLayout linearUbicacion) {
+        tvUbicacion.setText(Html.fromHtml("<u>" + evento.getUbicacion() + "</u>"));
+        tvUbicacion.setTextColor(getResources().getColor(R.color.hyperlink));
+
+        linearUbicacion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String map = "http://maps.google.com/maps?q=" + evento.getUbicacion().replace(" ", "+");
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(map));
+                startActivity(intent);
+            }
+        });
     }
 
     private void comprobarValoracionMedia() {
@@ -419,7 +451,6 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                             public void onFailure(Call<Asistir> call, Throwable t) {
                                 ad.dismiss();
                                 CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
-
                             }
                         });
 
@@ -582,52 +613,26 @@ public class EventoDetalladoActivity extends AppCompatActivity {
             public void onResponse(Call<Evento> call, Response<Evento> response) {
                 switch(response.code()){
                     case 200:
-                        Toast.makeText(EventoDetalladoActivity.this, "Se actualizó la valoracion media del evento", Toast.LENGTH_SHORT).show();
-                        comprobarValoracionMedia();
+                        System.out.println("Se actualizó la valoracion media del evento");
                         break;
                     case 404:
                         // not found
-                        Toast.makeText(EventoDetalladoActivity.this, "Error: not found", Toast.LENGTH_SHORT).show();
+                        System.out.println("Error: not found");
                     default:
                         CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
                         break;
                 }
+                comprobarValoracionMedia();
                 ad.dismiss();
             }
 
             @Override
             public void onFailure(Call<Evento> call, Throwable t) {
                 ad.dismiss();
-                Toast.makeText(EventoDetalladoActivity.this, "Error: onFailure", Toast.LENGTH_SHORT).show();
+                comprobarValoracionMedia();
+                System.err.println("Error: onFailure: " + t.getMessage());
             }
         });
-//        callEvento.enqueue(new Callback<Evento>() {
-//            @Override
-//            public void onResponse(Call<Evento> call, Response<Evento> response) {
-//                switch(response.code()){
-//                    case 200:
-//                        // ok, se actualizó el evento
-//                        System.out.println("se actualizó el evento");
-//                        comprobarValoracionMedia();
-//                        break;
-//                    case 404:
-//                        // not found
-//                        System.out.println("not found");
-//                    default:
-//                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
-//                        break;
-//                }
-//                ad.dismiss();
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Evento> call, Throwable t) {
-//                System.out.println("error onFailure");
-//                // no se pudo enviar la call y por tanto, no se actualizó la valoración media
-//                //CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
-//                ad.dismiss();
-//            }
-//        });
     }
 
     private void refrescarComentarios(TextView noComments, RecyclerView recycler) {
