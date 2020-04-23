@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -72,6 +73,7 @@ public class MisEventosFragment extends Fragment {
          *          aquellos que tengan esos IDs y guardarlos en una lista aparte para poder trabajar mejor
          *          con ellos.
          */
+
         recogerAsistirs();
     }
 
@@ -171,7 +173,8 @@ public class MisEventosFragment extends Fragment {
     }
 
     private void actualizarRecyclerAsistidos(final ArrayList<Evento> eventosAsistidos) {
-        RecyclerView recycler = view.findViewById(R.id.recyclerEventosAsistidos);
+        RecyclerView recycler   = view.findViewById(R.id.recyclerEventosAsistidos);
+        TextView tvNoAsistidos  = view.findViewById(R.id.fragment_eventos_tvNoAsistidos);
 
         recycler.setLayoutManager(new GridLayoutManager(context,1));
         RecyclerEventoAdapter adapter = new RecyclerEventoAdapter(eventosAsistidos);
@@ -183,10 +186,20 @@ public class MisEventosFragment extends Fragment {
                 llamarApiEvento(eventosAsistidos, position);
             }
         });
+
+        // Comprobamos que tenga algún evento asistindo y lo reflejamos en el layout
+        if (adapter.getItemCount() > 0) {
+            recycler.setVisibility(View.VISIBLE);
+            tvNoAsistidos.setVisibility(View.GONE);
+        } else {
+            recycler.setVisibility(View.GONE);
+            tvNoAsistidos.setVisibility(View.VISIBLE);
+        }
     }
 
     private void actualizarRecyclerPendientes(final ArrayList<Evento> eventosPendientes) {
-        RecyclerView recycler = view.findViewById(R.id.recyclerEventosPendientes);
+        RecyclerView recycler   = view.findViewById(R.id.recyclerEventosPendientes);
+        TextView tvNoPendientes = view.findViewById(R.id.fragment_eventos_tvNoPendientes);
 
         recycler.setLayoutManager(new GridLayoutManager(context,1));
         RecyclerEventoAdapter adapter = new RecyclerEventoAdapter(eventosPendientes);
@@ -198,6 +211,14 @@ public class MisEventosFragment extends Fragment {
                 llamarApiEvento(eventosPendientes, position);
             }
         });
+
+        if (adapter.getItemCount() > 0 ){
+            tvNoPendientes.setVisibility(View.GONE);
+            recycler.setVisibility(View.VISIBLE);
+        } else {
+            tvNoPendientes.setVisibility(View.VISIBLE);
+            recycler.setVisibility(View.GONE);
+        }
     }
 
     private void llamarApiEvento(ArrayList<Evento> listaEventos, int position) {

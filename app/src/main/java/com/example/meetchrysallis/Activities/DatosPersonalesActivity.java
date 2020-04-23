@@ -542,8 +542,6 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                     }
                                     ad.dismiss();
 
-                                    //FIXME
-                                    //  Arreglar problema con limpiar seleccion, cancelar
                                     final AlertDialog.Builder builder = new AlertDialog.Builder(DatosPersonalesActivity.this);
                                     builder.setTitle(getResources().getString(R.string.indique_comunidades))
                                             .setMultiChoiceItems(arrayComunidades, arrayBooleans, new DialogInterface.OnMultiChoiceClickListener() {

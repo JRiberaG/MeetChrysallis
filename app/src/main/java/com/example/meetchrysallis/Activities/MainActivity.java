@@ -32,11 +32,9 @@ import java.io.File;
 //      - Evento Detallado:
 //          - Descargar los documentos que el evento pueda tener
 //      - Buscar una fuente y aplicarla a los textos
-//      - Mejorar el fragment de 'mis eventos': cada vez que se accede se llaman dos veces a la API,
-//          buscar un modo para que sólo llame dos veces (al abrir la app y al refrescar)
-//      - Correguir métodos UPDATE/DELETE de la API (y de las clases Android 'xService')
 //      - Completar traducciones
-//      - Fecha limite evento -> no mostrar evento disponible
+//      - Cambiar icono app
+//      - Crear imagenes para las CCAA y que cada evento tenga la imagen de su CCAA
 
 //Tutorial Navigation Bottom Bar https://www.youtube.com/watch?v=tPV8xA7m-iw
 public class MainActivity extends AppCompatActivity {

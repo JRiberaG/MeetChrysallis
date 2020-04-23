@@ -52,7 +52,7 @@
     <string name="contrasenya_actualizada">Contraseña actualizada</string>
     <string name="indique_comunidades">Marque las Comunidades que le interesen</string>
     <string name="eventos_pendientes">Eventos pendientes</string>
-    <string name="error_no_eventos_pendientes">No tiene ningún evento pendiente aun</string>
+    <string name="error_no_eventos_pendientes">No tiene ningún evento pendiente.</string>
     <string name="error_no_eventos_asistidos">Todavía no ha asistido a ningún evento.</string>
     <string name="eventos_asistidos">Eventos asistidos</string>
     <string name="modificar_datos_personales">Modificar datos personales</string>
@@ -103,4 +103,7 @@
     <string name="datos_de_contacto">Datos de contacto</string>
     <string name="mensaje_enviado">Mensaje enviado</string>
     <string name="no_se_envio_mensaje">No se pudo enviar el mensaje</string>
+    <string name="desea_desapuntarse_evento">¿Desea desapuntarse del evento?</string>
+    <string name="no">No</string>
+    <string name="si_desapuntarse">Sí, desapuntarse</string>
 </resources>

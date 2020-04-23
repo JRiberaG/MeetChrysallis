@@ -103,6 +103,7 @@
     <string name="datos_de_contacto">Dades de contacte</string>
     <string name="mensaje_enviado">Missatge enviat</string>
     <string name="no_se_envio_mensaje">No s\'ha pogut enviar el missatge</string>
+    <string name="no">No</string>
     <string-array name="motivos">
         <item>-- Seleccioni el motiu --</item>
         <item>Dubte</item>

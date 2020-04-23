@@ -74,6 +74,7 @@
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/eve_det_linear_fecha"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -182,6 +183,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/eve_det_linear_comentarios"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
@@ -204,6 +206,10 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/gradient_background"/>
     </LinearLayout>
 
     <ScrollView
@@ -235,16 +241,14 @@
                     android:layout_marginTop="15dp"
                     android:orientation="vertical">
 
-                    <!-- LAYOUT DIVISIORIO -->
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="4dp"
-                        android:background="@color/colorPrimaryDark_light"/>
-                    <LinearLayout
+                        android:id="@+id/eve_det_linear_header_comentarios"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginTop="10dp"
-                        android:gravity="center">
+                        android:gravity="center"
+                        android:background="@drawable/gradient_background_darker"
+                        android:padding="12dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

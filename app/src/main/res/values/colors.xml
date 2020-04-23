@@ -687,5 +687,11 @@
     <color name="md_falcon_A400_25">#40598bae</color>
 
     <color name="md_statusbar_translucent">#4000</color>
+
+    <!-- OTROS COLORES PERSONALIZADOS -->
     <color name="hyperlink">#0000EE</color>
+    <color name="toast_red">#ff3333</color>
+    <color name="toast_blue">#3385ff</color>
+    <color name="toast_green">#5cd65c</color>
+    <color name="toast_yellow">#ffff33</color>
 </resources>

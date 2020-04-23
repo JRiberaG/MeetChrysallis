@@ -87,10 +87,11 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         TextView tvNoComments       = findViewById(R.id.eve_det_tvNoComments);
 
         LinearLayout linearFechaLim     = findViewById(R.id.eve_det_linearlayout_fechaLim);
-        linearRatingMedio  = findViewById(R.id.eve_det_linearLayout_ratingMedio);
+        linearRatingMedio               = findViewById(R.id.eve_det_linearLayout_ratingMedio);
         LinearLayout linearRatear       = findViewById(R.id.eve_det_linearLayout_rating);
         LinearLayout linearComentarios  = findViewById(R.id.eve_det_linearLayoutComentarios);
         LinearLayout linearUbicacion    = findViewById(R.id.eve_det_linearlayout_Ubicacion);
+        LinearLayout linearHeadComments = findViewById(R.id.eve_det_linear_header_comentarios);
 
         btnComentar     = findViewById(R.id.eve_det_btnComentar);
         btnMultifuncion = findViewById(R.id.eve_det_btnAsistire);
@@ -107,7 +108,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         // A los elementos del layout les asignamos los los valores correspondientes del evento
         asignarDatos(tvTitulo, tvFecha, tvUbicacion, tvFechaLimite, linearRatear, linearRatingMedio, tvNumComentarios, linearFechaLim, tvComunidad, tvValoracionMedia, tvDescripcion, linearUbicacion, ibBack);
 
-        configurarBotonExpand(linearComentarios, recyclerComments, tvNoComments);
+        configurarLayoutExpand(linearComentarios, recyclerComments, tvNoComments, linearHeadComments);
         configurarBotonComentar(recyclerComments, tvNoComments);
         configurarBotonMultifuncion();
     }
@@ -240,14 +241,12 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         });
     }
 
-    private void configurarBotonExpand(final LinearLayout linearComentarios, final RecyclerView recyclerComments, final TextView tvNoComments) {
+    private void configurarLayoutExpand(final LinearLayout linearComentarios, final RecyclerView recyclerComments, final TextView tvNoComments, final LinearLayout linearHeadComments) {
         expand = findViewById(R.id.eve_det_ivExpand);
-        expand.setOnClickListener(new View.OnClickListener() {
+        linearHeadComments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(expandido){
-                    //tvNoComments.setVisibility(View.GONE);
-                    //recyclerComments.setVisibility(View.GONE);
                     linearComentarios.setVisibility(View.GONE);
                     expand.setImageResource(R.drawable.ic_expand_more_black_24dp);
                     expandido = false;
@@ -261,6 +260,26 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                 }
             }
         });
+
+//        expand.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(expandido){
+//                    //tvNoComments.setVisibility(View.GONE);
+//                    //recyclerComments.setVisibility(View.GONE);
+//                    linearComentarios.setVisibility(View.GONE);
+//                    expand.setImageResource(R.drawable.ic_expand_more_black_24dp);
+//                    expandido = false;
+//                }
+//                else{
+//                    linearComentarios.setVisibility(View.VISIBLE);
+//                    refrescarComentarios(tvNoComments, recyclerComments);
+//
+//                    expand.setImageResource(R.drawable.ic_expand_less_black_24dp);
+//                    expandido = true;
+//                }
+//            }
+//        });
     }
 
     private void configurarBotonComentar(final RecyclerView recyclerComments, final TextView tvNoComments) {
@@ -425,34 +444,38 @@ public class EventoDetalladoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!eventoPasado) {
                     if(asistido){
-                        DialogProgress dp = new DialogProgress(EventoDetalladoActivity.this);
-                        final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.cargando));
+                        mostrarDialogConfirmacion();
 
-                        // Llamamos a la API para eliminar el asistir
-                        Call<Asistir> asistirCall = asistirService.deleteAsistir(MainActivity.socio.getId(), evento.getId());
-                        asistirCall.clone().enqueue(new Callback<Asistir>() {
-                            @Override
-                            public void onResponse(Call<Asistir> call, Response<Asistir> response) {
-                                switch(response.code()){
-                                    case 200:
-                                    case 201:
-                                        //marcamos como no asistido y cambiamos colores y texto del boton
-                                        asistido = false;
-                                        comprobarAsistido();
-                                        break;
-                                    default:
-                                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
-                                        break;
-                                }
-                                ad.dismiss();
-                            }
-
-                            @Override
-                            public void onFailure(Call<Asistir> call, Throwable t) {
-                                ad.dismiss();
-                                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
-                            }
-                        });
+//                        llamadaApiDesapuntarse();
+//                        DialogProgress dp = new DialogProgress(EventoDetalladoActivity.this);
+//                        final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.cargando));
+//
+//                        // Llamamos a la API para eliminar el asistir
+//                        Call<Asistir> asistirCall = asistirService.deleteAsistir(MainActivity.socio.getId(), evento.getId());
+//                        asistirCall.clone().enqueue(new Callback<Asistir>() {
+//                            @Override
+//                            public void onResponse(Call<Asistir> call, Response<Asistir> response) {
+//                                switch(response.code()){
+//                                    case 200:
+//                                    case 201:
+//                                        mostrarDialogConfirmacion();
+//                                        //marcamos como no asistido y cambiamos colores y texto del boton
+////                                        asistido = false;
+////                                        comprobarAsistido();
+//                                        break;
+//                                    default:
+//                                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+//                                        break;
+//                                }
+//                                ad.dismiss();
+//                            }
+//
+//                            @Override
+//                            public void onFailure(Call<Asistir> call, Throwable t) {
+//                                ad.dismiss();
+//                                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+//                            }
+//                        });
 
                     } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(EventoDetalladoActivity.this);
@@ -583,6 +606,64 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void llamadaApiDesapuntarse() {
+        DialogProgress dp = new DialogProgress(EventoDetalladoActivity.this);
+        final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.cargando));
+
+        // Llamamos a la API para eliminar el asistir
+        Call<Asistir> asistirCall = asistirService.deleteAsistir(MainActivity.socio.getId(), evento.getId());
+        asistirCall.clone().enqueue(new Callback<Asistir>() {
+            @Override
+            public void onResponse(Call<Asistir> call, Response<Asistir> response) {
+                switch(response.code()){
+                    case 200:
+                    case 201:
+
+//                        mostrarDialogConfirmacion();
+                        //marcamos como no asistido y cambiamos colores y texto del boton
+                                        asistido = false;
+                                        comprobarAsistido();
+                        break;
+                    default:
+                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                        break;
+                }
+                ad.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<Asistir> call, Throwable t) {
+                ad.dismiss();
+                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+            }
+        });
+    }
+
+    private void mostrarDialogConfirmacion() {
+//        final boolean[] res = {true};
+        AlertDialog.Builder builder = new AlertDialog.Builder(EventoDetalladoActivity.this);
+        builder.setTitle(getResources().getString(R.string.desea_desapuntarse_evento))
+                .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setPositiveButton(getResources().getString(R.string.si_desapuntarse), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+//                        res[0] = true;
+                        llamadaApiDesapuntarse();
+//                        asistido = false;
+//                        comprobarAsistido();
+                    }
+                })
+                .create()
+                .show();
+
+//        return res[0];
     }
 
     private void modificarValoracionMedia() {

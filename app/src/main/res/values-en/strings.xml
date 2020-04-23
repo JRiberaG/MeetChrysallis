@@ -53,7 +53,7 @@
     <string name="indique_comunidades">Select the Communities that you are interested in</string>
     <string name="eventos_pendientes">Pending events</string>
     <string name="error_no_eventos_pendientes">You have no pending events.</string>
-    <string name="error_no_eventos_asistidos">You have not attended to any event.</string>
+    <string name="error_no_eventos_asistidos">You have not attended to any event yet.</string>
     <string name="eventos_asistidos">Events attended</string>
     <string name="modificar_datos_personales">Modify your personal data</string>
     <string name="cerrar_sesion">Logout</string>
@@ -103,6 +103,7 @@
     <string name="datos_de_contacto">Contact information</string>
     <string name="mensaje_enviado">Message sent</string>
     <string name="no_se_envio_mensaje">The message could not be sent</string>
+    <string name="no">No</string>
     <string-array name="motivos">
         <item>-- Select a motive --</item>
         <item>Question</item>

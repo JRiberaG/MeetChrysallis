@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:errorEnabled="true"
-            android:hint="@string/indique_su_email"
+            android:hint="@string/email"
             app:helperTextEnabled="true"
             app:startIconDrawable="@drawable/ic_email_black_24dp">
             <com.google.android.material.textfield.TextInputEditText
