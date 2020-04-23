@@ -226,7 +226,6 @@ public class OpcionesFragment extends Fragment {
             public void onClick(View v) {
                 //TODO:
                 //  Pendiente de programar
-                //CustomToast.mostrarInfo(context, getLayoutInflater(), "Configurar las notificaciones");
             }
         });
     }
@@ -258,7 +257,7 @@ public class OpcionesFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //File fileCreds = new File(context.getExternalFilesDir(null).getPath() + File.separator + "cred.json");
-                File fileCreds = Archivador.recuperarFicheroCreds(context);
+                File fileCreds = Archivador.recuperarFicheroCredenciales(context);
 
                 try{
                     fileCreds.delete();

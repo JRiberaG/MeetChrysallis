@@ -731,11 +731,8 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                 switch(response.code()){
                     case 200:
                     case 201:
-
-//                        mostrarDialogConfirmacion();
-                        //marcamos como no asistido y cambiamos colores y texto del boton
-                                        asistido = false;
-                                        comprobarAsistido();
+                            asistido = false;
+                            comprobarAsistido();
                         break;
                     default:
                         CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
@@ -788,17 +785,47 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         result = valoracionTotal / personas;
         evento.setValoracionMedia(result);
 
-
-
         DialogProgress dp = new DialogProgress(EventoDetalladoActivity.this);
         final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.cargando));
 
-        // llamada a la api para actualizar evento
-        EventoService eventoService = Api.getApi().create(EventoService.class);
+//        // llamada a la api para actualizar evento
+//        EventoService eventoService = Api.getApi().create(EventoService.class);
 
         //FIXME
         //  Funciona, cumple su cometido pero se va por el onFailure
         Evento e = new Evento(evento.getId(), evento.getTitulo(), evento.getFecha(), evento.getUbicacion(), evento.getDescripcion(), evento.getFecha_limite(), evento.getIdComunidad(), evento.getIdAdmin(), evento.getValoracionMedia());
+        actualizarEvento(e, ad);
+//        Call<Evento> callEvento = eventoService.updateEvento(e.getId(), e);
+//        callEvento.enqueue(new Callback<Evento>() {
+//            @Override
+//            public void onResponse(Call<Evento> call, Response<Evento> response) {
+//                switch(response.code()){
+//                    case 200:
+//                        System.out.println("Se actualizó la valoracion media del evento");
+//                        break;
+//                    case 404:
+//                        // not found
+//                        System.out.println("Error: not found");
+//                    default:
+//                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
+//                        break;
+//                }
+//                comprobarValoracionMedia();
+//                ad.dismiss();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Evento> call, Throwable t) {
+//                ad.dismiss();
+//                comprobarValoracionMedia();
+//                System.err.println("Error: onFailure: " + t.getMessage());
+//            }
+//        });
+    }
+
+    private void actualizarEvento(Evento e, final AlertDialog ad) {
+        // llamada a la api para actualizar evento
+        EventoService eventoService = Api.getApi().create(EventoService.class);
         Call<Evento> callEvento = eventoService.updateEvento(e.getId(), e);
         callEvento.enqueue(new Callback<Evento>() {
             @Override

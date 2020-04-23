@@ -31,10 +31,9 @@ import java.io.File;
 //  Pendiente de hacer:
 //      - Evento Detallado:
 //          - Descargar los documentos que el evento pueda tener
-//      - Buscar una fuente y aplicarla a los textos
 //      - Completar traducciones
-//      - Cambiar icono app
-//      - Poner logo chrysallis en Login
+//      - Notificaciones
+//      - Arreglar error ComunidadeInteres
 
 //Tutorial Navigation Bottom Bar https://www.youtube.com/watch?v=tPV8xA7m-iw
 public class MainActivity extends AppCompatActivity {

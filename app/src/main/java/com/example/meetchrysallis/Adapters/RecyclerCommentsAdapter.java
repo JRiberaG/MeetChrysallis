@@ -57,18 +57,12 @@ public class RecyclerCommentsAdapter extends RecyclerView.Adapter<RecyclerCommen
         public void asignarDatos(Comentario coment) {
             if(coment.isMostrarNombre()){
                 tvNombre.setText(coment.getSocio().getNombre() + " " + coment.getSocio().getApellidos());
-//                tvNombre.setTypeface(tvNombre.getTypeface(), Typeface.BOLD);
                 tvNombre.setVisibility(View.VISIBLE);
                 tvAnonimo.setVisibility(View.GONE);
             }
             else{
                 tvNombre.setVisibility(View.GONE);
                 tvAnonimo.setVisibility(View.VISIBLE);
-//                tvNombre.setText(context.getResources().getString(R.string.anonimo));
-////                tvNombre.setTypeface(tvNombre.getTypeface(), Typeface.ITALIC);
-////                tvNombre.setTypeface(Typeface.createFromAsset(context.getAssets(), "font/raleway_lightitalic.ttf"));
-//                Typeface typeFace = Typeface.createFromAsset(context.getAssets(), "font/raleway_lightitalic.ttf");
-//                tvNombre.setTypeface(typeFace);
             }
 
             tvFecha.setText(Utils.formateadorFechas(coment.getFecha()));
