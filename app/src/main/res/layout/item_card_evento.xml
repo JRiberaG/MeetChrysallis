@@ -37,12 +37,12 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/cat"/>
+                    android:src="@drawable/bandera_andalucia_rounded"/>
             </LinearLayout>
 
             <!-- LINEAR DATOS EVENTO -->
             <LinearLayout
-                android:layout_weight="4"
+                android:layout_weight="5"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical">

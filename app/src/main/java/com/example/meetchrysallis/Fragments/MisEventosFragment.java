@@ -103,7 +103,7 @@ public class MisEventosFragment extends Fragment {
                         // No se encontró ningún asistir
                         break;
                     default:
-                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
                 ad.dismiss();
@@ -111,7 +111,7 @@ public class MisEventosFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ArrayList<Asistir>> call, Throwable t) {
-                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                 ad.dismiss();
             }
         });
@@ -160,14 +160,14 @@ public class MisEventosFragment extends Fragment {
                         // No se encontraron eventos (???)
                         break;
                     default:
-                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
             }
 
             @Override
             public void onFailure(Call<List<Evento>> call, Throwable t) {
-                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
             }
         });
     }
@@ -177,7 +177,7 @@ public class MisEventosFragment extends Fragment {
         TextView tvNoAsistidos  = view.findViewById(R.id.fragment_eventos_tvNoAsistidos);
 
         recycler.setLayoutManager(new GridLayoutManager(context,1));
-        RecyclerEventoAdapter adapter = new RecyclerEventoAdapter(eventosAsistidos);
+        RecyclerEventoAdapter adapter = new RecyclerEventoAdapter(eventosAsistidos, context);
         recycler.setAdapter(adapter);
 
         adapter.setOnItemClickListener(new RecyclerEventoAdapter.OnItemClickListener() {
@@ -202,7 +202,7 @@ public class MisEventosFragment extends Fragment {
         TextView tvNoPendientes = view.findViewById(R.id.fragment_eventos_tvNoPendientes);
 
         recycler.setLayoutManager(new GridLayoutManager(context,1));
-        RecyclerEventoAdapter adapter = new RecyclerEventoAdapter(eventosPendientes);
+        RecyclerEventoAdapter adapter = new RecyclerEventoAdapter(eventosPendientes, context);
         recycler.setAdapter(adapter);
 
         adapter.setOnItemClickListener(new RecyclerEventoAdapter.OnItemClickListener() {
@@ -242,7 +242,7 @@ public class MisEventosFragment extends Fragment {
                         startActivity(intent);
                         break;
                     default:
-                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
 
@@ -251,7 +251,7 @@ public class MisEventosFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Evento> call, Throwable t) {
-                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                 ad.dismiss();
             }
         });

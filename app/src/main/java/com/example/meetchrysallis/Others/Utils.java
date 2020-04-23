@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
+import android.widget.ImageView;
+
+import com.example.meetchrysallis.R;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -103,5 +106,67 @@ public class Utils {
         Configuration conf = res.getConfiguration();
         conf.setLocale(myLocale);
         res.updateConfiguration(conf, dm);
+    }
+
+    public static void asignarImagenComunidad(Context ctx, ImageView iv, byte idComunidad) {
+        switch(idComunidad){
+            case 1:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_andalucia_rounded));
+                break;
+            case 2:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_aragon_rounded));
+                break;
+            case 3:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_islas_canarias_rounded));
+                break;
+            case 4:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_cantabria_rounded));
+                break;
+            case 5:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_castilla_leon_rounded));
+                break;
+            case 6:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_castilla_mancha_rounded));
+                break;
+            case 7:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_catalunya_rounded));
+                break;
+            case 8:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_ceuta_rounded));
+                break;
+            case 9:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_melilla_rounded));
+                break;
+            case 10:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_comunidad_madrid_rounded));
+                break;
+            case 11:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_navarra_rounded));
+                break;
+            case 12:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_comunitat_valenciana_rounded));
+                break;
+            case 13:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_extremadura_rounded));
+                break;
+            case 14:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_galicia_rounded));
+                break;
+            case 15:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_islas_baleares_rounded));
+                break;
+            case 16:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_la_rioja_rounded));
+                break;
+            case 17:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_pais_vasco_rounded));
+                break;
+            case 18:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_asturias_rounded));
+                break;
+            case 19:
+                iv.setImageDrawable(ctx.getResources().getDrawable(R.drawable.bandera_region_murcia_rounded));
+                break;
+        }
     }
 }

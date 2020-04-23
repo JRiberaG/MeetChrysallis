@@ -185,11 +185,11 @@ public class OpcionesFragment extends Fragment {
 
                                 Thread.sleep(800);
 
-                                CustomToast.mostrarSuccess(context, getLayoutInflater(), getResources().getString(R.string.mensaje_enviado));
+                                CustomToast.mostrarSuccess(context, getLayoutInflater(), getResources().getString(R.string.mensaje_enviado), false);
 
                             } catch (Exception e) {
                                 System.err.println(e.toString());
-                                CustomToast.mostrarError(context, getLayoutInflater(), getResources().getString(R.string.no_se_envio_mensaje));
+                                CustomToast.mostrarError(context, getLayoutInflater(), getResources().getString(R.string.no_se_envio_mensaje), true);
                             }
                             dialog.dismiss();
                         }

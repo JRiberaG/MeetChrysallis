@@ -127,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
                         fileCreds.delete();
                         break;
                     default:
-                        CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
 
@@ -138,9 +138,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Call<Socio> call, Throwable t) {
                 String fallo = t.toString();
                 if (fallo.contains("failed to connect"))
-                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
+                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db), true);
                 else
-                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), t.toString());
+                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), t.toString(), true);
 
                 fileCreds.delete();
 
@@ -228,7 +228,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                                 @Override
                                                 public void onFailure(Call<Socio> call, Throwable t) {
-                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db), true);
                                                 }
                                             });
                                             break;
@@ -236,22 +236,22 @@ public class LoginActivity extends AppCompatActivity {
                                             edCorreo.setText("");
                                             edPassword.setText("");
                                             edCorreo.requestFocus();
-                                            CustomToast.mostrarError(LoginActivity.this,getLayoutInflater(), getString(R.string.loginincorrecto));
+                                            CustomToast.mostrarError(LoginActivity.this,getLayoutInflater(), getString(R.string.loginincorrecto), false);
                                             break;
                                         default: //no hay socios en la bd
-                                            CustomToast.mostrarWarning(LoginActivity.this,getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado));
+                                            CustomToast.mostrarWarning(LoginActivity.this,getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado), true);
                                             break;
                                     }
                                     break;
                                 default:
-                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), response.code() + " - " + response.message());
+                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), response.code() + " - " + response.message(), true);
                                     break;
                             }
                             ad.dismiss();
                         }
                         @Override
                         public void onFailure(Call<List<Socio>> call, Throwable t) {
-                            CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
+                            CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db), true);
                             ad.dismiss();
                         }
                     });
@@ -392,7 +392,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                                 @Override
                                                 public void onFailure(Call<Socio> call, Throwable t) {
-                                                    CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                    CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                                                 }
                                             });
 
@@ -402,15 +402,15 @@ public class LoginActivity extends AppCompatActivity {
                                             //JavaMailAPI javaMailAPI = new JavaMailAPI(LoginActivity.this, LoginActivity.this, email, asunto, mensaje);
                                             javaMailAPI.execute();
 
-                                            CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getResources().getString(R.string.se_ha_enviado_correo));
+                                            CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getResources().getString(R.string.se_ha_enviado_correo), true);
                                         } else
-                                            CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado));
+                                            CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado), true);
                                     }
                                 }
 
                                 @Override
                                 public void onFailure(Call<List<Socio>> call, Throwable t) {
-                                    CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                    CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                                 }
                             });
 

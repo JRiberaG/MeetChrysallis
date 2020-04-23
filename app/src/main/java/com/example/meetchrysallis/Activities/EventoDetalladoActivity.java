@@ -1,6 +1,7 @@
 package com.example.meetchrysallis.Activities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -48,6 +49,7 @@ import retrofit2.Response;
 
 public class EventoDetalladoActivity extends AppCompatActivity {
 
+    private Context ctx = EventoDetalladoActivity.this;
     private Button btnMultifuncion;
     private Button btnComentar;
     private ImageView expand;
@@ -76,22 +78,27 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         evento = (Evento)getIntent().getExtras().getSerializable("evento");
 
         // --------------- ELEMENTOS DEL LAYOUT ---------------
+        ImageView ivBandera        = findViewById(R.id.eve_det_ivImagen);
+
         TextView tvTitulo           = findViewById(R.id.eve_det_tvNombre);
         TextView tvFecha            = findViewById(R.id.eve_det_tvFecha);
         TextView tvUbicacion        = findViewById(R.id.eve_det_tvUbicacion);
         TextView tvFechaLimite      = findViewById(R.id.eve_det_tvFechaLimite);
         TextView tvComunidad        = findViewById(R.id.eve_det_tvComunidad);
-        tvValoracionMedia  = findViewById(R.id.eve_det_tvStars);
+        tvValoracionMedia           = findViewById(R.id.eve_det_tvStars);
         tvNumComentarios            = findViewById(R.id.eve_det_tvNumComments);
         TextView tvDescripcion      = findViewById(R.id.eve_det_tvDescripcion);
         TextView tvNoComments       = findViewById(R.id.eve_det_tvNoComments);
 
-        LinearLayout linearFechaLim     = findViewById(R.id.eve_det_linearlayout_fechaLim);
-        linearRatingMedio               = findViewById(R.id.eve_det_linearLayout_ratingMedio);
-        LinearLayout linearRatear       = findViewById(R.id.eve_det_linearLayout_rating);
-        LinearLayout linearComentarios  = findViewById(R.id.eve_det_linearLayoutComentarios);
-        LinearLayout linearUbicacion    = findViewById(R.id.eve_det_linearlayout_Ubicacion);
-        LinearLayout linearHeadComments = findViewById(R.id.eve_det_linear_header_comentarios);
+        LinearLayout linearFecha            = findViewById(R.id.eve_det_linear_fecha);
+        LinearLayout linearUbicacion        = findViewById(R.id.eve_det_linear_ubicacion);
+        LinearLayout linearFechaLim         = findViewById(R.id.eve_det_linear_fechaLim);
+        LinearLayout linearComunidad        = findViewById(R.id.eve_det_linear_comunidad);
+        linearRatingMedio                   = findViewById(R.id.eve_det_linear_ratingMedio);
+        LinearLayout linearNumComentarios   = findViewById(R.id.eve_det_linear_numComentarios);
+        LinearLayout linearHeadComments     = findViewById(R.id.eve_det_linear_header_comentarios);
+        LinearLayout linearComentarios      = findViewById(R.id.eve_det_linearLayoutComentarios);
+        LinearLayout linearRatear           = findViewById(R.id.eve_det_linearLayout_rating);
 
         btnComentar     = findViewById(R.id.eve_det_btnComentar);
         btnMultifuncion = findViewById(R.id.eve_det_btnAsistire);
@@ -106,15 +113,57 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         cargarComentariosAPI();
 
         // A los elementos del layout les asignamos los los valores correspondientes del evento
-        asignarDatos(tvTitulo, tvFecha, tvUbicacion, tvFechaLimite, linearRatear, linearRatingMedio, tvNumComentarios, linearFechaLim, tvComunidad, tvValoracionMedia, tvDescripcion, linearUbicacion, ibBack);
+        asignarDatos(ivBandera, tvTitulo, tvFecha, tvUbicacion, tvFechaLimite, linearRatear, linearRatingMedio, tvNumComentarios, linearFechaLim, tvComunidad, tvValoracionMedia, tvDescripcion, linearUbicacion, ibBack);
+
+        configurarListenersLayouts(linearFecha, linearFechaLim, linearComunidad, linearNumComentarios);
 
         configurarLayoutExpand(linearComentarios, recyclerComments, tvNoComments, linearHeadComments);
         configurarBotonComentar(recyclerComments, tvNoComments);
         configurarBotonMultifuncion();
     }
 
-    private void asignarDatos(TextView tvTitulo, TextView tvFecha, TextView tvUbicacion, TextView tvFechaLimite, LinearLayout linearRatear, LinearLayout linearRatingMedio, TextView tvNumComentarios, LinearLayout linearFechaLim, TextView tvComunidad, TextView tvValoracionMedia, TextView tvDescripcion, LinearLayout linearUbicacion, ImageButton ibBack) {
+    private void configurarListenersLayouts(LinearLayout linearFecha, LinearLayout linearFechaLim, LinearLayout linearComunidad, LinearLayout linearNumComentarios) {
+        linearFecha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.info_fecha), false);
+            }
+        });
+
+        linearFechaLim.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.info_fechaLim), false);
+            }
+        });
+
+        linearComunidad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.info_comunidad), false);
+            }
+        });
+
+        linearRatingMedio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.info_ratingMedio), false);
+            }
+        });
+
+        linearNumComentarios.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.info_numComents), false);
+            }
+        });
+    }
+
+    private void asignarDatos(ImageView ivBandera, TextView tvTitulo, TextView tvFecha, TextView tvUbicacion, TextView tvFechaLimite, LinearLayout linearRatear, LinearLayout linearRatingMedio, TextView tvNumComentarios, LinearLayout linearFechaLim, TextView tvComunidad, TextView tvValoracionMedia, TextView tvDescripcion, LinearLayout linearUbicacion, ImageButton ibBack) {
         configurarIbBack(ibBack);
+
+//        asignarBandera(imgBandera);
+        Utils.asignarImagenComunidad(ctx, ivBandera, evento.getIdComunidad());
 
         //titulo
         tvTitulo.setText(evento.getTitulo());
@@ -172,6 +221,68 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         tvDescripcion.setText(evento.getDescripcion());
     }
 
+//    private void asignarBandera(ImageView imgBandera) {
+//        switch(evento.getIdComunidad()){
+//            case 1:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_andalucia_rounded));
+//                break;
+//            case 2:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_aragon_rounded));
+//                break;
+//            case 3:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_islas_canarias_rounded));
+//                break;
+//            case 4:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_cantabria_rounded));
+//                break;
+//            case 5:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_castilla_leon_rounded));
+//                break;
+//            case 6:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_castilla_mancha_rounded));
+//                break;
+//            case 7:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_catalunya_rounded));
+//                break;
+//            case 8:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_ceuta_rounded));
+//                break;
+//            case 9:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_melilla_rounded));
+//                break;
+//            case 10:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_comunidad_madrid_rounded));
+//                break;
+//            case 11:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_navarra_rounded));
+//                break;
+//            case 12:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_comunitat_valenciana_rounded));
+//                break;
+//            case 13:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_extremadura_rounded));
+//                break;
+//            case 14:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_galicia_rounded));
+//                break;
+//            case 15:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_islas_baleares_rounded));
+//                break;
+//            case 16:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_la_rioja_rounded));
+//                break;
+//            case 17:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_pais_vasco_rounded));
+//                break;
+//            case 18:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_asturias_rounded));
+//                break;
+//            case 19:
+//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_region_murcia_rounded));
+//                break;
+//        }
+//    }
+
     private void configurarIbBack(ImageButton ibBack) {
         ibBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,7 +338,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                             tvNumComentarios.setText("0");
                         break;
                     default:
-                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
                 ad.dismiss();
@@ -235,7 +346,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ArrayList<Comentario>> call, Throwable t) {
-                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                 ad.dismiss();
             }
         });
@@ -314,9 +425,9 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                                 int maxCaracteres = 140;
                                 if (comment.length() > maxCaracteres || comment.length() < 5){
                                     if (comment.length() > maxCaracteres){
-                                        CustomToast.mostrarWarning(EventoDetalladoActivity.this,getLayoutInflater(),getResources().getString(R.string.error_comentario_excede));
+                                        CustomToast.mostrarWarning(EventoDetalladoActivity.this,getLayoutInflater(),getResources().getString(R.string.error_comentario_excede), true);
                                     } else {
-                                        CustomToast.mostrarWarning(EventoDetalladoActivity.this,getLayoutInflater(),getResources().getString(R.string.error_comentario_demasiado_corto));
+                                        CustomToast.mostrarWarning(EventoDetalladoActivity.this,getLayoutInflater(),getResources().getString(R.string.error_comentario_demasiado_corto), true);
                                     }
                                 }
                                 else{
@@ -416,7 +527,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                     case 200:
                     case 201:
                     case 204:
-                        CustomToast.mostrarSuccess(EventoDetalladoActivity.this, getLayoutInflater(), getResources().getString(R.string.comentario_anadido));
+                        CustomToast.mostrarSuccess(EventoDetalladoActivity.this, getLayoutInflater(), getResources().getString(R.string.comentario_anadido), false);
                         // Añadimos, al comentario recien creado, el socio para que pete al actualizar el recycler
                         c.setSocio(MainActivity.socio);
                         // Añadimos el comentario al evento
@@ -426,14 +537,14 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                         tvNumComentarios.setText(String.valueOf(evento.getComentarios().size()));
                         break;
                     default:
-                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
             }
 
             @Override
             public void onFailure(Call<Comentario> call, Throwable t) {
-                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db), true);
             }
         });
     }
@@ -528,14 +639,14 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                                                             comprobarAsistido();
                                                             break;
                                                         default:
-                                                            CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                                                            CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
                                                             break;
                                                     }
                                                 }
 
                                                 @Override
                                                 public void onFailure(Call<Asistir> call, Throwable t) {
-                                                    CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                    CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                                                 }
                                             });
                                             dialog.dismiss();
@@ -580,21 +691,21 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                                                     switch(response.code()){
                                                         case 204:
                                                             valorado = true;
-                                                            CustomToast.mostrarSuccess(EventoDetalladoActivity.this, getLayoutInflater(), getResources().getString(R.string.valoracion_enviada));
+                                                            CustomToast.mostrarSuccess(EventoDetalladoActivity.this, getLayoutInflater(), getResources().getString(R.string.valoracion_enviada), false);
                                                             ratingBar.setEnabled(false);
                                                             comprobarValoracion(asistir);
 
                                                             modificarValoracionMedia();
                                                             break;
                                                         default:
-                                                            CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                                                            CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
                                                             break;
                                                     }
                                                 }
 
                                                 @Override
                                                 public void onFailure(Call<Asistir> call, Throwable t) {
-                                                    CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                    CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                                                 }
                                             });
                                         }
@@ -627,7 +738,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                                         comprobarAsistido();
                         break;
                     default:
-                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
                 ad.dismiss();
@@ -636,7 +747,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Asistir> call, Throwable t) {
                 ad.dismiss();
-                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db), true);
             }
         });
     }
@@ -700,7 +811,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                         // not found
                         System.out.println("Error: not found");
                     default:
-                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
                 comprobarValoracionMedia();

@@ -236,13 +236,13 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                                                     case 202:
                                                                     case 203:
                                                                     case 204: //se actualizó con éxito el usuario
-                                                                        CustomToast.mostrarSuccess(context, getLayoutInflater(), getResources().getString(R.string.email_actualizado));
+                                                                        CustomToast.mostrarSuccess(context, getLayoutInflater(), getResources().getString(R.string.email_actualizado), false);
                                                                         // Cambiamos el email del socio de la MainActivity y actualizamos el campo Email del layout
                                                                         MainActivity.socio.setEmail(nuevo);
                                                                         actualizarTvEmail(tvCorreo);
                                                                         break;
                                                                     default: //error al intentar actualizar el socio
-                                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                                                                         break;
                                                                 }
                                                                 // Cerramos tanto el dialog de 'Cargando..' como el de 'Modificar Email'
@@ -253,20 +253,20 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                                             @Override
                                                             public void onFailure(Call<Socio> call, Throwable t) {
                                                                 alertDialog.dismiss();
-                                                                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                                                                 dialog.dismiss();
                                                             }
                                                         });
                                                     }
                                                     break;
                                                 default:
-                                                    CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                                                    CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                                                     break;
                                             }
                                         }
                                         @Override
                                         public void onFailure(Call<Socio> call, Throwable t) {
-                                            CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                            CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                                         }
                                     });
                                 }
@@ -408,11 +408,11 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                                     case 202:
                                                     case 203:
                                                     case 204: //se actualizó con éxito el usuario
-                                                        CustomToast.mostrarSuccess(context, getLayoutInflater(), getResources().getString(R.string.contrasenya_actualizada));
+                                                        CustomToast.mostrarSuccess(context, getLayoutInflater(), getResources().getString(R.string.contrasenya_actualizada), false);
                                                         MainActivity.socio.setContrasenya(contrasenyaEncriptada);
                                                         break;
                                                     default:
-                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                                                         break;
                                                 }
                                                 alertDialog.dismiss();
@@ -423,7 +423,7 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                             public void onFailure(Call<Socio> call, Throwable t) {
                                                 alertDialog.dismiss();
                                                 dialog.dismiss();
-                                                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                                             }
                                         });
 
@@ -452,11 +452,11 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                                                         case 202:
                                                                         case 203:
                                                                         case 204: //se actualizó con éxito el usuario
-                                                                            CustomToast.mostrarSuccess(context, getLayoutInflater(), getResources().getString(R.string.contrasenya_actualizada));
+                                                                            CustomToast.mostrarSuccess(context, getLayoutInflater(), getResources().getString(R.string.contrasenya_actualizada), false);
                                                                             MainActivity.socio.setContrasenya(contrasenyaEncriptada);
                                                                             break;
                                                                         default:
-                                                                            CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                                                                            CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                                                                             break;
                                                                     }
                                                                     alertDialog.dismiss();
@@ -467,19 +467,19 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                                                 public void onFailure(Call<Socio> call, Throwable t) {
                                                                     alertDialog.dismiss();
                                                                     dialog.dismiss();
-                                                                    CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                                    CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                                                                 }
                                                             });
                                                         }
                                                         break;
                                                     default:
-                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                                                         break;
                                                 }
                                             }
                                             @Override
                                             public void onFailure(Call<Socio> call, Throwable t) {
-                                                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                                             }
                                         });
                                     }
@@ -619,7 +619,7 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                                         });
                                                         dialog.dismiss();
                                                     } else {
-                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), getResources().getString(R.string.error_ccaa_minima));
+                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), getResources().getString(R.string.error_ccaa_minima), true);
                                                     }
 
 //                                                    // Limpiamos las CCAA interesadas que hubiese
@@ -724,7 +724,7 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                 }
                                 break;
                             default:
-                                CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                                CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                                 ad.dismiss();
                                 break;
                         }
@@ -732,7 +732,7 @@ public class DatosPersonalesActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<ArrayList<Comunidad>> call, Throwable t) {
-                        CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                        CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                     }
                 });
             }

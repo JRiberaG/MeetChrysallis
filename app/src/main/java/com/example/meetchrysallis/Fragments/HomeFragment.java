@@ -265,13 +265,13 @@ public class HomeFragment extends Fragment {
                         }
                         break;
                     default:
-                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
             }
             @Override
             public void onFailure(Call<List<Evento>> call, Throwable t) {
-                CustomToast.mostrarInfo(context, getLayoutInflater(), t.toString());
+                CustomToast.mostrarInfo(context, getLayoutInflater(), t.toString(), true);
             }
         });
 
@@ -303,7 +303,7 @@ public class HomeFragment extends Fragment {
 //                                actualizarAdapter();
                                 break;
                             default:
-                                CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                                CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                                 break;
                         }
 
@@ -312,7 +312,7 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<Evento> call, Throwable t) {
-                        CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                        CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                         ad.dismiss();
                     }
                 });
@@ -340,14 +340,14 @@ public class HomeFragment extends Fragment {
 
                                 break;
                             default:
-                                CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                                CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                                 break;
                         }
                     }
 
                     @Override
                     public void onFailure(Call<List<Evento>> call, Throwable t) {
-                        CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                        CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                     }
                 });
             }
@@ -356,7 +356,7 @@ public class HomeFragment extends Fragment {
 
     private void actualizarAdapter() {
         recycler.setLayoutManager(new GridLayoutManager(context,1));
-        adapter = new RecyclerEventoAdapter(eventosDelSocio);
+        adapter = new RecyclerEventoAdapter(eventosDelSocio, context);
         recycler.setAdapter(adapter);
     }
 

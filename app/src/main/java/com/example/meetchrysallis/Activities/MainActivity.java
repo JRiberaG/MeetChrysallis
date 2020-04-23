@@ -35,16 +35,15 @@ import java.io.File;
 //      - Completar traducciones
 //      - Cambiar icono app
 //      - Crear imagenes para las CCAA y que cada evento tenga la imagen de su CCAA
+//      - Poner logo chrysallis en Login
 
 //Tutorial Navigation Bottom Bar https://www.youtube.com/watch?v=tPV8xA7m-iw
 public class MainActivity extends AppCompatActivity {
 
     public static Socio socio = null;
     public static String idioma = "";
-    public static boolean idiomaCambiado = false;
 
     private static BottomNavigationView botNavBar;
-    //private static ArrayList<Fragment> fragments = new ArrayList<>();
 
     private long backPressedTime;
 
