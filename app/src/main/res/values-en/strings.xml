@@ -104,6 +104,13 @@
     <string name="mensaje_enviado">Message sent</string>
     <string name="no_se_envio_mensaje">The message could not be sent</string>
     <string name="no">No</string>
+    <string name="desea_desapuntarse_evento">Do you wish to unregister from the event?</string>
+    <string name="si_desapuntarse">Yes, unregister</string>
+    <string name="info_fecha">Date when the event will happen</string>
+    <string name="info_fechaLim">Deadline to confirm your participation</string>
+    <string name="info_comunidad">Autonomous Community where the event will take place</string>
+    <string name="info_numComents">Number of comments that the event has</string>
+    <string name="info_ratingMedio">Average rating of the event</string>
     <string-array name="motivos">
         <item>-- Select a motive --</item>
         <item>Question</item>

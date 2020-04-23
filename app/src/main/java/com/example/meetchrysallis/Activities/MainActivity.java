@@ -34,7 +34,6 @@ import java.io.File;
 //      - Buscar una fuente y aplicarla a los textos
 //      - Completar traducciones
 //      - Cambiar icono app
-//      - Crear imagenes para las CCAA y que cada evento tenga la imagen de su CCAA
 //      - Poner logo chrysallis en Login
 
 //Tutorial Navigation Bottom Bar https://www.youtube.com/watch?v=tPV8xA7m-iw

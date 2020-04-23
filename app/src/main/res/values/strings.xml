@@ -103,8 +103,8 @@
     <string name="datos_de_contacto">Datos de contacto</string>
     <string name="mensaje_enviado">Mensaje enviado</string>
     <string name="no_se_envio_mensaje">No se pudo enviar el mensaje</string>
-    <string name="desea_desapuntarse_evento">¿Desea desapuntarse del evento?</string>
     <string name="no">No</string>
+    <string name="desea_desapuntarse_evento">¿Desea desapuntarse del evento?</string>
     <string name="si_desapuntarse">Sí, desapuntarse</string>
     <string name="info_fecha">Fecha en la que el evento se celebra</string>
     <string name="info_fechaLim">Fecha límite para marcar su participación</string>

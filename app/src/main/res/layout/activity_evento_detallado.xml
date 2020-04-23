@@ -91,7 +91,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:paddingLeft="10dp"
-                        android:text="Fecha" />
+                        android:text="00/00/00 00:00"
+                        android:fontFamily="@font/opensans_regular"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -112,7 +113,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:paddingLeft="10dp"
-                        android:text="Ubicación" />
+                        android:text="Ubicación"
+                        android:fontFamily="@font/raleway_regular"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -133,7 +135,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:paddingLeft="10dp"
-                        android:text="Fecha límite" />
+                        android:text="00/00/00 00:00"
+                        android:fontFamily="@font/opensans_regular"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -154,7 +157,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:paddingLeft="10dp"
-                        android:text="Comunidad" />
+                        android:text="Comunidad"
+                        android:fontFamily="@font/raleway_regular"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -180,7 +184,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:paddingLeft="2dp"
-                            android:text="X.XX" />
+                            android:text="0.00"
+                            android:fontFamily="@font/opensans_regular"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -202,7 +207,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:paddingLeft="3dp"
-                            android:text="XX" />
+                            android:text="00"
+                            android:fontFamily="@font/opensans_regular"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -235,7 +241,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="25dp"
                     android:text="Lorem ipsum dolor sit amet consectetur adipiscing elit proin inceptos nibh, neque mus justo in ac dictumst dapibus nullam diam tincidunt volutpat, lacus natoque mi pretium malesuada erat placerat maecenas ultrices. Fermentum nostra natoque et viverra ut nam sociosqu nulla taciti vitae urna orci sollicitudin quis pharetra, quisque mollis interdum dapibus porta mus imperdiet neque himenaeos fringilla netus odio ridiculus ac. Vitae facilisis purus fames id venenatis vivamus eros convallis sapien urna est, pellentesque facilisi aliquet lectus orci conubia litora dignissim ridiculus pharetra aliquam sociis, a sodales ut faucibus tristique sed malesuada enim arcu eu. Nullam a penatibus cubilia molestie tempor nisl urna vivamus praesent bibendum platea fusce hendrerit velit, in placerat consequat cras eu vitae sollicitudin sociosqu nunc est duis commodo.
-                            Lorem ipsum dolor sit amet consectetur adipiscing elit proin inceptos nibh, neque mus justo in ac dictumst dapibus nullam diam tincidunt volutpat, lacus natoque mi pretium malesuada erat placerat maecenas ultrices. Fermentum nostra natoque et viverra ut nam sociosqu nulla taciti vitae urna orci sollicitudin quis pharetra, quisque mollis interdum dapibus porta mus imperdiet neque himenaeos fringilla ..." />
+                            Lorem ipsum dolor sit amet consectetur adipiscing elit proin inceptos nibh, neque mus justo in ac dictumst dapibus nullam diam tincidunt volutpat, lacus natoque mi pretium malesuada erat placerat maecenas ultrices. Fermentum nostra natoque et viverra ut nam sociosqu nulla taciti vitae urna orci sollicitudin quis pharetra, quisque mollis interdum dapibus porta mus imperdiet neque himenaeos fringilla ..."
+                    android:fontFamily="@font/raleway_regular"/>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -256,7 +263,7 @@
                             android:layout_gravity="center"
                             android:text="@string/comentarios"
                             android:textSize="@dimen/txt_subHeader"
-                            android:textStyle="bold" />
+                            android:fontFamily="@font/raleway_regular"/>
 
                         <ImageView
                             android:id="@+id/eve_det_ivExpand"
@@ -286,6 +293,7 @@
                         android:paddingVertical="5dp"
                         android:text="@string/comentar"
                         android:textAllCaps="false"
+                        android:fontFamily="@font/raleway_regular"
 
                         android:drawableLeft="@drawable/ic_edit_black_24dp"
                         android:drawablePadding="10dp"
@@ -303,7 +311,8 @@
                         android:layout_marginLeft="5dp"
                         android:text="@string/no_hay_comentarios"
                         android:textSize="@dimen/txt_error"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:fontFamily="@font/raleway_regular"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -321,7 +330,8 @@
                         android:layout_marginTop="10dp"
                         android:text="@string/valora_el_evento"
                         android:textSize="@dimen/txt_body"
-                        android:gravity="center"/>
+                        android:gravity="center"
+                        android:fontFamily="@font/raleway_regular"/>
                     <RatingBar
                         android:id="@+id/eve_det_ratingBar"
                         android:layout_width="wrap_content"
@@ -346,7 +356,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/selector_custom_button_green"
-            android:text="@string/asistire" />
+            android:text="@string/asistire"
+            android:fontFamily="@font/raleway_semibold"/>
 
     </LinearLayout>
 </LinearLayout>

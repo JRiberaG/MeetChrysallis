@@ -10,8 +10,8 @@
         android:id="@+id/CardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp"
 
         app:cardBackgroundColor="@color/colorAccent"
@@ -42,7 +42,7 @@
 
             <!-- LINEAR DATOS EVENTO -->
             <LinearLayout
-                android:layout_weight="5"
+                android:layout_weight="6"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -51,11 +51,17 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="center">
+
                     <TextView
                         android:id="@+id/cv_titulo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="TITULO" />
+                        android:text="Titulo del evento"
+                        android:fontFamily="@font/raleway_regular"
+                        android:textSize="@dimen/txt_bigBody"
+
+                        android:ellipsize="end"
+                        android:maxLines="1"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -79,13 +85,17 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
                             android:layout_gravity="center"
-                            android:text="Ubicación"
-                            android:textSize="10sp"/>
+                            android:text="Ubicación del evento"
+                            android:fontFamily="@font/raleway_regular"
+                            android:textSize="@dimen/txt_error"
+                            android:ellipsize="end"
+                            android:maxLines="2"/>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_weight="2"
+                        android:layout_weight="3"
                         android:layout_width="0dp"
+                        android:layout_marginLeft="5dp"
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
                         <ImageView
@@ -99,8 +109,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
                             android:layout_gravity="center"
-                            android:text="Fecha"
-                            android:textSize="10sp"/>
+                            android:text="00/00/00 00:00"
+                            android:fontFamily="@font/opensans_regular"
+                            android:textSize="12sp"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_weight="1"
@@ -118,8 +129,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
                             android:layout_gravity="center"
-                            android:text="Asistentes"
-                            android:textSize="10sp"/>
+                            android:text="00"
+                            android:fontFamily="@font/opensans_regular"
+                            android:textSize="@dimen/txt_error"/>
                     </LinearLayout>
                 </LinearLayout>
 

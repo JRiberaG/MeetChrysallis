@@ -16,8 +16,7 @@
         app:startIconDrawable="@drawable/ic_email_black_24dp">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/dialog_modificar_datos_etActual"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            style="@style/editText_email"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -31,8 +30,7 @@
         app:startIconDrawable="@drawable/ic_email_black_24dp">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/dialog_modificar_datos_etNuevo"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            style="@style/editText_email"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -46,8 +44,6 @@
         app:startIconDrawable="@drawable/ic_email_black_24dp">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/dialog_modificar_datos_etConfirmar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:longClickable="false"/>
+            style="@style/editText_email"/>
     </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

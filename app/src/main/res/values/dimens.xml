@@ -17,6 +17,7 @@
     <dimen name="txt_bigHeader">24sp</dimen>
     <dimen name="txt_header">20sp</dimen>
     <dimen name="txt_subHeader">18sp</dimen>
+    <dimen name="txt_bigBody">16sp</dimen>
     <dimen name="txt_body">15sp</dimen>
     <dimen name="txt_body2">13sp</dimen>
     <dimen name="txt_error">12sp</dimen>

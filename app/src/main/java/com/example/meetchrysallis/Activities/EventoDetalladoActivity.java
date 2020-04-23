@@ -312,7 +312,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
             linearRatingMedio.setVisibility(View.GONE);
         } else {
             linearRatingMedio.setVisibility(View.VISIBLE);
-            tvValoracionMedia.setText(Utils.formatearFloat(evento.getValoracionMedia()));
+            tvValoracionMedia.setText(Utils.formatearFloat(evento.getValoracionMedia()) + "/5");
         }
     }
 

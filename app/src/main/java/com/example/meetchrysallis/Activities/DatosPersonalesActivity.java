@@ -556,14 +556,6 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                                     dialog.cancel();
                                                 }
                                             })
-//                                            .setNeutralButton(getResources().getString(R.string.limpiar), null)//new DialogInterface.OnClickListener() {
-//                                                @Override
-//                                                public void onClick(DialogInterface dialog, int which) {
-//                                                    for (int i = 0; i < arrayBooleans.length; i++) {
-//                                                        arrayBooleans[i] = false;
-//                                                    }
-//                                                }
-//                                            })
                                             .setPositiveButton(getResources().getString(R.string.aceptar), null);
                                     AlertDialog dialog = builder.create();
                                     dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -621,106 +613,11 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                                                     } else {
                                                         CustomToast.mostrarWarning(context, getLayoutInflater(), getResources().getString(R.string.error_ccaa_minima), true);
                                                     }
-
-//                                                    // Limpiamos las CCAA interesadas que hubiese
-//                                                    socio.getComunidadesInteres().clear();
-//                                                    for (int i = 0; i < arrayBooleans.length; i++){
-//                                                        if (arrayBooleans[i]){
-//                                                            socio.getComunidadesInteres().add(comunidades.get(i));
-//                                                        }
-//                                                    }
-//
-//                                                    if  (socio.getComunidadesInteres().size() < 1) {
-//                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), getResources().getString(R.string.error_ccaa_minima));
-//                                                    } else {
-//                                                        //FIXME
-//                                                        //  Problema 1 - no se actualiza la tabla de comunidadesInteresadas
-//                                                        //  Problema 2 - no deja marcar la CCAA que tiene como comunidad del socio
-//                                                        //      Es decir, si la CCAA de donde es el socio es de Andalucia, si se marca
-//                                                        //      Andalucia como CCAA interesada, tira error 500
-//                                                        Call<Socio> callUpdateSocio = socioService.updateSocio(MainActivity.socio.getId(), MainActivity.socio);
-//                                                        callUpdateSocio.enqueue(new Callback<Socio>() {
-//                                                            @Override
-//                                                            public void onResponse(Call<Socio> call, Response<Socio> response) {
-//                                                                switch(response.code()) {
-//                                                                    case 204:
-//                                                                        actualizarTvComunidades(tvComunidades);
-//                                                                        Toast.makeText(DatosPersonalesActivity.this, "Todo ok, se actualizó la bd", Toast.LENGTH_SHORT).show();
-//                                                                        // pendiente --> modificar las CCAA interes del socio en el MainActivity
-//                                                                        //MainActivity.socio.setComunidadesInteres(socio.getComunidadesInteres());
-//                                                                        break;
-//                                                                    default:
-//                                                                        Toast.makeText(DatosPersonalesActivity.this, response.code() + " - " + response.message(), Toast.LENGTH_SHORT).show();
-//                                                                        break;
-//                                                                }
-//                                                            }
-//
-//                                                            @Override
-//                                                            public void onFailure(Call<Socio> call, Throwable t) {
-//                                                                Toast.makeText(DatosPersonalesActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-//                                                            }
-//                                                        });
-//                                                        dialog.dismiss();
-//                                                    }
                                                 }
                                             });
-//                                            Button btnNeutral = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
-//                                            btnNeutral.setOnClickListener(new View.OnClickListener() {
-//                                                @Override
-//                                                public void onClick(View v) {
-//                                                    v.
-//                                                    for (int i = 0; i < arrayBooleans.length; i++) {
-//                                                    }
-//                                                }
-//                                            });
                                         }
                                     });
                                     dialog.show();
-//                                        @Override
-//                                        public void onShow(final DialogInterface dialog) {
-//                                            Button btn = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-//                                            .setPositiveButton(getResources().getString(R.string.aceptar), new DialogInterface.OnClickListener() {
-//                                                @Override
-//                                                public void onClick(DialogInterface dialog, int which) {
-//                                                    // Limpiamos las CCAA interesadas que hubiese
-//                                                    socio.getComunidadesInteres().clear();
-//                                                    for (int i = 0; i < arrayBooleans.length; i++){
-//                                                        if (arrayBooleans[i]){
-//                                                            socio.getComunidadesInteres().add(comunidades.get(i));
-//                                                        }
-//                                                    }
-//
-//                                                    //FIXME
-//                                                    // No se puede actualizar las comunidades que le interesan al socio
-//                                                    // porque no se actualizar el socio con las nuevas comunidades tal cual,
-//                                                    //  se tiene que actualizar la tabla de ComunidadesInteres y no sé cómo hacerlo
-//                                                    Call<Socio> callUpdateSocio = socioService.updateSocio(MainActivity.socio.getId(), MainActivity.socio);
-//                                                    callUpdateSocio.enqueue(new Callback<Socio>() {
-//                                                        @Override
-//                                                        public void onResponse(Call<Socio> call, Response<Socio> response) {
-//                                                            switch(response.code()) {
-//                                                                case 204:
-//                                                                    Toast.makeText(DatosPersonalesActivity.this, "Todo ok, se actualizó la bd", Toast.LENGTH_SHORT).show();
-//                                                                    // pendiente --> modificar las CCAA interes del socio en el MainActivity
-//                                                                    //MainActivity.socio.setComunidadesInteres(socio.getComunidadesInteres());
-//                                                                    break;
-//                                                                default:
-//                                                                    Toast.makeText(DatosPersonalesActivity.this, response.code() + " - " + response.message(), Toast.LENGTH_SHORT).show();
-//                                                                    break;
-//                                                            }
-//                                                        }
-//
-//                                                        @Override
-//                                                        public void onFailure(Call<Socio> call, Throwable t) {
-//                                                            Toast.makeText(DatosPersonalesActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-//                                                        }
-//                                                    });
-//
-//                                                    //CustomToast.mostrarInfo(context, getLayoutInflater(), socio.getComunidadesInteres().toString());
-//                                                }
-//                                            })
-//                                            .create();
-//                                    builder.show();
                                 }
                                 break;
                             default:

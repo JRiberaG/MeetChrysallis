@@ -18,7 +18,8 @@
                 android:paddingVertical="10dp"
                 android:text="@string/datos_de_contacto"
                 android:textSize="@dimen/txt_header"
-                android:background="@color/md_grey_500"/>
+                android:background="@color/md_grey_500"
+                android:fontFamily="@font/opensans_regular"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -37,7 +38,8 @@
                         android:id="@+id/dialog_contacto_etNombre"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:maxLength="30"/>
+                        android:maxLength="30"
+                        android:fontFamily="@font/opensans_regular"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -51,9 +53,7 @@
                     app:startIconDrawable="@drawable/ic_email_black_24dp">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/dialog_contacto_etEmail"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="textEmailAddress"/>
+                        style="@style/editText_email"/>
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
@@ -65,7 +65,8 @@
                 android:layout_marginTop="30dp"
                 android:text="@string/datos_del_mensaje"
                 android:textSize="@dimen/txt_header"
-                android:background="@color/md_grey_500"/>
+                android:background="@color/md_grey_500"
+                android:fontFamily="@font/opensans_regular"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,7 +87,7 @@
                         android:paddingHorizontal="10dp"
                         android:background="@drawable/background_spinner"
                         android:popupBackground="@drawable/background_spinner_popup"
-                        android:spinnerMode="dropdown" />
+                        android:spinnerMode="dropdown"/>
                     <ImageView
                         android:id="@+id/dialog_contacto_ivErrorMotivo"
                         android:layout_width="wrap_content"
@@ -111,7 +112,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:inputType="text"
-                        android:maxLength="45"/>
+                        android:maxLength="45"
+                        android:fontFamily="@font/opensans_regular"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -130,7 +132,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:maxLength="350"
-                        android:inputType="textMultiLine"/>
+                        android:inputType="textMultiLine"
+                        android:fontFamily="@font/opensans_regular"/>
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
         </LinearLayout>

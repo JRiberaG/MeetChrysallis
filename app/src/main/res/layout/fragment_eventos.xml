@@ -22,7 +22,8 @@
             <TextView
                 android:text="@string/eventos_pendientes"
                 android:padding="10dp"
-                style="@style/Text_BigHeader"/>
+                style="@style/Text_BigHeader"
+                android:fontFamily="@font/raleway_regular"/>
         </LinearLayout>
 
         <!-- RECYCLER -->
@@ -44,7 +45,8 @@
                     android:layout_marginTop="15dp"
                     android:text="@string/error_no_eventos_pendientes"
                     android:gravity="center"
-                    android:visibility="gone"/>
+                    android:visibility="gone"
+                    android:fontFamily="@font/raleway_regular"/>
             </LinearLayout>
         </ScrollView>
 
@@ -78,7 +80,8 @@
             <TextView
                 android:padding="10dp"
                 style="@style/Text_BigHeader"
-                android:text="@string/eventos_asistidos" />
+                android:text="@string/eventos_asistidos"
+                android:fontFamily="@font/raleway_regular"/>
         </LinearLayout>
 
         <!-- RECYCLER -->
@@ -100,7 +103,8 @@
                     android:layout_marginTop="15dp"
                     android:text="@string/error_no_eventos_asistidos"
                     android:gravity="center"
-                    android:visibility="gone"/>
+                    android:visibility="gone"
+                    android:fontFamily="@font/raleway_regular"/>
             </LinearLayout>
         </ScrollView>
 

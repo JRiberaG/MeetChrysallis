@@ -1,7 +1,6 @@
 package com.example.meetchrysallis.Adapters;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,24 +42,33 @@ public class RecyclerCommentsAdapter extends RecyclerView.Adapter<RecyclerCommen
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombre;
+        TextView tvAnonimo;
         TextView tvFecha;
         TextView tvComentario;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvNombre = itemView.findViewById(R.id.item_comentario_tvNombre);
-            tvFecha = itemView.findViewById(R.id.item_comentario_tvFecha);
-            tvComentario = itemView.findViewById(R.id.item_comentario_tvComent);
+            tvNombre        = itemView.findViewById(R.id.item_comentario_tvNombre);
+            tvAnonimo       = itemView.findViewById(R.id.item_comentario_tvAnonimo);
+            tvFecha         = itemView.findViewById(R.id.item_comentario_tvFecha);
+            tvComentario    = itemView.findViewById(R.id.item_comentario_tvComent);
         }
 
         public void asignarDatos(Comentario coment) {
             if(coment.isMostrarNombre()){
                 tvNombre.setText(coment.getSocio().getNombre() + " " + coment.getSocio().getApellidos());
-                tvNombre.setTypeface(tvNombre.getTypeface(), Typeface.BOLD);
+//                tvNombre.setTypeface(tvNombre.getTypeface(), Typeface.BOLD);
+                tvNombre.setVisibility(View.VISIBLE);
+                tvAnonimo.setVisibility(View.GONE);
             }
             else{
-                tvNombre.setText(context.getResources().getString(R.string.anonimo));
-                tvNombre.setTypeface(tvNombre.getTypeface(), Typeface.ITALIC);
+                tvNombre.setVisibility(View.GONE);
+                tvAnonimo.setVisibility(View.VISIBLE);
+//                tvNombre.setText(context.getResources().getString(R.string.anonimo));
+////                tvNombre.setTypeface(tvNombre.getTypeface(), Typeface.ITALIC);
+////                tvNombre.setTypeface(Typeface.createFromAsset(context.getAssets(), "font/raleway_lightitalic.ttf"));
+//                Typeface typeFace = Typeface.createFromAsset(context.getAssets(), "font/raleway_lightitalic.ttf");
+//                tvNombre.setTypeface(typeFace);
             }
 
             tvFecha.setText(Utils.formateadorFechas(coment.getFecha()));

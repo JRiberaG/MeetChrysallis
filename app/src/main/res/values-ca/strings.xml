@@ -104,6 +104,13 @@
     <string name="mensaje_enviado">Missatge enviat</string>
     <string name="no_se_envio_mensaje">No s\'ha pogut enviar el missatge</string>
     <string name="no">No</string>
+    <string name="desea_desapuntarse_evento">Desitja desapuntar-se de l\'event?</string>
+    <string name="si_desapuntarse">Sí, desapuntar-se</string>
+    <string name="info_fecha">Data en la que l\'event es celebra</string>
+    <string name="info_fechaLim">Data límit per a marcar la seva participació</string>
+    <string name="info_comunidad">Comunitat Autònoma on es celebra l\'event</string>
+    <string name="info_numComents">Número de comentaris que té l\'event</string>
+    <string name="info_ratingMedio">Valoració mitja de l\'event</string>
     <string-array name="motivos">
         <item>-- Seleccioni el motiu --</item>
         <item>Dubte</item>
