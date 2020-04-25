@@ -73,6 +73,9 @@ public class HomeFragment extends Fragment {
 
         recogerIdsLayout();
 
+//        timestamp = Utils.capturarTimestampActual();
+//        cargarEventos();
+
         capturarTiempo();
 
 ////        final EventoService eventoService = Api.getApi().create(EventoService.class);
@@ -232,6 +235,11 @@ public class HomeFragment extends Fragment {
                 cargarEventos();
             }
         });
+
+//        // FIXME
+//        //  ... eliminar
+//        timestamp = Utils.capturarTimestampActual();
+//        cargarEventos();
     }
 
     private void cargarEventos() {

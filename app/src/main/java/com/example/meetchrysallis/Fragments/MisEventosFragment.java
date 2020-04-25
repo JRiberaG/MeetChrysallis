@@ -45,6 +45,11 @@ public class MisEventosFragment extends Fragment {
 
     private EventoService eventoService = Api.getApi().create(EventoService.class);
 
+    TextView tvNoPendientes;
+    TextView tvNoAsistidos;
+    RecyclerView recyclerPendientes;
+    RecyclerView recyclerAsistidos;
+
     public MisEventosFragment(Context context) {
         this.context = context;
     }
@@ -74,7 +79,17 @@ public class MisEventosFragment extends Fragment {
          *          con ellos.
          */
 
+        asignarIdsLayout();
+
         recogerAsistirs();
+    }
+
+    private void asignarIdsLayout() {
+        tvNoPendientes  = view.findViewById(R.id.fragment_eventos_tvNoPendientes);
+        tvNoAsistidos   = view.findViewById(R.id.fragment_eventos_tvNoAsistidos);
+
+        recyclerPendientes  = view.findViewById(R.id.recyclerEventosPendientes);
+        recyclerAsistidos   = view.findViewById(R.id.recyclerEventosAsistidos);
     }
 
     private void recogerAsistirs() {
@@ -101,6 +116,10 @@ public class MisEventosFragment extends Fragment {
                         break;
                     case 404:
                         // No se encontró ningún asistir
+                        tvNoPendientes.setVisibility(View.VISIBLE);
+                        tvNoAsistidos.setVisibility(View.VISIBLE);
+                        recyclerPendientes.setVisibility(View.GONE);
+                        recyclerAsistidos.setVisibility(View.GONE);
                         break;
                     default:
                         CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
@@ -173,12 +192,9 @@ public class MisEventosFragment extends Fragment {
     }
 
     private void actualizarRecyclerAsistidos(final ArrayList<Evento> eventosAsistidos) {
-        RecyclerView recycler   = view.findViewById(R.id.recyclerEventosAsistidos);
-        TextView tvNoAsistidos  = view.findViewById(R.id.fragment_eventos_tvNoAsistidos);
-
-        recycler.setLayoutManager(new GridLayoutManager(context,1));
+        recyclerAsistidos.setLayoutManager(new GridLayoutManager(context,1));
         RecyclerEventoAdapter adapter = new RecyclerEventoAdapter(eventosAsistidos, context);
-        recycler.setAdapter(adapter);
+        recyclerAsistidos.setAdapter(adapter);
 
         adapter.setOnItemClickListener(new RecyclerEventoAdapter.OnItemClickListener() {
             @Override
@@ -189,21 +205,18 @@ public class MisEventosFragment extends Fragment {
 
         // Comprobamos que tenga algún evento asistindo y lo reflejamos en el layout
         if (adapter.getItemCount() > 0) {
-            recycler.setVisibility(View.VISIBLE);
+            recyclerAsistidos.setVisibility(View.VISIBLE);
             tvNoAsistidos.setVisibility(View.GONE);
         } else {
-            recycler.setVisibility(View.GONE);
+            recyclerAsistidos.setVisibility(View.GONE);
             tvNoAsistidos.setVisibility(View.VISIBLE);
         }
     }
 
     private void actualizarRecyclerPendientes(final ArrayList<Evento> eventosPendientes) {
-        RecyclerView recycler   = view.findViewById(R.id.recyclerEventosPendientes);
-        TextView tvNoPendientes = view.findViewById(R.id.fragment_eventos_tvNoPendientes);
-
-        recycler.setLayoutManager(new GridLayoutManager(context,1));
+        recyclerPendientes.setLayoutManager(new GridLayoutManager(context,1));
         RecyclerEventoAdapter adapter = new RecyclerEventoAdapter(eventosPendientes, context);
-        recycler.setAdapter(adapter);
+        recyclerPendientes.setAdapter(adapter);
 
         adapter.setOnItemClickListener(new RecyclerEventoAdapter.OnItemClickListener() {
             @Override
@@ -214,10 +227,10 @@ public class MisEventosFragment extends Fragment {
 
         if (adapter.getItemCount() > 0 ){
             tvNoPendientes.setVisibility(View.GONE);
-            recycler.setVisibility(View.VISIBLE);
+            recyclerPendientes.setVisibility(View.VISIBLE);
         } else {
             tvNoPendientes.setVisibility(View.VISIBLE);
-            recycler.setVisibility(View.GONE);
+            recyclerPendientes.setVisibility(View.GONE);
         }
     }
 

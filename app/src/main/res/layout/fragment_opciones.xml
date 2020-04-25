@@ -4,6 +4,8 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background">
+
+    <!-- DATOS PERSONALES -->
     <LinearLayout
         android:id="@+id/opciones_layout_modificarDatos"
         android:layout_width="match_parent"
@@ -23,11 +25,38 @@
             android:layout_gravity="center"
             android:fontFamily="@font/raleway_regular"/>
     </LinearLayout>
+
+    <!-- DIVISORIO -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/md_yellow_700"/>
+
+    <!-- IDIOMA -->
     <LinearLayout
+        android:id="@+id/opciones_layout_idioma"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="10dp"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="@dimen/icon_medium"
+            android:layout_height="@dimen/icon_medium"
+            android:layout_marginLeft="10dp"
+            app:srcCompat="@drawable/ic_language_black_24dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="@string/idioma"
+            android:layout_gravity="center"
+            android:fontFamily="@font/raleway_regular"/>
+    </LinearLayout>
+
+
+    <!-- NOTIFICACIONES -->
+    <LinearLayout
+        android:visibility="gone"
         android:id="@+id/opciones_layout_notificaciones"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -57,10 +86,14 @@
                 android:layout_marginRight="20dp"/>
         </LinearLayout>
     </LinearLayout>
+
+    <!-- DIVISORIO -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/md_yellow_700"/>
+
+    <!-- CONTACTAR -->
     <LinearLayout
         android:id="@+id/opciones_layout_contactar"
         android:layout_width="match_parent"
@@ -80,10 +113,14 @@
             android:layout_gravity="center"
             android:fontFamily="@font/raleway_regular"/>
     </LinearLayout>
+
+    <!-- DIVISORIO -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/md_yellow_700"/>
+
+    <!-- LOGOUT -->
     <LinearLayout
         android:id="@+id/opciones_layout_cerrarSesion"
         android:layout_width="match_parent"
@@ -103,6 +140,8 @@
             android:layout_gravity="center"
             android:fontFamily="@font/raleway_regular"/>
     </LinearLayout>
+
+    <!-- DIVISORIO -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="2dp"

@@ -84,11 +84,6 @@
     <string name="valoracion_enviada">Valoración enviada. ¡Gracias!</string>
     <string name="gracias_por_valorar">Muchas gracias por su valoración.</string>
     <string name="error_ccaa_minima">Se ha de seleccionar como mínimo una Comunidad Autónoma</string>
-    <string-array name="idiomas">
-        <item>Castellano</item>
-        <item>Catalán</item>
-        <item>Inglés</item>
-    </string-array>
     <string name="indique_num_asistentes">Indique el número de personas que van a asistir al evento, por favor.</string>
     <string name="num_personas">"Número de personas: "</string>
     <string name="escriba_aqui_su_comentario">Escriba aquí su comentario</string>
@@ -111,6 +106,13 @@
     <string name="info_comunidad">Comunidad Autónoma donde se celebra el evento</string>
     <string name="info_numComents">Número de comentarios que tiene el evento</string>
     <string name="info_ratingMedio">Valoración media del evento</string>
+    <string name="cerrar">Cerrar</string>
+    <string name="timeout">Se agotó el tiempo de espera. Pruebe de nuevo</string>
+    <string-array name="idiomas">
+        <item>Castellano</item>
+        <item>Catalán</item>
+        <item>Inglés</item>
+    </string-array>
     <string-array name="motivos">
         <item>-- Seleccione el motivo --</item>
         <item>Duda</item>

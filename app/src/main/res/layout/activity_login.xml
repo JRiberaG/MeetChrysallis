@@ -186,8 +186,8 @@
             android:layout_height="wrap_content">
             <ImageButton
                 android:background="@color/colorPrimary"
-                android:layout_width="@dimen/icon_big"
-                android:layout_height="@dimen/icon_big"
+                android:layout_width="@dimen/icon_medium"
+                android:layout_height="@dimen/icon_medium"
                 android:scaleType="fitCenter"
                 android:src="@drawable/cat"
                 android:layout_marginRight="20dp"
@@ -196,16 +196,16 @@
             <ImageButton
                 android:id="@+id/BtnEsp"
                 android:background="@color/colorPrimary"
-                android:layout_width="@dimen/icon_big"
-                android:layout_height="@dimen/icon_big"
+                android:layout_width="@dimen/icon_medium"
+                android:layout_height="@dimen/icon_medium"
                 android:scaleType="fitCenter"
                 android:src="@drawable/esp"
                 android:layout_marginRight="20dp" />
 
             <ImageButton
                 android:background="@color/colorPrimary"
-                android:layout_width="@dimen/icon_big"
-                android:layout_height="@dimen/icon_big"
+                android:layout_width="@dimen/icon_medium"
+                android:layout_height="@dimen/icon_medium"
                 android:scaleType="fitCenter"
                 android:src="@drawable/eng"
                 android:id="@+id/BtnEng"/>

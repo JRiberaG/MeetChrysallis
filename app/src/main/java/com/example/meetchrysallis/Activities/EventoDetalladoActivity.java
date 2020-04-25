@@ -1,6 +1,8 @@
 package com.example.meetchrysallis.Activities;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,6 +43,7 @@ import com.example.meetchrysallis.R;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 
 import retrofit2.Call;
@@ -87,6 +90,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         TextView tvComunidad        = findViewById(R.id.eve_det_tvComunidad);
         tvValoracionMedia           = findViewById(R.id.eve_det_tvStars);
         tvNumComentarios            = findViewById(R.id.eve_det_tvNumComments);
+        TextView tvNumDocs          = findViewById(R.id.eve_det_numDocs);
         TextView tvDescripcion      = findViewById(R.id.eve_det_tvDescripcion);
         TextView tvNoComments       = findViewById(R.id.eve_det_tvNoComments);
 
@@ -96,12 +100,13 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         LinearLayout linearComunidad        = findViewById(R.id.eve_det_linear_comunidad);
         linearRatingMedio                   = findViewById(R.id.eve_det_linear_ratingMedio);
         LinearLayout linearNumComentarios   = findViewById(R.id.eve_det_linear_numComentarios);
+        LinearLayout linearNumDocs          = findViewById(R.id.eve_det_linear_numAdjuntos);
         LinearLayout linearHeadComments     = findViewById(R.id.eve_det_linear_header_comentarios);
         LinearLayout linearComentarios      = findViewById(R.id.eve_det_linearLayoutComentarios);
         LinearLayout linearRatear           = findViewById(R.id.eve_det_linearLayout_rating);
 
         btnComentar     = findViewById(R.id.eve_det_btnComentar);
-        btnMultifuncion = findViewById(R.id.eve_det_btnAsistire);
+        btnMultifuncion = findViewById(R.id.eve_det_btnMultifuncion);
         ImageButton ibBack  = findViewById(R.id.eve_det_btnBack);
 
         ratingBar = findViewById(R.id.eve_det_ratingBar);
@@ -113,20 +118,27 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         cargarComentariosAPI();
 
         // A los elementos del layout les asignamos los los valores correspondientes del evento
-        asignarDatos(ivBandera, tvTitulo, tvFecha, tvUbicacion, tvFechaLimite, linearRatear, linearRatingMedio, tvNumComentarios, linearFechaLim, tvComunidad, tvValoracionMedia, tvDescripcion, linearUbicacion, ibBack);
+        asignarDatos(ivBandera, tvTitulo, tvFecha, tvUbicacion, tvFechaLimite, linearRatear, linearRatingMedio, tvNumComentarios, linearFechaLim, tvComunidad, tvValoracionMedia, tvDescripcion, linearUbicacion, ibBack, tvNumDocs, linearNumDocs);
 
-        configurarListenersLayouts(linearFecha, linearFechaLim, linearComunidad, linearNumComentarios);
+        configurarListenersLayouts(linearFecha, linearUbicacion, linearFechaLim, linearComunidad, linearNumComentarios, linearNumDocs);
 
         configurarLayoutExpand(linearComentarios, recyclerComments, tvNoComments, linearHeadComments);
         configurarBotonComentar(recyclerComments, tvNoComments);
         configurarBotonMultifuncion();
     }
 
-    private void configurarListenersLayouts(LinearLayout linearFecha, LinearLayout linearFechaLim, LinearLayout linearComunidad, LinearLayout linearNumComentarios) {
+    private void configurarListenersLayouts(LinearLayout linearFecha, final LinearLayout linearUbicacion, LinearLayout linearFechaLim, LinearLayout linearComunidad, LinearLayout linearNumComentarios, LinearLayout linearNumDocs) {
         linearFecha.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.info_fecha), false);
+            }
+        });
+
+        linearUbicacion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            configurarIntentMaps(linearUbicacion);
             }
         });
 
@@ -157,9 +169,125 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                 CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.info_numComents), false);
             }
         });
+
+        linearNumDocs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                abrirDialogDocs();
+            }
+        });
     }
 
-    private void asignarDatos(ImageView ivBandera, TextView tvTitulo, TextView tvFecha, TextView tvUbicacion, TextView tvFechaLimite, LinearLayout linearRatear, LinearLayout linearRatingMedio, TextView tvNumComentarios, LinearLayout linearFechaLim, TextView tvComunidad, TextView tvValoracionMedia, TextView tvDescripcion, LinearLayout linearUbicacion, ImageButton ibBack) {
+    private void abrirDialogDocs() {
+//        final ArrayList<Documento> docs = (ArrayList)evento.getDocumentos();
+//        View view = getLayoutInflater().inflate(R.layout.dialog_documentos, null);
+//        ListViewAdapter lvAdapter = new ListViewAdapter(ctx, evento.getDocumentos());
+//        ListView lvDocs = view.findViewById(R.id.dialog_docs_lvDocs);
+//        lvDocs.setAdapter(lvAdapter);
+//
+//        lvDocs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                //TODO recortar nombre y ver si es png o pdf
+//                String nombre = docs.get(position).getUrl();
+//                String extension = nombre.substring(nombre.length()-3);
+//
+////                if (extension.equals("pdf")){
+//                    Documento documento = docs.get(position);
+//                    byte[] pdfAsBytes = Base64.decode(documento.getDatos(), 0);
+//
+//                    File file = new File(getCacheDir() + documento.getUrl());
+//                    FileOutputStream fos = null;
+//                    try {
+//                        fos = new FileOutputStream(file, true);
+//                        fos.write(pdfAsBytes);
+//                        fos.flush();
+//                        fos.close();
+//                    } catch (FileNotFoundException e) {
+//                        e.printStackTrace();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    Intent intent = new Intent(ctx, PdfViewerActivity.class);
+//                    intent.putExtra("file", file);
+//                    intent.putExtra("ext", extension);
+//                    try {
+//                        startActivity(intent);
+//                    } catch (ActivityNotFoundException e) {
+//                        System.err.println("error");
+//                        // Instruct the user to install a PDF reader here, or something
+//                    }
+//
+////                }
+////                else if (extension.equals("png")){
+////
+////                    Intent intent = new Intent(ctx, PdfViewerActivity.class);
+////                    intent.putExtra("file", file);
+////                    intent.putExtra("ext", extension);
+////                    try {
+////                        startActivity(intent);
+////                    } catch (ActivityNotFoundException e) {
+////                        System.err.println("error");
+////                        // Instruct the user to install a PDF reader here, or something
+////                    }
+////                }
+////                else {
+////                    System.err.println("error de extension");
+////                }
+////                String strTarget = "\\";
+////                String strReplacement = "\\\\";
+////                nombre = nombre.replace(strTarget, strReplacement);
+////
+////                String[] nombreSplit = nombre.split("\\\\");
+////                int numeroParticiones = nombreSplit.length;
+////                String semiFinalNombre = nombreSplit[numeroParticiones-1];
+////
+////                String[] nombreSplit2 = semiFinalNombre.split("\\.");
+////                numeroParticiones = nombreSplit2.length;
+////                String nombreFinal = nombreSplit2[numeroParticiones-1];
+////                Toast.makeText(EventoDetalladoActivity.this, numeroParticiones + ", " + nombreFinal, Toast.LENGTH_SHORT).show();
+//
+//
+////                Documento documento = evento.getDocumentos().get(position);
+////                byte[] pdfAsBytes = Base64.decode(documento.getDatos(), 0);
+////
+////                File filePath = new File(getCacheDir() + documento.getNombre());
+////                FileOutputStream os = null;
+////                try {
+////                    os = new FileOutputStream(filePath, true);
+////                    os.write(pdfAsBytes);
+////                    os.flush();
+////                    os.close();
+////                } catch (FileNotFoundException e) {
+////                    e.printStackTrace();
+////                } catch (IOException e) {
+////                    e.printStackTrace();
+////                }
+////
+////                Intent intent1 = new Intent(EventoActivity.this,PdfViewActivity.class);
+////                intent1.putExtra("file",filePath);
+////                try {
+////                    startActivity(intent1);
+////                } catch (ActivityNotFoundException e) {
+////                    // Instruct the user to install a PDF reader here, or something
+////                }
+////
+////            }
+//                //
+//            }
+//        });
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+//        builder.setView(view)
+//                .setTitle("Documentos")
+//                .setPositiveButton(getResources().getString(R.string.cerrar), null)
+//                .create()
+//                .show();
+    }
+
+    private void asignarDatos(ImageView ivBandera, TextView tvTitulo, TextView tvFecha, TextView tvUbicacion, TextView tvFechaLimite, LinearLayout linearRatear, LinearLayout linearRatingMedio, TextView tvNumComentarios, LinearLayout linearFechaLim, TextView tvComunidad, TextView tvValoracionMedia, TextView tvDescripcion, LinearLayout linearUbicacion, ImageButton ibBack, TextView tvNumDocs, LinearLayout linearNumDocs) {
         configurarIbBack(ibBack);
 
 //        asignarBandera(imgBandera);
@@ -173,7 +301,8 @@ public class EventoDetalladoActivity extends AppCompatActivity {
 
         //ubicacion
         tvUbicacion.setText(evento.getUbicacion());
-        configurarIntentMaps(tvUbicacion, linearUbicacion);
+        tvUbicacion.setText(Html.fromHtml("<u>" + evento.getUbicacion() + "</u>"));
+        tvUbicacion.setTextColor(getResources().getColor(R.color.hyperlink));
 
         //fecha límite
         if(evento.getFecha_limite() != null) {
@@ -216,6 +345,17 @@ public class EventoDetalladoActivity extends AppCompatActivity {
             tvNumComentarios.setText(String.valueOf(evento.getComentarios().size()));
         else
             tvNumComentarios.setText("0");
+
+        // núm documentos
+        if (evento.getDocumentos() != null){
+            if (evento.getDocumentos().size() > 0) {
+                tvNumDocs.setText(String.valueOf(evento.getDocumentos().size()));
+            } else {
+                linearNumDocs.setVisibility(View.GONE);
+            }
+        } else {
+            linearNumDocs.setVisibility(View.GONE);
+        }
 
         //descripción
         tvDescripcion.setText(evento.getDescripcion());
@@ -292,10 +432,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         });
     }
 
-    private void configurarIntentMaps(TextView tvUbicacion, LinearLayout linearUbicacion) {
-        tvUbicacion.setText(Html.fromHtml("<u>" + evento.getUbicacion() + "</u>"));
-        tvUbicacion.setTextColor(getResources().getColor(R.color.hyperlink));
-
+    private void configurarIntentMaps(LinearLayout linearUbicacion) {
         linearUbicacion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -637,6 +774,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                                                             //marcamos como asistido y cambiamos colores y texto del boton
                                                             asistido = true;
                                                             comprobarAsistido();
+                                                            crearNotificacion();
                                                             break;
                                                         default:
                                                             CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
@@ -719,6 +857,27 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         });
     }
 
+    private void crearNotificacion() {
+        //TODO
+        //  Pendiente de arreglar: si el socio se desapunta, cancelar la notificacion
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.set(Calendar.HOUR_OF_DAY, 22);
+        calendar.set(Calendar.MINUTE, 45);
+
+        Intent intent = new Intent(ctx, Notification_reciever.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("evento", evento);
+        intent.putExtra("bundle", bundle);
+        intent.setAction("NOTIFICACION");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+//        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//        nm.cancel(102);
+    }
+
     private void llamadaApiDesapuntarse() {
         DialogProgress dp = new DialogProgress(EventoDetalladoActivity.this);
         final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.cargando));
@@ -750,7 +909,6 @@ public class EventoDetalladoActivity extends AppCompatActivity {
     }
 
     private void mostrarDialogConfirmacion() {
-//        final boolean[] res = {true};
         AlertDialog.Builder builder = new AlertDialog.Builder(EventoDetalladoActivity.this);
         builder.setTitle(getResources().getString(R.string.desea_desapuntarse_evento))
                 .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -762,16 +920,11 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                 .setPositiveButton(getResources().getString(R.string.si_desapuntarse), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-//                        res[0] = true;
                         llamadaApiDesapuntarse();
-//                        asistido = false;
-//                        comprobarAsistido();
                     }
                 })
                 .create()
                 .show();
-
-//        return res[0];
     }
 
     private void modificarValoracionMedia() {
@@ -876,19 +1029,27 @@ public class EventoDetalladoActivity extends AppCompatActivity {
      */
     private void comprobarAsistido() {
         // Si el evento no se ha celebrado
+        // FIXME
+        //  Cambiar icono
         if (!eventoPasado) {
             if(asistido){
                 btnMultifuncion.setText(getResources().getString(R.string.no_asistir));
-                btnMultifuncion.setBackground(this.getResources().getDrawable(R.drawable.selector_custom_button_red));
+                btnMultifuncion.setCompoundDrawablesWithIntrinsicBounds((R.drawable.ic_event_busy_black_24dp), 0, 0, 0);
+//                btnMultifuncion.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_event_busy_black_24dp),null, null, null);
+//                btnMultifuncion.setBackground(this.getResources().getDrawable(R.drawable.selector_custom_button_red));
             }
             else{
                 btnMultifuncion.setText(getResources().getString(R.string.asistire));
-                btnMultifuncion.setBackground(this.getResources().getDrawable(R.drawable.selector_custom_button_green));
+                btnMultifuncion.setCompoundDrawablesWithIntrinsicBounds((R.drawable.ic_event_available_black_24dp), 0, 0, 0);
+//                btnMultifuncion.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_event_available_black_24dp),null, null, null);
+//                btnMultifuncion.setBackground(this.getResources().getDrawable(R.drawable.selector_custom_button_green));
             }
         // Si ya se celebró
         } else {
             btnMultifuncion.setText(getResources().getString(R.string.valorar));
-            btnMultifuncion.setBackground(this.getResources().getDrawable(R.drawable.custom_button_ratear));
+            btnMultifuncion.setCompoundDrawablesWithIntrinsicBounds((R.drawable.ic_star_black_24dp), 0, 0, 0);
+//            btnMultifuncion.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_thumbs_up_down_black_24dp),null, null, null);
+//            btnMultifuncion.setBackground(this.getResources().getDrawable(R.drawable.custom_button_ratear));
         }
 
         // Si ha asistido podrá comentar, de lo contrario no
@@ -906,6 +1067,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
             // Inhabilitamos el ratingBar y marcamos la valoración que el socio envió
             ratingBar.setRating(a.getValoracion());
             ratingBar.setEnabled(false);
+            btnMultifuncion.setBackground(getResources().getDrawable(R.drawable.custom_button_multifuncion_disabled));
             // Cambiamos el el textView para mayor comodidad del usuario
             TextView tv = findViewById(R.id.eve_det_tvValoraElEvento);
             tv.setText(R.string.gracias_por_valorar);

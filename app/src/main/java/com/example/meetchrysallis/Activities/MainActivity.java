@@ -2,8 +2,8 @@ package com.example.meetchrysallis.Activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -38,6 +38,8 @@ import java.io.File;
 //Tutorial Navigation Bottom Bar https://www.youtube.com/watch?v=tPV8xA7m-iw
 public class MainActivity extends AppCompatActivity {
 
+    private Context ctx = MainActivity.this;
+
     public static Socio socio = null;
     public static String idioma = "";
 
@@ -49,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager fm = getSupportFragmentManager();
 
 
-    private static int selectedFragmentId = 0;
+    private static int selectedFragmentId = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,21 +59,15 @@ public class MainActivity extends AppCompatActivity {
 
         // Antes de cargar el layout, configuramos el idioma
         configurarIdioma();
-        Utils.configurarIdioma(MainActivity.this, idioma);
+        Utils.configurarIdioma(ctx, idioma);
 
         // Cargamos el layout
         setContentView(R.layout.activity_main);
 
-        pedirPermisos();
-
-//        fragments.add(new HomeFragment(MainActivity.this));
-//        fragments.add(new MisEventosFragment(MainActivity.this));
-//        fragments.add(new OpcionesFragment(MainActivity.this));
-
-
+//        pedirPermisos();
 
         //Iniciamos la Activity del login
-        Intent intent = new Intent(this, LoginActivity.class);
+        Intent intent = new Intent(ctx, LoginActivity.class);
         startActivityForResult(intent, 1);
 
         try {
@@ -119,10 +115,6 @@ public class MainActivity extends AppCompatActivity {
                     socio = (Socio)data.getExtras().getSerializable("socio");
 
                     cargarFragment(new HomeFragment(this));
-//
-//                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-//                            new HomeFragment(MainActivity.this)).commit();
-
                 }
             } else {
                 finish();
@@ -134,16 +126,18 @@ public class MainActivity extends AppCompatActivity {
      * Pide permisos de escritura, lectura y de Internet.
      */
     private void pedirPermisos() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-            }
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-            }
-            if (checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 3);
-            }
+//        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET}, 1);
+//            }
+//            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+//            }
+//            if (checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+//                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 3);
+//            }
+        }
 
             /*
                 ActivityCompat.requestPermissions(MainActivity.this,
@@ -156,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                         new String[]{Manifest.permission.INTERNET},
                         3);
                 }*/
-        }
+//        }
     }
 
     /**
@@ -199,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
         fm.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(nombreFragment)
-            .commit();
+            .commitAllowingStateLoss();
     }
 
     /**

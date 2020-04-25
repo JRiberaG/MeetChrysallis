@@ -11,7 +11,7 @@ public class Api {
     //Constante necesaria para poder parsear la fecha que se recibe de la BD
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
-    private static final String BASE_URL = "http://10.0.2.2:49999/";
+    private static final String BASE_URL = "http://abp-politecnics.com/2020/dm0202/";
     private static Retrofit retrofit = null;
 
     public static Retrofit getApi(){

@@ -1,10 +1,13 @@
 package com.example.meetchrysallis.Activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -53,12 +56,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        /**
-         * ACTUALIZACIÓN 18/04:
-         *   Parece que los cambios con las nuevas Creds funcionan.
-         *   Queda pendiente de hacer más pruebas y, en caso de que funcionen, borrar los comentarios
-         *   antiguos.
-         */
+        pedirPermisos();
 
         // --------- PASOS PARA EL LOGIN ---------
         //OPCIÓN A: Hay credenciales guardadas
@@ -76,7 +74,6 @@ public class LoginActivity extends AppCompatActivity {
         //(Si no se entiende en el drive hay un FlowChart explicándolo)
         //----------------------------------------
 
-        //fileCreds = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.cfg");
 
         // En caso de que accedamos desde el logout...
         boolean sesionCerrada = false;
@@ -142,8 +139,8 @@ public class LoginActivity extends AppCompatActivity {
                 String fallo = t.toString();
                 if (fallo.contains("failed to connect"))
                     CustomToast.mostrarInfo(ctx, getLayoutInflater(), getString(R.string.error_conexion_db), true);
-                else
-                    CustomToast.mostrarInfo(ctx, getLayoutInflater(), t.toString(), true);
+                else if (fallo.contains("timeout"))
+                    CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.timeout), true);
 
                 fileCreds.delete();
 
@@ -157,6 +154,8 @@ public class LoginActivity extends AppCompatActivity {
         btnAcceder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                pedirPermisos();
+
                 final EditText edCorreo = findViewById(R.id.EditTextCorreo);
                 final EditText edPassword = findViewById(R.id.EditTextPassword);
 
@@ -253,6 +252,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         @Override
                         public void onFailure(Call<List<Socio>> call, Throwable t) {
+                            System.err.println(t.getMessage());
                             CustomToast.mostrarInfo(ctx, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                             ad.dismiss();
                         }
@@ -270,6 +270,20 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void pedirPermisos() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            }
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+            }
+            if (checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 3);
+            }
+        }
     }
 
     private void configurarRecuperacionContrasenya() {

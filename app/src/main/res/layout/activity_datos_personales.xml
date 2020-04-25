@@ -154,6 +154,7 @@
         android:background="@color/md_yellow_700"/>
     <!-- LAYOUT IDIOMA -->
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/datos_personales_layout_idioma"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -209,11 +210,15 @@
         </LinearLayout>
     </LinearLayout>
     <!-- LINEAR DIVISORIO -->
+    <!--
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/md_yellow_700"/>
+        -->
+
     <!-- LAYOUT COMUNIDADES -->
+    <!--
     <LinearLayout
         android:id="@+id/datos_personales_layout_comunidades"
         android:layout_width="match_parent"
@@ -269,9 +274,5 @@
                 app:srcCompat="@drawable/ic_chevron_right_black_24dp"/>
         </LinearLayout>
     </LinearLayout>
-    <!-- LINEAR DIVISORIO -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/md_yellow_700"/>
+    -->
 </LinearLayout>

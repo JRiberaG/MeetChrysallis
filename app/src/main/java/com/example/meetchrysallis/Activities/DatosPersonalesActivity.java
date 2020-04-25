@@ -11,12 +11,10 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.meetchrysallis.API.Api;
-import com.example.meetchrysallis.API.ApiService.ComunidadService;
 import com.example.meetchrysallis.API.ApiService.SocioService;
 import com.example.meetchrysallis.Models.Comunidad;
 import com.example.meetchrysallis.Models.Socio;
@@ -69,24 +67,24 @@ public class DatosPersonalesActivity extends AppCompatActivity {
 
         final TextView tvCorreo = findViewById(R.id.datos_personales_tvCorreo);
         final TextView tvIdioma = findViewById(R.id.datos_personales_tvIdioma);
-        final TextView tvComunidades = findViewById(R.id.datos_personales_tvComunidades);
+//        final TextView tvComunidades = findViewById(R.id.datos_personales_tvComunidades);
 
-        inicializacionDatos(tvCorreo, tvIdioma, tvComunidades);
+        inicializacionDatos(tvCorreo, tvIdioma);//, tvComunidades);
 
         configurarBackButton();
 
         modificarEmail(tvCorreo);
         modificarContrasenya();
-        modificarIdioma(tvIdioma);
-        modificarComunidades(tvComunidades);
+//        modificarIdioma(tvIdioma);
+//        modificarComunidades(tvComunidades);
     }
 
     /**
      * Una vez se crea la activity, se asignan valores a los textViews del correo, idioma y CCAA
      */
-    private void inicializacionDatos(TextView tvCorreo, TextView tvIdioma, TextView tvComunidades) {
+    private void inicializacionDatos(TextView tvCorreo, TextView tvIdioma){//, TextView tvComunidades) {
         actualizarTvEmail(tvCorreo);
-        actualizarTvComunidades(tvComunidades);
+//        actualizarTvComunidades(tvComunidades);
         asignarTvIdioma(tvIdioma, MainActivity.idioma);
         asignarPosicionIdioma();
     }
@@ -498,194 +496,194 @@ public class DatosPersonalesActivity extends AppCompatActivity {
      * las cuales le interesan, para luego poder recibir notificaciones. Se actualiza la base de datos
      * @param tvComunidades     El TextView que cambiará con las nuevas comunidades
      */
-    private void modificarComunidades(final TextView tvComunidades) {
-        LinearLayout llComunidades = findViewById(R.id.datos_personales_layout_comunidades);
-        llComunidades.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Abrimos AlertDialog 'Cargando...'
-                DialogProgress dp = new DialogProgress(context);
-                final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.cargando));
-
-                // Llamamos a la API para recuperar todas las CCAA
-                ComunidadService comunidadService = Api.getApi().create(ComunidadService.class);
-                Call<ArrayList<Comunidad>> comunidadesCall = comunidadService.getComunidades();
-                comunidadesCall.enqueue(new Callback<ArrayList<Comunidad>>() {
-                    @Override
-                    public void onResponse(Call<ArrayList<Comunidad>> call, Response<ArrayList<Comunidad>> response) {
-                        switch(response.code()){
-                            case 200:
-                            case 202:
-                            case 204:
-                                final ArrayList<Comunidad> comunidades = response.body();
-
-                                if(comunidades != null){
-                                    // Creamos el Array de Strings con todas las comunidades recogidas
-                                    final String[] arrayComunidades = new String[comunidades.size()];
-                                    for(int i = 0; i < comunidades.size(); i++){
-                                        arrayComunidades[i] = comunidades.get(i).getNombre();
-                                    }
-                                    // Creamos el Array de booleanos
-                                    final boolean[] arrayBooleans = new boolean[arrayComunidades.length];
-                                    // Creamos el ArrayList (String) de las comunidades que el socio tiene como favoritas
-                                    ArrayList<String> comunidadesSuscritas = new ArrayList<>();
-                                    // Iteramos en el ArrayList de comunidades del socio y añadimos al ArrayList(String) cada
-                                    //  comunidad que encontremos (sólo su nombre)
-                                    for(Comunidad comunidad : MainActivity.socio.getComunidadesInteres()){
-                                        comunidadesSuscritas.add(comunidad.getNombre());
-                                    }
-                                    // Iteramos el Array (String) de comunidades y si esa comunidad está dentro del
-                                    //  ArrayList(String) de comunidadesSuscritas, marcamos el booleano correspondiente como true
-                                    //  si no, como false
-                                    for (int i = 0; i < arrayComunidades.length; i++){
-                                        arrayBooleans[i] = comunidadesSuscritas.contains(arrayComunidades[i]);
-                                    }
-                                    ad.dismiss();
-
-                                    final AlertDialog.Builder builder = new AlertDialog.Builder(DatosPersonalesActivity.this);
-                                    builder.setTitle(getResources().getString(R.string.indique_comunidades))
-                                            .setMultiChoiceItems(arrayComunidades, arrayBooleans, new DialogInterface.OnMultiChoiceClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int pos, boolean isChecked) {
-                                                    arrayBooleans[pos] = isChecked;
-                                                }
-                                            })
-                                            .setNegativeButton(getResources().getString(R.string.cancelar), new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.cancel();
-                                                }
-                                            })
-                                            .setPositiveButton(getResources().getString(R.string.aceptar), null);
-                                    AlertDialog dialog = builder.create();
-                                    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                                        @Override
-                                        public void onShow(final DialogInterface dialog) {
-                                            Button btn = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                                            btn.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    int ccaaSeleccionadas = 0;
-                                                    for (int i = 0; i < arrayBooleans.length; i++) {
-                                                        if (arrayBooleans[i]){
-                                                            ccaaSeleccionadas++;
-                                                        }
-                                                    }
-
-                                                    if (ccaaSeleccionadas > 0) {
-                                                        // Limpiamos las CCAA interesadas que hubiese
-                                                        socio.getComunidadesInteres().clear();
-                                                        for (int i = 0; i < arrayBooleans.length; i++){
-                                                            if (arrayBooleans[i]){
-                                                                socio.getComunidadesInteres().add(comunidades.get(i));
-                                                            }
-                                                        }
-
-                                                        //FIXME
-                                                        //  Problema 1 - no se actualiza la tabla de comunidadesInteresadas
-                                                        //  Problema 2 - no deja marcar la CCAA que tiene como comunidad del socio
-                                                        //      Es decir, si la CCAA de donde es el socio es de Andalucia, si se marca
-                                                        //      Andalucia como CCAA interesada, tira error 500
-                                                        Call<Socio> callUpdateSocio = socioService.updateSocio(MainActivity.socio.getId(), MainActivity.socio);
-                                                        callUpdateSocio.enqueue(new Callback<Socio>() {
-                                                            @Override
-                                                            public void onResponse(Call<Socio> call, Response<Socio> response) {
-                                                                switch(response.code()) {
-                                                                    case 204:
-//                                                                        actualizarTvComunidades(tvComunidades);
-                                                                        Toast.makeText(DatosPersonalesActivity.this, "Todo ok", Toast.LENGTH_SHORT).show();
-                                                                        // pendiente --> modificar las CCAA interes del socio en el MainActivity
-                                                                        //MainActivity.socio.setComunidadesInteres(socio.getComunidadesInteres());
-                                                                        break;
-                                                                    default:
-                                                                        Toast.makeText(DatosPersonalesActivity.this, response.code() + " - " + response.message(), Toast.LENGTH_SHORT).show();
-                                                                        break;
-                                                                }
-                                                                actualizarTvComunidades(tvComunidades);
-                                                            }
-
-                                                            @Override
-                                                            public void onFailure(Call<Socio> call, Throwable t) {
-                                                                Toast.makeText(DatosPersonalesActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        });
-                                                        dialog.dismiss();
-                                                    } else {
-                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), getResources().getString(R.string.error_ccaa_minima), true);
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    });
-                                    dialog.show();
-                                }
-                                break;
-                            default:
-                                CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
-                                ad.dismiss();
-                                break;
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ArrayList<Comunidad>> call, Throwable t) {
-                        CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
-                    }
-                });
-            }
-        });
-    }
+//    private void modificarComunidades(final TextView tvComunidades) {
+//        LinearLayout llComunidades = findViewById(R.id.datos_personales_layout_comunidades);
+//        llComunidades.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Abrimos AlertDialog 'Cargando...'
+//                DialogProgress dp = new DialogProgress(context);
+//                final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.cargando));
+//
+//                // Llamamos a la API para recuperar todas las CCAA
+//                ComunidadService comunidadService = Api.getApi().create(ComunidadService.class);
+//                Call<ArrayList<Comunidad>> comunidadesCall = comunidadService.getComunidades();
+//                comunidadesCall.enqueue(new Callback<ArrayList<Comunidad>>() {
+//                    @Override
+//                    public void onResponse(Call<ArrayList<Comunidad>> call, Response<ArrayList<Comunidad>> response) {
+//                        switch(response.code()){
+//                            case 200:
+//                            case 202:
+//                            case 204:
+//                                final ArrayList<Comunidad> comunidades = response.body();
+//
+//                                if(comunidades != null){
+//                                    // Creamos el Array de Strings con todas las comunidades recogidas
+//                                    final String[] arrayComunidades = new String[comunidades.size()];
+//                                    for(int i = 0; i < comunidades.size(); i++){
+//                                        arrayComunidades[i] = comunidades.get(i).getNombre();
+//                                    }
+//                                    // Creamos el Array de booleanos
+//                                    final boolean[] arrayBooleans = new boolean[arrayComunidades.length];
+//                                    // Creamos el ArrayList (String) de las comunidades que el socio tiene como favoritas
+//                                    ArrayList<String> comunidadesSuscritas = new ArrayList<>();
+//                                    // Iteramos en el ArrayList de comunidades del socio y añadimos al ArrayList(String) cada
+//                                    //  comunidad que encontremos (sólo su nombre)
+//                                    for(Comunidad comunidad : MainActivity.socio.getComunidadesInteres()){
+//                                        comunidadesSuscritas.add(comunidad.getNombre());
+//                                    }
+//                                    // Iteramos el Array (String) de comunidades y si esa comunidad está dentro del
+//                                    //  ArrayList(String) de comunidadesSuscritas, marcamos el booleano correspondiente como true
+//                                    //  si no, como false
+//                                    for (int i = 0; i < arrayComunidades.length; i++){
+//                                        arrayBooleans[i] = comunidadesSuscritas.contains(arrayComunidades[i]);
+//                                    }
+//                                    ad.dismiss();
+//
+//                                    final AlertDialog.Builder builder = new AlertDialog.Builder(DatosPersonalesActivity.this);
+//                                    builder.setTitle(getResources().getString(R.string.indique_comunidades))
+//                                            .setMultiChoiceItems(arrayComunidades, arrayBooleans, new DialogInterface.OnMultiChoiceClickListener() {
+//                                                @Override
+//                                                public void onClick(DialogInterface dialog, int pos, boolean isChecked) {
+//                                                    arrayBooleans[pos] = isChecked;
+//                                                }
+//                                            })
+//                                            .setNegativeButton(getResources().getString(R.string.cancelar), new DialogInterface.OnClickListener() {
+//                                                @Override
+//                                                public void onClick(DialogInterface dialog, int which) {
+//                                                    dialog.cancel();
+//                                                }
+//                                            })
+//                                            .setPositiveButton(getResources().getString(R.string.aceptar), null);
+//                                    AlertDialog dialog = builder.create();
+//                                    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+//                                        @Override
+//                                        public void onShow(final DialogInterface dialog) {
+//                                            Button btn = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+//                                            btn.setOnClickListener(new View.OnClickListener() {
+//                                                @Override
+//                                                public void onClick(View v) {
+//                                                    int ccaaSeleccionadas = 0;
+//                                                    for (int i = 0; i < arrayBooleans.length; i++) {
+//                                                        if (arrayBooleans[i]){
+//                                                            ccaaSeleccionadas++;
+//                                                        }
+//                                                    }
+//
+//                                                    if (ccaaSeleccionadas > 0) {
+//                                                        // Limpiamos las CCAA interesadas que hubiese
+//                                                        socio.getComunidadesInteres().clear();
+//                                                        for (int i = 0; i < arrayBooleans.length; i++){
+//                                                            if (arrayBooleans[i]){
+//                                                                socio.getComunidadesInteres().add(comunidades.get(i));
+//                                                            }
+//                                                        }
+//
+//                                                        //FIXME
+//                                                        //  Problema 1 - no se actualiza la tabla de comunidadesInteresadas
+//                                                        //  Problema 2 - no deja marcar la CCAA que tiene como comunidad del socio
+//                                                        //      Es decir, si la CCAA de donde es el socio es de Andalucia, si se marca
+//                                                        //      Andalucia como CCAA interesada, tira error 500
+//                                                        Call<Socio> callUpdateSocio = socioService.updateSocio(MainActivity.socio.getId(), MainActivity.socio);
+//                                                        callUpdateSocio.enqueue(new Callback<Socio>() {
+//                                                            @Override
+//                                                            public void onResponse(Call<Socio> call, Response<Socio> response) {
+//                                                                switch(response.code()) {
+//                                                                    case 204:
+////                                                                        actualizarTvComunidades(tvComunidades);
+//                                                                        Toast.makeText(DatosPersonalesActivity.this, "Todo ok", Toast.LENGTH_SHORT).show();
+//                                                                        // pendiente --> modificar las CCAA interes del socio en el MainActivity
+//                                                                        //MainActivity.socio.setComunidadesInteres(socio.getComunidadesInteres());
+//                                                                        break;
+//                                                                    default:
+//                                                                        Toast.makeText(DatosPersonalesActivity.this, response.code() + " - " + response.message(), Toast.LENGTH_SHORT).show();
+//                                                                        break;
+//                                                                }
+//                                                                actualizarTvComunidades(tvComunidades);
+//                                                            }
+//
+//                                                            @Override
+//                                                            public void onFailure(Call<Socio> call, Throwable t) {
+//                                                                Toast.makeText(DatosPersonalesActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+//                                                            }
+//                                                        });
+//                                                        dialog.dismiss();
+//                                                    } else {
+//                                                        CustomToast.mostrarWarning(context, getLayoutInflater(), getResources().getString(R.string.error_ccaa_minima), true);
+//                                                    }
+//                                                }
+//                                            });
+//                                        }
+//                                    });
+//                                    dialog.show();
+//                                }
+//                                break;
+//                            default:
+//                                CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
+//                                ad.dismiss();
+//                                break;
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<ArrayList<Comunidad>> call, Throwable t) {
+//                        CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
+//                    }
+//                });
+//            }
+//        });
+//    }
 
     /**
      * Método que permite al usuario, al clickar en el layout pertinente, modificar el idioma de la app
      * @param tvIdioma      El TextView que cambiará con el nuevo idioma seleccionado
      */
-    private void modificarIdioma(final TextView tvIdioma) {
-        LinearLayout llIdioma = findViewById(R.id.datos_personales_layout_idioma);
-        llIdioma.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String [] idiomas = getResources().getStringArray(R.array.idiomas);
-
-                final AlertDialog.Builder builder = new AlertDialog.Builder(DatosPersonalesActivity.this);
-                builder.setTitle(getResources().getString(R.string.seleccione_idioma))
-                        .setSingleChoiceItems(idiomas, posicionIdioma, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int i) {
-                                posicionIdioma = i;
-                            }
-                        })
-                        .setNegativeButton(getResources().getString(R.string.cancelar), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        })
-                        .setPositiveButton(getResources().getString(R.string.aceptar), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String lang;
-                                switch(posicionIdioma) {
-                                    case 0:
-                                        lang = "es";
-                                        break;
-                                    case 1:
-                                        lang = "ca";
-                                        break;
-                                    default:
-                                        lang = "en";
-                                        break;
-                                }
-                                Utils.configurarIdioma(context, lang);
-                                recreate();
-                                asignarIdioma(tvIdioma);
-                            }
-                        });
-                builder.create();
-                builder.show();
-            }
-        });
-    }
+//    private void modificarIdioma(final TextView tvIdioma) {
+//        LinearLayout llIdioma = findViewById(R.id.datos_personales_layout_idioma);
+//        llIdioma.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String [] idiomas = getResources().getStringArray(R.array.idiomas);
+//
+//                final AlertDialog.Builder builder = new AlertDialog.Builder(DatosPersonalesActivity.this);
+//                builder.setTitle(getResources().getString(R.string.seleccione_idioma))
+//                        .setSingleChoiceItems(idiomas, posicionIdioma, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int i) {
+//                                posicionIdioma = i;
+//                            }
+//                        })
+//                        .setNegativeButton(getResources().getString(R.string.cancelar), new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.cancel();
+//                            }
+//                        })
+//                        .setPositiveButton(getResources().getString(R.string.aceptar), new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                String lang;
+//                                switch(posicionIdioma) {
+//                                    case 0:
+//                                        lang = "es";
+//                                        break;
+//                                    case 1:
+//                                        lang = "ca";
+//                                        break;
+//                                    default:
+//                                        lang = "en";
+//                                        break;
+//                                }
+//                                Utils.configurarIdioma(context, lang);
+//                                recreate();
+//                                asignarIdioma(tvIdioma);
+//                            }
+//                        });
+//                builder.create();
+//                builder.show();
+//            }
+//        });
+//    }
 
     /**
      * Modifica el TextView de las CCAA que el interesan al socio
@@ -774,5 +772,4 @@ public class DatosPersonalesActivity extends AppCompatActivity {
                 break;
             }
     }
-
 }

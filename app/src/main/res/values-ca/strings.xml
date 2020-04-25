@@ -70,7 +70,7 @@
     <string name="no_hay_socio_registrado">No hi ha cap soci registrat amb aquest email</string>
     <string name="escriba_su_email">Escrigui el seu email</string>
     <string name="recuperacion_asunto">MeetChrysallis - Recuperació de contrasenya</string>
-    <string name="se_ha_enviado_correo">Se l\'hi ha enviat un email amb la seva nombra contrasenya. En cas de no haver-lo rebut, comprovi la seva carpeta d\'spam o la seva connexió a internet</string>
+    <string name="se_ha_enviado_correo">Se l\'hi ha enviat un email amb la seva nova contrasenya. En cas de no haver-lo rebut, comprovi la seva carpeta d\'spam o la seva connexió a internet</string>
     <string name="confirmar_asistencia">Confirmar assistència</string>
     <string name="confirmar">Confirmar</string>
     <string name="nuevo_comentario">Nou comentari</string>
@@ -94,9 +94,9 @@
     <string name="escriba_aqui_su_comentario">Escrigui aquí el seu comentari</string>
     <string name="mostrar_nombre">Mostrar nom</string>
     <string name="formulario_contacto">Formulari de contacte</string>
-    <string name="indique_su_nombre">Indique el seu nome</string>
-    <string name="indique_su_email">Indique el seu email (*)</string>
-    <string name="asunto">Indique l\'assumpte</string>
+    <string name="indique_su_nombre">Indiqui el seu nome</string>
+    <string name="indique_su_email">Indiqui el seu email (*)</string>
+    <string name="asunto">Indiqui l\'assumpte</string>
     <string name="mensaje">Escrigui el seu missatge (*)</string>
     <string name="error_campo_minimo_caracteres">Camp invàlid: caràcters insuficients</string>
     <string name="datos_del_mensaje">Dades del missatge</string>
@@ -111,6 +111,8 @@
     <string name="info_comunidad">Comunitat Autònoma on es celebra l\'event</string>
     <string name="info_numComents">Número de comentaris que té l\'event</string>
     <string name="info_ratingMedio">Valoració mitja de l\'event</string>
+    <string name="cerrar">Tancar</string>
+    <string name="timeout">S\'ha esgotat el temps d\'espera. Provi de nou</string>
     <string-array name="motivos">
         <item>-- Seleccioni el motiu --</item>
         <item>Dubte</item>

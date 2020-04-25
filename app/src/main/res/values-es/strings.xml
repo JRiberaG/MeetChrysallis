@@ -111,4 +111,13 @@
     <string name="info_comunidad">Comunidad Autónoma donde se celebra el evento</string>
     <string name="info_numComents">Número de comentarios que tiene el evento</string>
     <string name="info_ratingMedio">Valoración media del evento</string>
+    <string name="cerrar">Cerrar</string>
+    <string name="timeout">Se agotó el tiempo de espera. Pruebe de nuevo</string>
+    <string-array name="motivos">
+        <item>-- Seleccione el motivo --</item>
+        <item>Duda</item>
+        <item>Problema</item>
+        <item>Sugerencia</item>
+        <item>Otro</item>
+    </string-array>
 </resources>

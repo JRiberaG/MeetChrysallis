@@ -25,6 +25,7 @@ public class Evento implements Serializable {
     //private Administrador admin;
     @SerializedName("Asistir")
     private List<Asistir> asistencia;
+    @SerializedName("Documentos")
     private List<Documento> documentos;
     private List<Notificacion> notificaciones;
     private float valoracionMedia;

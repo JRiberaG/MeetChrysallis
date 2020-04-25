@@ -78,7 +78,7 @@
     <string name="no_asistir">I will not attend</string>
     <string name="comentario_anadido">Comment added</string>
     <string name="anonimo">Anonymus</string>
-    <string name="indique_email_recuperacion">It is necessary that you type your member email to send the new password.</string>
+    <string name="indique_email_recuperacion">It is necessary that you type your member email to send you the new password.</string>
     <string name="error_comentario_demasiado_corto">The comment contains less that the minimum characters allowed</string>
     <string name="valorar">Rate</string>
     <string name="si_enviar">Yes, send</string>
@@ -111,6 +111,8 @@
     <string name="info_comunidad">Autonomous Community where the event will take place</string>
     <string name="info_numComents">Number of comments that the event has</string>
     <string name="info_ratingMedio">Average rating of the event</string>
+    <string name="cerrar">Close</string>
+    <string name="timeout">The request took too much time to be processed. Try again</string>
     <string-array name="motivos">
         <item>-- Select a motive --</item>
         <item>Question</item>
