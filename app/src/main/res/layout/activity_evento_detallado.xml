@@ -212,6 +212,29 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/eve_det_linear_numAsistentes"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:layout_width="@dimen/icon_small"
+                            android:layout_height="@dimen/icon_small"
+                            android:layout_marginTop="5dp"
+                            app:srcCompat="@drawable/ic_people_black_24dp" />
+
+                        <TextView
+                            android:id="@+id/eve_det_numAsistentes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingLeft="3dp"
+                            android:text="00"
+                            android:fontFamily="@font/opensans_regular"/>
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:visibility="gone"
                         android:id="@+id/eve_det_linear_numAdjuntos"
                         android:layout_width="0dp"
@@ -266,7 +289,8 @@
                     android:layout_marginHorizontal="25dp"
                     android:text="Lorem ipsum dolor sit amet consectetur adipiscing elit proin inceptos nibh, neque mus justo in ac dictumst dapibus nullam diam tincidunt volutpat, lacus natoque mi pretium malesuada erat placerat maecenas ultrices. Fermentum nostra natoque et viverra ut nam sociosqu nulla taciti vitae urna orci sollicitudin quis pharetra, quisque mollis interdum dapibus porta mus imperdiet neque himenaeos fringilla netus odio ridiculus ac. Vitae facilisis purus fames id venenatis vivamus eros convallis sapien urna est, pellentesque facilisi aliquet lectus orci conubia litora dignissim ridiculus pharetra aliquam sociis, a sodales ut faucibus tristique sed malesuada enim arcu eu. Nullam a penatibus cubilia molestie tempor nisl urna vivamus praesent bibendum platea fusce hendrerit velit, in placerat consequat cras eu vitae sollicitudin sociosqu nunc est duis commodo.
                             Lorem ipsum dolor sit amet consectetur adipiscing elit proin inceptos nibh, neque mus justo in ac dictumst dapibus nullam diam tincidunt volutpat, lacus natoque mi pretium malesuada erat placerat maecenas ultrices. Fermentum nostra natoque et viverra ut nam sociosqu nulla taciti vitae urna orci sollicitudin quis pharetra, quisque mollis interdum dapibus porta mus imperdiet neque himenaeos fringilla ..."
-                    android:fontFamily="@font/raleway_regular"/>
+                    android:fontFamily="@font/raleway_regular"
+                    android:lineSpacingExtra="6dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"

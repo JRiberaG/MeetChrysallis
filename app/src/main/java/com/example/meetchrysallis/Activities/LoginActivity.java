@@ -120,6 +120,7 @@ public class LoginActivity extends AppCompatActivity {
                             case 0:
                             default: // socio inactivo o error --> borramos creds, son erroneas
                                 fileCreds.delete();
+                                CustomToast.mostrarWarning(ctx, getLayoutInflater(), "Credenciales erroneas, inicie sesión", true);
                                 break;
                         }
                         break;

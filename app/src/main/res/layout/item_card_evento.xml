@@ -20,7 +20,7 @@
         
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_margin="5dp"
             android:padding="5dp">
@@ -30,7 +30,8 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:gravity="center">
+                android:gravity="center"
+                android:layout_marginRight="10dp">
 
                 <ImageView
                     android:id="@+id/cv_imagen"
@@ -44,7 +45,7 @@
             <LinearLayout
                 android:layout_weight="6"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -58,18 +59,21 @@
                         android:layout_height="wrap_content"
                         android:text="Titulo del evento"
                         android:fontFamily="@font/raleway_regular"
+                        android:textColor="@color/md_grey_400"
                         android:textSize="@dimen/txt_bigBody"
 
                         android:ellipsize="end"
                         android:maxLines="1"/>
                 </LinearLayout>
 
+                <!-- UBI + FECHA -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:orientation="horizontal">
                     <LinearLayout
+                        android:visibility="gone"
                         android:layout_weight="4"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -97,7 +101,8 @@
                         android:layout_width="0dp"
                         android:layout_marginLeft="5dp"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:gravity="">
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"

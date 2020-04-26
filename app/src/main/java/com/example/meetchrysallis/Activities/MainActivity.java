@@ -35,7 +35,6 @@ import java.io.File;
 //      - Notificaciones
 //      - Arreglar error ComunidadeInteres
 
-//Tutorial Navigation Bottom Bar https://www.youtube.com/watch?v=tPV8xA7m-iw
 public class MainActivity extends AppCompatActivity {
 
     private Context ctx = MainActivity.this;

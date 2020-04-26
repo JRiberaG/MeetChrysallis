@@ -85,7 +85,7 @@
     <string name="confirmar_valoracion">Confirmar valoración</string>
     <string name="msj_enviar_valoracion1">Ha valorado el evento con un</string>
     <string name="msj_enviar_valoracion2">Una vez se envíe la valoración no podrá ser modificada.\n¿Enviar?</string>
-    <string name="no_eventos_disponibles">No hay eventos disponibles que le puedan interesar.</string>
+    <string name="no_eventos_disponibles">No hay eventos disponibles. Pruebe más tarde.</string>
     <string name="valoracion_enviada">Valoración enviada. ¡Gracias!</string>
     <string name="gracias_por_valorar">Muchas gracias por su valoración.</string>
     <string name="error_ccaa_minima">Se ha de seleccionar, como mínimo, una Comunidad Autónoma</string>
@@ -113,6 +113,8 @@
     <string name="info_ratingMedio">Valoración media del evento</string>
     <string name="cerrar">Cerrar</string>
     <string name="timeout">Se agotó el tiempo de espera. Pruebe de nuevo</string>
+    <string name="info_numAsistentes">Número de asistentes</string>
+    <string name="cargando_eventos">Cargando eventos...</string>
     <string-array name="motivos">
         <item>-- Seleccione el motivo --</item>
         <item>Duda</item>

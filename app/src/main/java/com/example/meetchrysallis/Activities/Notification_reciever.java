@@ -17,6 +17,7 @@ import com.example.meetchrysallis.R;
 public class Notification_reciever extends BroadcastReceiver {
 
     private Evento evento = new Evento();
+    private String tag;
 
 
     @Override
@@ -24,6 +25,7 @@ public class Notification_reciever extends BroadcastReceiver {
 
         Bundle bundle = intent.getBundleExtra("bundle");
         evento = (Evento)bundle.getSerializable("evento");
+        tag = (String)bundle.getString("tag");
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -51,11 +53,11 @@ public class Notification_reciever extends BroadcastReceiver {
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.ic_chat_black_24dp)
                 .setContentTitle("TITULO")
-                .setContentText("Body del mensaje")
+                .setContentText("Se creó la notificacion con tag " + tag)
                 .setAutoCancel(true);
 
         if (intent.getAction().equals("NOTIFICACION")) {
-            notificationManager.notify(102, builder.build());
+            notificationManager.notify(tag,150, builder.build());
         }
     }
 }

@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -91,6 +92,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         tvValoracionMedia           = findViewById(R.id.eve_det_tvStars);
         tvNumComentarios            = findViewById(R.id.eve_det_tvNumComments);
         TextView tvNumDocs          = findViewById(R.id.eve_det_numDocs);
+        TextView tvNumAsis          = findViewById(R.id.eve_det_numAsistentes);
         TextView tvDescripcion      = findViewById(R.id.eve_det_tvDescripcion);
         TextView tvNoComments       = findViewById(R.id.eve_det_tvNoComments);
 
@@ -101,6 +103,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         linearRatingMedio                   = findViewById(R.id.eve_det_linear_ratingMedio);
         LinearLayout linearNumComentarios   = findViewById(R.id.eve_det_linear_numComentarios);
         LinearLayout linearNumDocs          = findViewById(R.id.eve_det_linear_numAdjuntos);
+        LinearLayout linearNumAsis          = findViewById(R.id.eve_det_linear_numAsistentes);
         LinearLayout linearHeadComments     = findViewById(R.id.eve_det_linear_header_comentarios);
         LinearLayout linearComentarios      = findViewById(R.id.eve_det_linearLayoutComentarios);
         LinearLayout linearRatear           = findViewById(R.id.eve_det_linearLayout_rating);
@@ -118,16 +121,19 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         cargarComentariosAPI();
 
         // A los elementos del layout les asignamos los los valores correspondientes del evento
-        asignarDatos(ivBandera, tvTitulo, tvFecha, tvUbicacion, tvFechaLimite, linearRatear, linearRatingMedio, tvNumComentarios, linearFechaLim, tvComunidad, tvValoracionMedia, tvDescripcion, linearUbicacion, ibBack, tvNumDocs, linearNumDocs);
+        asignarDatos(ivBandera, tvTitulo, tvFecha, tvUbicacion, tvFechaLimite, linearRatear, linearRatingMedio,
+                tvNumComentarios, linearFechaLim, tvComunidad, tvValoracionMedia, tvDescripcion, linearUbicacion,
+                ibBack, tvNumDocs, linearNumDocs, tvNumAsis, linearNumAsis);
 
-        configurarListenersLayouts(linearFecha, linearUbicacion, linearFechaLim, linearComunidad, linearNumComentarios, linearNumDocs);
+        configurarListenersLayouts(linearFecha, linearUbicacion, linearFechaLim, linearComunidad,
+                linearNumComentarios, linearNumDocs, linearNumAsis);
 
         configurarLayoutExpand(linearComentarios, recyclerComments, tvNoComments, linearHeadComments);
         configurarBotonComentar(recyclerComments, tvNoComments);
         configurarBotonMultifuncion();
     }
 
-    private void configurarListenersLayouts(LinearLayout linearFecha, final LinearLayout linearUbicacion, LinearLayout linearFechaLim, LinearLayout linearComunidad, LinearLayout linearNumComentarios, LinearLayout linearNumDocs) {
+    private void configurarListenersLayouts(LinearLayout linearFecha, final LinearLayout linearUbicacion, LinearLayout linearFechaLim, LinearLayout linearComunidad, LinearLayout linearNumComentarios, LinearLayout linearNumDocs, LinearLayout linearNumAsis) {
         linearFecha.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,7 +144,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         linearUbicacion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            configurarIntentMaps(linearUbicacion);
+                configurarIntentMaps();
             }
         });
 
@@ -170,10 +176,17 @@ public class EventoDetalladoActivity extends AppCompatActivity {
             }
         });
 
-        linearNumDocs.setOnClickListener(new View.OnClickListener() {
+//        linearNumDocs.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                abrirDialogDocs();
+//            }
+//        });
+
+        linearNumAsis.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                abrirDialogDocs();
+                CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.info_numAsistentes), false);
             }
         });
     }
@@ -287,10 +300,14 @@ public class EventoDetalladoActivity extends AppCompatActivity {
 //                .show();
     }
 
-    private void asignarDatos(ImageView ivBandera, TextView tvTitulo, TextView tvFecha, TextView tvUbicacion, TextView tvFechaLimite, LinearLayout linearRatear, LinearLayout linearRatingMedio, TextView tvNumComentarios, LinearLayout linearFechaLim, TextView tvComunidad, TextView tvValoracionMedia, TextView tvDescripcion, LinearLayout linearUbicacion, ImageButton ibBack, TextView tvNumDocs, LinearLayout linearNumDocs) {
+    private void asignarDatos(ImageView ivBandera, TextView tvTitulo, TextView tvFecha, TextView tvUbicacion, TextView tvFechaLimite,
+                              LinearLayout linearRatear, LinearLayout linearRatingMedio, TextView tvNumComentarios,
+                              LinearLayout linearFechaLim, TextView tvComunidad, TextView tvValoracionMedia, TextView tvDescripcion,
+                              LinearLayout linearUbicacion, ImageButton ibBack, TextView tvNumDocs, LinearLayout linearNumDocs,
+                              TextView tvNumAsis, LinearLayout linearNumAsis) {
         configurarIbBack(ibBack);
 
-//        asignarBandera(imgBandera);
+        // Bandera de la CCAA
         Utils.asignarImagenComunidad(ctx, ivBandera, evento.getIdComunidad());
 
         //titulo
@@ -346,82 +363,37 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         else
             tvNumComentarios.setText("0");
 
-        // núm documentos
-        if (evento.getDocumentos() != null){
-            if (evento.getDocumentos().size() > 0) {
-                tvNumDocs.setText(String.valueOf(evento.getDocumentos().size()));
-            } else {
-                linearNumDocs.setVisibility(View.GONE);
+//        // núm documentos
+//        if (evento.getDocumentos() != null){
+//            if (evento.getDocumentos().size() > 0) {
+//                tvNumDocs.setText(String.valueOf(evento.getDocumentos().size()));
+//            } else {
+//                linearNumDocs.setVisibility(View.GONE);
+//            }
+//        } else {
+//            linearNumDocs.setVisibility(View.GONE);
+//        }
+
+        // num asistentes
+        if (evento.getAsistencia() != null) {
+            int numAsistentes = 0;
+            for (Asistir a : evento.getAsistencia()) {
+                numAsistentes += a.getNumAsistentes();
+            }
+            tvNumAsis.setText(String.valueOf(numAsistentes));
+
+            if (numAsistentes == 0) {
+                linearNumAsis.setVisibility(View.GONE);
             }
         } else {
-            linearNumDocs.setVisibility(View.GONE);
+            linearNumAsis.setVisibility(View.GONE);
         }
 
         //descripción
-        tvDescripcion.setText(evento.getDescripcion());
+        String desc = evento.getDescripcion();
+        desc = desc.replace(". ", ".\n");
+        tvDescripcion.setText(desc);
     }
-
-//    private void asignarBandera(ImageView imgBandera) {
-//        switch(evento.getIdComunidad()){
-//            case 1:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_andalucia_rounded));
-//                break;
-//            case 2:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_aragon_rounded));
-//                break;
-//            case 3:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_islas_canarias_rounded));
-//                break;
-//            case 4:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_cantabria_rounded));
-//                break;
-//            case 5:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_castilla_leon_rounded));
-//                break;
-//            case 6:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_castilla_mancha_rounded));
-//                break;
-//            case 7:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_catalunya_rounded));
-//                break;
-//            case 8:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_ceuta_rounded));
-//                break;
-//            case 9:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_melilla_rounded));
-//                break;
-//            case 10:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_comunidad_madrid_rounded));
-//                break;
-//            case 11:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_navarra_rounded));
-//                break;
-//            case 12:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_comunitat_valenciana_rounded));
-//                break;
-//            case 13:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_extremadura_rounded));
-//                break;
-//            case 14:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_galicia_rounded));
-//                break;
-//            case 15:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_islas_baleares_rounded));
-//                break;
-//            case 16:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_la_rioja_rounded));
-//                break;
-//            case 17:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_pais_vasco_rounded));
-//                break;
-//            case 18:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_asturias_rounded));
-//                break;
-//            case 19:
-//                imgBandera.setImageDrawable(getResources().getDrawable(R.drawable.bandera_region_murcia_rounded));
-//                break;
-//        }
-//    }
 
     private void configurarIbBack(ImageButton ibBack) {
         ibBack.setOnClickListener(new View.OnClickListener() {
@@ -432,16 +404,11 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         });
     }
 
-    private void configurarIntentMaps(LinearLayout linearUbicacion) {
-        linearUbicacion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String map = "http://maps.google.com/maps?q=" + evento.getUbicacion().replace(" ", "+");
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(map));
-                startActivity(intent);
-            }
-        });
+    private void configurarIntentMaps() {
+        String strUbicacion = "http://maps.google.com/maps?q=" + evento.getUbicacion().replace(" ", "+");
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(strUbicacion));
+        startActivity(intent);
     }
 
     private void comprobarValoracionMedia() {
@@ -454,7 +421,6 @@ public class EventoDetalladoActivity extends AppCompatActivity {
     }
 
     private void cargarComentariosAPI() {
-        //comentarioService = Api.getApi().create(ComentarioService.class);
         Call<ArrayList<Comentario>> comentariosCall = comentarioService.getComentariosByEvento(evento.getId());
 
         DialogProgress dp = new DialogProgress(EventoDetalladoActivity.this);
@@ -508,26 +474,6 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                 }
             }
         });
-
-//        expand.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(expandido){
-//                    //tvNoComments.setVisibility(View.GONE);
-//                    //recyclerComments.setVisibility(View.GONE);
-//                    linearComentarios.setVisibility(View.GONE);
-//                    expand.setImageResource(R.drawable.ic_expand_more_black_24dp);
-//                    expandido = false;
-//                }
-//                else{
-//                    linearComentarios.setVisibility(View.VISIBLE);
-//                    refrescarComentarios(tvNoComments, recyclerComments);
-//
-//                    expand.setImageResource(R.drawable.ic_expand_less_black_24dp);
-//                    expandido = true;
-//                }
-//            }
-//        });
     }
 
     private void configurarBotonComentar(final RecyclerView recyclerComments, final TextView tvNoComments) {
@@ -771,10 +717,11 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                                                     switch(response.code()){
                                                         case 200:
                                                         case 201:
+//                                                            crearNotificacion();
                                                             //marcamos como asistido y cambiamos colores y texto del boton
                                                             asistido = true;
                                                             comprobarAsistido();
-                                                            crearNotificacion();
+//                                                            crearNotificacion();
                                                             break;
                                                         default:
                                                             CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
@@ -862,15 +809,23 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         //  Pendiente de arreglar: si el socio se desapunta, cancelar la notificacion
         Calendar calendar = Calendar.getInstance();
 
-        calendar.set(Calendar.HOUR_OF_DAY, 22);
-        calendar.set(Calendar.MINUTE, 45);
+        int hora = calendar.get(Calendar.HOUR);
+        int minutos = calendar.get(Calendar.HOUR);
+
+        calendar.set(Calendar.HOUR_OF_DAY, hora);
+        calendar.set(Calendar.MINUTE, minutos + 1);
+        calendar.set(Calendar.SECOND, 00);
 
         Intent intent = new Intent(ctx, Notification_reciever.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable("evento", evento);
+        String tag = String.valueOf(Calendar.getInstance().get(Calendar.HOUR));
+        bundle.putString("tag", tag);
         intent.putExtra("bundle", bundle);
         intent.setAction("NOTIFICACION");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Toast.makeText(ctx, "Notificacion creada, tag: " + tag, Toast.LENGTH_SHORT).show();
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
@@ -890,8 +845,8 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                 switch(response.code()){
                     case 200:
                     case 201:
-                            asistido = false;
-                            comprobarAsistido();
+                        asistido = false;
+                        comprobarAsistido();
                         break;
                     default:
                         CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
@@ -989,7 +944,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                         break;
                     case 404:
                         // not found
-                        System.out.println("Error: not found");
+                        System.out.println("Error: evento not found");
                     default:
                         CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
@@ -1035,21 +990,15 @@ public class EventoDetalladoActivity extends AppCompatActivity {
             if(asistido){
                 btnMultifuncion.setText(getResources().getString(R.string.no_asistir));
                 btnMultifuncion.setCompoundDrawablesWithIntrinsicBounds((R.drawable.ic_event_busy_black_24dp), 0, 0, 0);
-//                btnMultifuncion.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_event_busy_black_24dp),null, null, null);
-//                btnMultifuncion.setBackground(this.getResources().getDrawable(R.drawable.selector_custom_button_red));
             }
             else{
                 btnMultifuncion.setText(getResources().getString(R.string.asistire));
                 btnMultifuncion.setCompoundDrawablesWithIntrinsicBounds((R.drawable.ic_event_available_black_24dp), 0, 0, 0);
-//                btnMultifuncion.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_event_available_black_24dp),null, null, null);
-//                btnMultifuncion.setBackground(this.getResources().getDrawable(R.drawable.selector_custom_button_green));
             }
         // Si ya se celebró
         } else {
             btnMultifuncion.setText(getResources().getString(R.string.valorar));
             btnMultifuncion.setCompoundDrawablesWithIntrinsicBounds((R.drawable.ic_star_black_24dp), 0, 0, 0);
-//            btnMultifuncion.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_thumbs_up_down_black_24dp),null, null, null);
-//            btnMultifuncion.setBackground(this.getResources().getDrawable(R.drawable.custom_button_ratear));
         }
 
         // Si ha asistido podrá comentar, de lo contrario no

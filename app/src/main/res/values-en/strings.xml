@@ -62,7 +62,7 @@
     <string name="cargando">Loading...</string>
     <string name="asistire">I will attend</string>
     <string name="valora_el_evento">Rate the event. Help us to improve!</string>
-    <string name="no_hay_comentarios">There are no comments yet. Be the first one!</string>
+    <string name="no_hay_comentarios">There are no comments yet.</string>
     <string name="comentar">Write a comment</string>
     <string name="comentarios">Comments</string>
     <string name="email">Email</string>
@@ -85,7 +85,7 @@
     <string name="confirmar_valoracion">Confirm rating</string>
     <string name="msj_enviar_valoracion1">You have rated the event with</string>
     <string name="msj_enviar_valoracion2">Once the rating is sent, you will not be allowed to modify it.\nSend it?</string>
-    <string name="no_eventos_disponibles">There are not any events available that you may be interested in.</string>
+    <string name="no_eventos_disponibles">There are not any events available at the time. Try later.</string>
     <string name="valoracion_enviada">Rating sent. Thanks!</string>
     <string name="gracias_por_valorar">Thanks for rating the event.</string>
     <string name="error_ccaa_minima">You have to select at least one Community</string>
@@ -113,6 +113,8 @@
     <string name="info_ratingMedio">Average rating of the event</string>
     <string name="cerrar">Close</string>
     <string name="timeout">The request took too much time to be processed. Try again</string>
+    <string name="info_numAsistentes">Number of attendants</string>
+    <string name="cargando_eventos">Loading events...</string>
     <string-array name="motivos">
         <item>-- Select a motive --</item>
         <item>Question</item>

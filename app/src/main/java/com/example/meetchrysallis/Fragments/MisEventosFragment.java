@@ -137,6 +137,9 @@ public class MisEventosFragment extends Fragment {
     }
 
     private void recogerEventos(final ArrayList<Short> idsEventos) {
+        DialogProgress dp = new DialogProgress(context);
+        final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.cargando_eventos));
+
         Call<List<Evento>> callEventos = eventoService.getEventos();
         callEventos.enqueue(new Callback<List<Evento>>() {
             @Override
@@ -182,10 +185,13 @@ public class MisEventosFragment extends Fragment {
                         CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
+                ad.dismiss();
             }
 
             @Override
             public void onFailure(Call<List<Evento>> call, Throwable t) {
+                ad.dismiss();
+                System.err.println(t.toString());
                 CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
             }
         });

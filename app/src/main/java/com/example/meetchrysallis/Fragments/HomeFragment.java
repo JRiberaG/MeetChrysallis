@@ -244,6 +244,9 @@ public class HomeFragment extends Fragment {
 
     private void cargarEventos() {
         //        final EventoService eventoService = Api.getApi().create(EventoService.class);
+        DialogProgress dp = new DialogProgress(context);
+        final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.cargando_eventos));
+
         final Call<List<Evento>> eventosCall = eventoService.getEventos();
         eventosCall.enqueue(new Callback<List<Evento>>() {
             @Override
@@ -252,6 +255,8 @@ public class HomeFragment extends Fragment {
                     case 200:
                     case 204:
                         ArrayList<Evento> eventosRecogidos = (ArrayList<Evento>)response.body();
+
+                        ad.dismiss();
 
                         actualizarEventosDisponibles(eventosRecogidos);
 
@@ -273,16 +278,18 @@ public class HomeFragment extends Fragment {
                         }
                         break;
                     default:
+                        ad.dismiss();
                         CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
             }
             @Override
             public void onFailure(Call<List<Evento>> call, Throwable t) {
+                ad.dismiss();
+                System.err.println(t.getMessage());
                 CustomToast.mostrarInfo(context, getLayoutInflater(), t.toString(), true);
             }
         });
-
     }
 
     private void configurarListenerAdapter() {
@@ -320,6 +327,7 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<Evento> call, Throwable t) {
+                        System.err.println(t.getMessage());
                         CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                         ad.dismiss();
                     }
@@ -355,6 +363,7 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<List<Evento>> call, Throwable t) {
+                        System.err.println(t.getMessage());
                         CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                     }
                 });
@@ -386,19 +395,13 @@ public class HomeFragment extends Fragment {
                     for(Evento eve : eventosRecogidos){
                         if (eve.getIdComunidad() == comunidad.getId()){
                             if (eve.getFecha_limite() != null) {
-
-//                                recogerEventosTimestamp(eve);
                                 if (eve.getFecha_limite().after(timestamp)){
-//                                    recogerEventoAPartirDeFecha(eve);
                                     comprobarEvento(eve);
                                 }
                             } else {
                                 if (eve.getFecha().after(timestamp)) {
                                     comprobarEvento(eve);
                                 }
-//                                }
-//                                    recogerEventoAPartirDeFecha(eve, Utils.capturarTimestampActual(), false);
-//                                }
                             }
                         }
                     }
@@ -407,91 +410,6 @@ public class HomeFragment extends Fragment {
         }
         ad.dismiss();
     }
-
-//    private void recogerEventosTimestamp(final Evento eve) {
-////        final boolean[] recogida = {false};
-////        final Timestamp[] tsReal = new Timestamp[1];
-//
-//        if (timestamp == null) {
-//            TimeService timeService = ApiWorldTime.getApi().create(TimeService.class);
-//            Call<Time> timeCall = timeService.getTime();
-//            timeCall.enqueue(new Callback<Time>() {
-//                @Override
-//                public void onResponse(Call<Time> call, Response<Time> response) {
-//                    if (response.code() == 200) {
-//                        Time tiempo = response.body();
-//                        timestamp = new Timestamp(0);
-//                        timestamp = tiempo.getDatetime();
-//
-//                        if (timestamp != null) {
-//                            recogerEventoAPartirDeFecha(eve, timestamp, true);
-////                            if (eve.getFecha_limite().after(tsReal[0])){
-////                                recogerEventoAPartirDeFecha(eve, tsReal[0]);
-////                            }
-////                            recogida[0] = true;
-//                        } else {
-//                            recogerEventoAPartirDeFecha(eve, Utils.capturarTimestampActual(), true);
-//                        }
-//
-//                    } else {
-//                        //salió mal
-//                        recogerEventoAPartirDeFecha(eve, Utils.capturarTimestampActual(), true);
-//                    }
-//                }
-//
-//                @Override
-//                public void onFailure(Call<Time> call, Throwable t) {
-//                    // salió mal
-//                    recogerEventoAPartirDeFecha(eve, Utils.capturarTimestampActual(), true);
-//                }
-//            });
-//        } else {
-//            recogerEventoAPartirDeFecha(eve, timestamp, true);
-//        }
-//    }
-
-//    private void recogerEventoAPartirDeFecha(Evento eve, Timestamp ts) {
-//        //Se añade a la lista si el evento es después a la fecha actual (no se ha celebrado)
-//        if (eve.getFecha().after(ts)) {
-//            boolean asistido = false;
-//            Iterator ite = eve.getAsistencia().iterator();
-//            while (!asistido && ite.hasNext()) {
-//                Asistir asistir = (Asistir)ite.next();
-//                if (asistir.getIdSocio() == MainActivity.socio.getId()) {
-//                    asistido = true;
-//                }
-//            }
-//            if (!asistido) {
-//                eventosDelSocio.add(eve);
-//            }
-//        }
-//    }
-//    private void recogerEventoAPartirDeFecha(Evento eve, Timestamp ts, boolean fechaLimite) {
-//
-//        if (fechaLimite) {
-//            if (eve.getFecha_limite().after(ts)){
-//                comprobarEvento(eve);
-//            }
-//        } else {
-//            if (eve.getFecha().after(ts)) {
-//                comprobarEvento(eve);
-//            }
-//        }
-//        //Se añade a la lista si el evento es después a la fecha actual (no se ha celebrado)
-//        if (eve.getFecha().after(ts)) {
-////            boolean asistido = false;
-////            Iterator ite = eve.getAsistencia().iterator();
-////            while (!asistido && ite.hasNext()) {
-////                Asistir asistir = (Asistir)ite.next();
-////                if (asistir.getIdSocio() == MainActivity.socio.getId()) {
-////                    asistido = true;
-////                }
-////            }
-////            if (!asistido) {
-////                eventosDelSocio.add(eve);
-////            }
-//        }
-//    }
 
     private void comprobarEvento(Evento eve) {
         boolean asistido = false;
