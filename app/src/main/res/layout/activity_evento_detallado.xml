@@ -60,10 +60,10 @@
 
                 <ImageView
                     android:id="@+id/eve_det_ivImagen"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/eng" />
+                    android:src="@drawable/bandera_espanya_rounded"/>
             </LinearLayout>
 
             <LinearLayout
@@ -74,6 +74,7 @@
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/eve_det_linear_fecha"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -90,11 +91,12 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:paddingLeft="10dp"
-                        android:text="Fecha" />
+                        android:text="00/00/00 00:00"
+                        android:fontFamily="@font/opensans_regular"/>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/eve_det_linearlayout_Ubicacion"
+                    android:id="@+id/eve_det_linear_ubicacion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -111,11 +113,12 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:paddingLeft="10dp"
-                        android:text="Ubicación" />
+                        android:text="Ubicación"
+                        android:fontFamily="@font/raleway_regular"/>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/eve_det_linearlayout_fechaLim"
+                    android:id="@+id/eve_det_linear_fechaLim"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -124,7 +127,7 @@
                     <ImageView
                         android:layout_width="@dimen/icon_small"
                         android:layout_height="@dimen/icon_small"
-                        android:src="@drawable/cat" />
+                        app:srcCompat="@drawable/ic_date_range_red_24dp" />
 
                     <TextView
                         android:id="@+id/eve_det_tvFechaLimite"
@@ -132,10 +135,12 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:paddingLeft="10dp"
-                        android:text="Fecha límite" />
+                        android:text="00/00/00 00:00"
+                        android:fontFamily="@font/opensans_regular"/>
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/eve_det_linear_comunidad"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -144,7 +149,7 @@
                     <ImageView
                         android:layout_width="@dimen/icon_small"
                         android:layout_height="@dimen/icon_small"
-                        android:src="@drawable/cat" />
+                        android:src="@drawable/icono_espana" />
 
                     <TextView
                         android:id="@+id/eve_det_tvComunidad"
@@ -152,7 +157,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:paddingLeft="10dp"
-                        android:text="Comunidad" />
+                        android:text="Comunidad"
+                        android:fontFamily="@font/raleway_regular"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -162,7 +168,7 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
-                        android:id="@+id/eve_det_linearLayout_ratingMedio"
+                        android:id="@+id/eve_det_linear_ratingMedio"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1">
@@ -178,14 +184,16 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:paddingLeft="2dp"
-                            android:text="X.XX" />
+                            android:text="0.00"
+                            android:fontFamily="@font/opensans_regular"/>
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/eve_det_linear_numComentarios"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
-                        android:layout_weight="2">
+                        android:layout_weight="1">
 
                         <ImageView
                             android:layout_width="@dimen/icon_small"
@@ -199,11 +207,63 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:paddingLeft="3dp"
-                            android:text="XX" />
+                            android:text="00"
+                            android:fontFamily="@font/opensans_regular"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/eve_det_linear_numAsistentes"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:layout_width="@dimen/icon_small"
+                            android:layout_height="@dimen/icon_small"
+                            android:layout_marginTop="5dp"
+                            app:srcCompat="@drawable/ic_people_black_24dp" />
+
+                        <TextView
+                            android:id="@+id/eve_det_numAsistentes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingLeft="3dp"
+                            android:text="00"
+                            android:fontFamily="@font/opensans_regular"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/eve_det_linear_numAdjuntos"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:layout_width="@dimen/icon_small"
+                            android:layout_height="@dimen/icon_small"
+                            android:layout_marginTop="5dp"
+                            app:srcCompat="@drawable/ic_attach_file_black_24dp" />
+
+                        <TextView
+                            android:id="@+id/eve_det_numDocs"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingLeft="3dp"
+                            android:text="00"
+                            android:fontFamily="@font/opensans_regular"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/gradient_background"/>
     </LinearLayout>
 
     <ScrollView
@@ -228,30 +288,31 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="25dp"
                     android:text="Lorem ipsum dolor sit amet consectetur adipiscing elit proin inceptos nibh, neque mus justo in ac dictumst dapibus nullam diam tincidunt volutpat, lacus natoque mi pretium malesuada erat placerat maecenas ultrices. Fermentum nostra natoque et viverra ut nam sociosqu nulla taciti vitae urna orci sollicitudin quis pharetra, quisque mollis interdum dapibus porta mus imperdiet neque himenaeos fringilla netus odio ridiculus ac. Vitae facilisis purus fames id venenatis vivamus eros convallis sapien urna est, pellentesque facilisi aliquet lectus orci conubia litora dignissim ridiculus pharetra aliquam sociis, a sodales ut faucibus tristique sed malesuada enim arcu eu. Nullam a penatibus cubilia molestie tempor nisl urna vivamus praesent bibendum platea fusce hendrerit velit, in placerat consequat cras eu vitae sollicitudin sociosqu nunc est duis commodo.
-                            Lorem ipsum dolor sit amet consectetur adipiscing elit proin inceptos nibh, neque mus justo in ac dictumst dapibus nullam diam tincidunt volutpat, lacus natoque mi pretium malesuada erat placerat maecenas ultrices. Fermentum nostra natoque et viverra ut nam sociosqu nulla taciti vitae urna orci sollicitudin quis pharetra, quisque mollis interdum dapibus porta mus imperdiet neque himenaeos fringilla ..." />
+                            Lorem ipsum dolor sit amet consectetur adipiscing elit proin inceptos nibh, neque mus justo in ac dictumst dapibus nullam diam tincidunt volutpat, lacus natoque mi pretium malesuada erat placerat maecenas ultrices. Fermentum nostra natoque et viverra ut nam sociosqu nulla taciti vitae urna orci sollicitudin quis pharetra, quisque mollis interdum dapibus porta mus imperdiet neque himenaeos fringilla ..."
+                    android:fontFamily="@font/raleway_regular"
+                    android:lineSpacingExtra="6dp"/>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
                     android:orientation="vertical">
 
-                    <!-- LAYOUT DIVISIORIO -->
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="4dp"
-                        android:background="@color/colorPrimaryDark_light"/>
-                    <LinearLayout
+                        android:id="@+id/eve_det_linear_header_comentarios"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginTop="10dp"
-                        android:gravity="center">
+                        android:gravity="center"
+                        android:background="@drawable/gradient_background_darker"
+                        android:padding="12dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="@string/comentarios"
                             android:textSize="@dimen/txt_subHeader"
-                            android:textStyle="bold" />
+                            android:fontFamily="@font/raleway_regular"/>
 
                         <ImageView
                             android:id="@+id/eve_det_ivExpand"
@@ -281,6 +342,7 @@
                         android:paddingVertical="5dp"
                         android:text="@string/comentar"
                         android:textAllCaps="false"
+                        android:fontFamily="@font/raleway_regular"
 
                         android:drawableLeft="@drawable/ic_edit_black_24dp"
                         android:drawablePadding="10dp"
@@ -298,22 +360,18 @@
                         android:layout_marginLeft="5dp"
                         android:text="@string/no_hay_comentarios"
                         android:textSize="@dimen/txt_error"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:fontFamily="@font/raleway_regular"/>
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/eve_det_linearLayout_rating"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="25dp"
+                    android:layout_marginTop="65dp"
                     android:orientation="vertical"
                     android:visibility="visible"
                     android:gravity="center">
-                    <!-- LAYOUT DIVISIORIO -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="4dp"
-                        android:background="@color/colorPrimaryDark_light"/>
                     <TextView
                         android:id="@+id/eve_det_tvValoraElEvento"
                         android:layout_width="match_parent"
@@ -321,7 +379,8 @@
                         android:layout_marginTop="10dp"
                         android:text="@string/valora_el_evento"
                         android:textSize="@dimen/txt_body"
-                        android:gravity="center"/>
+                        android:gravity="center"
+                        android:fontFamily="@font/raleway_regular"/>
                     <RatingBar
                         android:id="@+id/eve_det_ratingBar"
                         android:layout_width="wrap_content"
@@ -339,14 +398,18 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
+        android:layout_height="wrap_content"
+        android:gravity="center">
         <Button
-            android:id="@+id/eve_det_btnAsistire"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/selector_custom_button_green"
-            android:text="@string/asistire" />
-
+            android:id="@+id/eve_det_btnMultifuncion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="70dp"
+            android:paddingRight="80dp"
+            android:drawablePadding="10dp"
+            android:background="@drawable/selector_custom_button_multifuncion"
+            android:drawableLeft="@drawable/ic_event_available_black_24dp"
+            android:text="@string/asistire"
+            android:fontFamily="@font/raleway_semibold"/>
     </LinearLayout>
 </LinearLayout>

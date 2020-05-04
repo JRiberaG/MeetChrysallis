@@ -9,7 +9,7 @@
     <string name="nav_opciones">Opciones</string>
     <string name="nav_home">Principal</string>
     <string name="nav_eventos">Mis eventos</string>
-    <string name="fragmentHome_header">EVENTOS DISPONIBLES</string>
+    <string name="fragmentHome_header">Eventos disponibles</string>
     <string name="error_conexion_db">No se ha podido conectar con la base de datos. Pruebe más tarde</string>
     <string name="cargando_comentarios">Cargando comentarios...</string>
     <string name="cargando_evento">Cargando evento...</string>
@@ -47,7 +47,7 @@
     <string name="contrasenya_actualizada">Contraseña actualizada</string>
     <string name="indique_comunidades">Marque las Comunidades que le interesen</string>
     <string name="eventos_pendientes">Eventos pendientes</string>
-    <string name="error_no_eventos_pendientes">No tiene ningún evento pendiente aun</string>
+    <string name="error_no_eventos_pendientes">No tiene ningún evento pendiente.</string>
     <string name="error_no_eventos_asistidos">Todavía no ha asistido a ningún evento.</string>
     <string name="eventos_asistidos">Eventos asistidos</string>
     <string name="modificar_datos_personales">Modificar datos personales</string>
@@ -57,7 +57,7 @@
     <string name="cargando">Cargando...</string>
     <string name="asistire">Asistiré</string>
     <string name="valora_el_evento">Valora el evento ¡Ayúdanos a mejorar!</string>
-    <string name="no_hay_comentarios">No hay ningún comentario aun. ¡Sé el primero!</string>
+    <string name="no_hay_comentarios">No hay ningún comentario aun.</string>
     <string name="comentar">Escribir comentario</string>
     <string name="comentarios">Comentarios</string>
     <string name="email">Email</string>
@@ -80,15 +80,10 @@
     <string name="confirmar_valoracion">Confirmar valoración</string>
     <string name="msj_enviar_valoracion1">Ha valorado el evento con un</string>
     <string name="msj_enviar_valoracion2">Una vez se envíe la valoración no podrá ser modificada.\n¿Enviar?</string>
-    <string name="no_eventos_disponibles">No hay eventos disponibles que le puedan interesar.</string>
+    <string name="no_eventos_disponibles">No hay eventos disponibles. Pruebe más tarde.</string>
     <string name="valoracion_enviada">Valoración enviada. ¡Gracias!</string>
     <string name="gracias_por_valorar">Muchas gracias por su valoración.</string>
     <string name="error_ccaa_minima">Se ha de seleccionar como mínimo una Comunidad Autónoma</string>
-    <string-array name="idiomas">
-        <item>Castellano</item>
-        <item>Catalán</item>
-        <item>Inglés</item>
-    </string-array>
     <string name="indique_num_asistentes">Indique el número de personas que van a asistir al evento, por favor.</string>
     <string name="num_personas">"Número de personas: "</string>
     <string name="escriba_aqui_su_comentario">Escriba aquí su comentario</string>
@@ -103,6 +98,24 @@
     <string name="datos_de_contacto">Datos de contacto</string>
     <string name="mensaje_enviado">Mensaje enviado</string>
     <string name="no_se_envio_mensaje">No se pudo enviar el mensaje</string>
+    <string name="no">No</string>
+    <string name="desea_desapuntarse_evento">¿Desea desapuntarse del evento?</string>
+    <string name="si_desapuntarse">Sí, desapuntarse</string>
+    <string name="info_fecha">Fecha en la que el evento se celebra</string>
+    <string name="info_fechaLim">Fecha límite para marcar su participación</string>
+    <string name="info_comunidad">Comunidad Autónoma donde se celebra el evento</string>
+    <string name="info_numComents">Número de comentarios que tiene el evento</string>
+    <string name="info_ratingMedio">Valoración media del evento</string>
+    <string name="cerrar">Cerrar</string>
+    <string name="timeout">Se agotó el tiempo de espera. Pruebe de nuevo</string>
+    <string name="seleccione_archivo_para_visualizar">Seleccione archivo para visualizar:</string>
+    <string name="info_numAsistentes">Número de asistentes</string>
+    <string name="cargando_eventos">Cargando eventos...</string>
+    <string-array name="idiomas">
+        <item>Castellano</item>
+        <item>Catalán</item>
+        <item>Inglés</item>
+    </string-array>
     <string-array name="motivos">
         <item>-- Seleccione el motivo --</item>
         <item>Duda</item>

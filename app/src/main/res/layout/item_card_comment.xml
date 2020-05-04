@@ -37,8 +37,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/txt_body"
-                    android:textStyle="bold"
-                    android:text="(nombre)"/>
+                    android:text="(nombre)"
+                    android:fontFamily="@font/raleway_extralight"/>
+                <TextView
+                    android:id="@+id/item_comentario_tvAnonimo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/txt_body"
+                    android:text="@string/anonimo"
+                    android:fontFamily="@font/raleway_lightitalic"
+                    android:visibility="gone"/>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -47,11 +55,12 @@
                         android:id="@+id/item_comentario_tvFecha"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:paddingRight="5dp"
-                        android:textSize="@dimen/txt_body2"
-                        android:text="(XX/XX/XX XX:XX)"
                         android:paddingLeft="15dp"
-                        android:layout_gravity="center"/>
+                        android:textSize="@dimen/txt_body2"
+                        android:text="(00/00/00 00:00)"
+                        android:fontFamily="@font/opensans_regular"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -66,7 +75,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/txt_body2"
-                    android:text="(comentario)"/>
+                    android:text="(comentario)"
+                    android:fontFamily="@font/raleway_regular"/>
             </LinearLayout>
         </LinearLayout>
 

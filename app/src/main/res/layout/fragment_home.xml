@@ -17,7 +17,8 @@
             <TextView
                 android:padding="10dp"
                 style="@style/Text_BigHeader"
-                android:text="@string/fragmentHome_header" />
+                android:text="@string/fragmentHome_header"
+                android:fontFamily="@font/raleway_regular"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -32,8 +33,7 @@
             android:orientation="vertical">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerHome"
-                android:layout_marginLeft="5dp"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <TextView
                 android:id="@+id/fragment_home_tvNoEventos"
@@ -42,7 +42,8 @@
                 android:layout_marginTop="15dp"
                 android:text="@string/no_eventos_disponibles"
                 android:gravity="center"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:fontFamily="@font/raleway_regular"/>
         </LinearLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

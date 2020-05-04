@@ -23,7 +23,7 @@ public class CustomToast {
      * @param layoutInflater    Inflater
      * @param msj               Mensaje que se mostrará
      */
-    public static void mostrarSuccess(Context context, LayoutInflater layoutInflater, String msj){
+    public static void mostrarSuccess(Context context, LayoutInflater layoutInflater, String msj, boolean esLargo){
         LayoutInflater inflater = layoutInflater;
 
         View layout =
@@ -34,7 +34,11 @@ public class CustomToast {
 
         Toast toast = new Toast(context);
         toast.setGravity(Gravity.BOTTOM, 0, 0);
-        toast.setDuration(Toast.LENGTH_LONG);
+        if (esLargo) {
+            toast.setDuration(Toast.LENGTH_LONG);
+        } else {
+            toast.setDuration(Toast.LENGTH_SHORT);
+        }
         toast.setView(layout);
         toast.show();
     }
@@ -46,7 +50,7 @@ public class CustomToast {
      * @param layoutInflater    Inflater
      * @param msj               Mensaje que se mostrará
      */
-    public static void mostrarError(Context context, LayoutInflater layoutInflater, String msj){
+    public static void mostrarError(Context context, LayoutInflater layoutInflater, String msj, boolean esLargo){
         LayoutInflater inflater = layoutInflater;
 
         View layout =
@@ -57,7 +61,11 @@ public class CustomToast {
 
         Toast toast = new Toast(context);
         toast.setGravity(Gravity.BOTTOM, 0, 0);
-        toast.setDuration(Toast.LENGTH_LONG);
+        if (esLargo) {
+            toast.setDuration(Toast.LENGTH_LONG);
+        } else {
+            toast.setDuration(Toast.LENGTH_SHORT);
+        }
         toast.setView(layout);
         toast.show();
     }
@@ -69,7 +77,7 @@ public class CustomToast {
      * @param layoutInflater    Inflater
      * @param msj               Mensaje que se mostrará
      */
-    public static void mostrarInfo(Context context, LayoutInflater layoutInflater, String msj){
+    public static void mostrarInfo(Context context, LayoutInflater layoutInflater, String msj, boolean esLargo){
         LayoutInflater inflater = layoutInflater;
 
         View layout =
@@ -80,7 +88,11 @@ public class CustomToast {
 
         Toast toast = new Toast(context);
         toast.setGravity(Gravity.BOTTOM, 0, 0);
-        toast.setDuration(Toast.LENGTH_LONG);
+        if (esLargo) {
+            toast.setDuration(Toast.LENGTH_LONG);
+        } else {
+            toast.setDuration(Toast.LENGTH_SHORT);
+        }
         toast.setView(layout);
         toast.show();
     }
@@ -92,7 +104,7 @@ public class CustomToast {
      * @param layoutInflater    Inflater
      * @param msj               Mensaje que se mostrará
      */
-    public static void mostrarWarning(Context context, LayoutInflater layoutInflater, String msj){
+    public static void mostrarWarning(Context context, LayoutInflater layoutInflater, String msj, boolean esLargo){
         LayoutInflater inflater = layoutInflater;
 
         View layout =
@@ -103,7 +115,11 @@ public class CustomToast {
 
         Toast toast = new Toast(context);
         toast.setGravity(Gravity.BOTTOM, 0, 0);
-        toast.setDuration(Toast.LENGTH_LONG);
+        if (esLargo) {
+            toast.setDuration(Toast.LENGTH_LONG);
+        } else {
+            toast.setDuration(Toast.LENGTH_SHORT);
+        }
         toast.setView(layout);
         toast.show();
     }

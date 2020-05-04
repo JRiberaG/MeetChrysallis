@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">@color/md_amber_500</color>
+    <color name="colorPrimary">@color/md_amber_200</color>
     <color name="colorPrimary_light">@color/md_amber_300</color>
     <!--<color name="colorPrimaryDark">#c68400</color>-->
-    <color name="colorPrimaryDark">@color/md_amber_900</color>
-    <color name="colorPrimaryDark_light">@color/md_orange_600</color>
+    <color name="colorPrimaryDark">@color/md_amber_600</color>
+    <color name="colorPrimaryDark_light">@color/md_orange_400</color>
     <color name="colorPrimaryDark_lighter">@color/md_orange_300</color>
     <color name="colorAccent">#007c91</color>
     <color name="colorAccentLighter">#00adcc</color>
@@ -687,5 +687,11 @@
     <color name="md_falcon_A400_25">#40598bae</color>
 
     <color name="md_statusbar_translucent">#4000</color>
+
+    <!-- OTROS COLORES PERSONALIZADOS -->
     <color name="hyperlink">#0000EE</color>
+    <color name="toast_red">#ff3333</color>
+    <color name="toast_blue">#3385ff</color>
+    <color name="toast_green">#5cd65c</color>
+    <color name="toast_yellow">#ffff33</color>
 </resources>

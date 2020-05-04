@@ -1,5 +1,6 @@
 package com.example.meetchrysallis.Adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +20,11 @@ import java.util.ArrayList;
 public class RecyclerEventoAdapter extends RecyclerView.Adapter<RecyclerEventoAdapter.ViewHolder>{
     private ArrayList<Evento> eventos;
     private OnItemClickListener onItemClickListener;
+    private Context ctx;
 
-    public RecyclerEventoAdapter(ArrayList<Evento> eventos) {
+    public RecyclerEventoAdapter(ArrayList<Evento> eventos, Context ctx) {
         this.eventos = eventos;
+        this.ctx = ctx;
     }
 
     @Override
@@ -78,6 +81,7 @@ public class RecyclerEventoAdapter extends RecyclerView.Adapter<RecyclerEventoAd
         }
 
         public void asignarDatos(Evento evento) {
+            Utils.asignarImagenComunidad(ctx, imagen, evento.getIdComunidad());
             titulo.setText(evento.getTitulo());
             ubicacion.setText(evento.getUbicacion());
 

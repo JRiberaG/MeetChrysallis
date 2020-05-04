@@ -18,7 +18,7 @@ public interface TimeService {
 //           public void onResponse(Call<Time> call, Response<Time> response) {
 //               if (response.code() == 200) {
 //                   Time tiempo = response.body();
-//                   Timestamp ts = tiempo.getDateTime();
+//                   Timestamp ts = tiempo.getDatetime();
 //                   // Hacer lo que se quiera con el ts recogido
 //               } else {
 //                   //salió mal

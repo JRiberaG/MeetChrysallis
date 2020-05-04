@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,6 +45,11 @@ public class MisEventosFragment extends Fragment {
 
     private EventoService eventoService = Api.getApi().create(EventoService.class);
 
+    TextView tvNoPendientes;
+    TextView tvNoAsistidos;
+    RecyclerView recyclerPendientes;
+    RecyclerView recyclerAsistidos;
+
     public MisEventosFragment(Context context) {
         this.context = context;
     }
@@ -72,7 +78,18 @@ public class MisEventosFragment extends Fragment {
          *          aquellos que tengan esos IDs y guardarlos en una lista aparte para poder trabajar mejor
          *          con ellos.
          */
+
+        asignarIdsLayout();
+
         recogerAsistirs();
+    }
+
+    private void asignarIdsLayout() {
+        tvNoPendientes  = view.findViewById(R.id.fragment_eventos_tvNoPendientes);
+        tvNoAsistidos   = view.findViewById(R.id.fragment_eventos_tvNoAsistidos);
+
+        recyclerPendientes  = view.findViewById(R.id.recyclerEventosPendientes);
+        recyclerAsistidos   = view.findViewById(R.id.recyclerEventosAsistidos);
     }
 
     private void recogerAsistirs() {
@@ -99,9 +116,13 @@ public class MisEventosFragment extends Fragment {
                         break;
                     case 404:
                         // No se encontró ningún asistir
+                        tvNoPendientes.setVisibility(View.VISIBLE);
+                        tvNoAsistidos.setVisibility(View.VISIBLE);
+                        recyclerPendientes.setVisibility(View.GONE);
+                        recyclerAsistidos.setVisibility(View.GONE);
                         break;
                     default:
-                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
                 ad.dismiss();
@@ -109,13 +130,16 @@ public class MisEventosFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ArrayList<Asistir>> call, Throwable t) {
-                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                 ad.dismiss();
             }
         });
     }
 
     private void recogerEventos(final ArrayList<Short> idsEventos) {
+        DialogProgress dp = new DialogProgress(context);
+        final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.cargando_eventos));
+
         Call<List<Evento>> callEventos = eventoService.getEventos();
         callEventos.enqueue(new Callback<List<Evento>>() {
             @Override
@@ -158,24 +182,25 @@ public class MisEventosFragment extends Fragment {
                         // No se encontraron eventos (???)
                         break;
                     default:
-                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
+                ad.dismiss();
             }
 
             @Override
             public void onFailure(Call<List<Evento>> call, Throwable t) {
-                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                ad.dismiss();
+                System.err.println(t.toString());
+                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
             }
         });
     }
 
     private void actualizarRecyclerAsistidos(final ArrayList<Evento> eventosAsistidos) {
-        RecyclerView recycler = view.findViewById(R.id.recyclerEventosAsistidos);
-
-        recycler.setLayoutManager(new GridLayoutManager(context,1));
-        RecyclerEventoAdapter adapter = new RecyclerEventoAdapter(eventosAsistidos);
-        recycler.setAdapter(adapter);
+        recyclerAsistidos.setLayoutManager(new GridLayoutManager(context,1));
+        RecyclerEventoAdapter adapter = new RecyclerEventoAdapter(eventosAsistidos, context);
+        recyclerAsistidos.setAdapter(adapter);
 
         adapter.setOnItemClickListener(new RecyclerEventoAdapter.OnItemClickListener() {
             @Override
@@ -183,14 +208,21 @@ public class MisEventosFragment extends Fragment {
                 llamarApiEvento(eventosAsistidos, position);
             }
         });
+
+        // Comprobamos que tenga algún evento asistindo y lo reflejamos en el layout
+        if (adapter.getItemCount() > 0) {
+            recyclerAsistidos.setVisibility(View.VISIBLE);
+            tvNoAsistidos.setVisibility(View.GONE);
+        } else {
+            recyclerAsistidos.setVisibility(View.GONE);
+            tvNoAsistidos.setVisibility(View.VISIBLE);
+        }
     }
 
     private void actualizarRecyclerPendientes(final ArrayList<Evento> eventosPendientes) {
-        RecyclerView recycler = view.findViewById(R.id.recyclerEventosPendientes);
-
-        recycler.setLayoutManager(new GridLayoutManager(context,1));
-        RecyclerEventoAdapter adapter = new RecyclerEventoAdapter(eventosPendientes);
-        recycler.setAdapter(adapter);
+        recyclerPendientes.setLayoutManager(new GridLayoutManager(context,1));
+        RecyclerEventoAdapter adapter = new RecyclerEventoAdapter(eventosPendientes, context);
+        recyclerPendientes.setAdapter(adapter);
 
         adapter.setOnItemClickListener(new RecyclerEventoAdapter.OnItemClickListener() {
             @Override
@@ -198,6 +230,14 @@ public class MisEventosFragment extends Fragment {
                 llamarApiEvento(eventosPendientes, position);
             }
         });
+
+        if (adapter.getItemCount() > 0 ){
+            tvNoPendientes.setVisibility(View.GONE);
+            recyclerPendientes.setVisibility(View.VISIBLE);
+        } else {
+            tvNoPendientes.setVisibility(View.VISIBLE);
+            recyclerPendientes.setVisibility(View.GONE);
+        }
     }
 
     private void llamarApiEvento(ArrayList<Evento> listaEventos, int position) {
@@ -221,7 +261,7 @@ public class MisEventosFragment extends Fragment {
                         startActivity(intent);
                         break;
                     default:
-                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarWarning(context, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
 
@@ -230,7 +270,7 @@ public class MisEventosFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Evento> call, Throwable t) {
-                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db));
+                CustomToast.mostrarInfo(context, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                 ad.dismiss();
             }
         });

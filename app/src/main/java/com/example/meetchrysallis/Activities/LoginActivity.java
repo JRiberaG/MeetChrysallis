@@ -1,9 +1,13 @@
 package com.example.meetchrysallis.Activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -42,6 +46,8 @@ import retrofit2.Response;
 //https://dribbble.com/shots/6787415-Meet-Up-Login-App-UI-Design
 public class LoginActivity extends AppCompatActivity {
 
+    private Context ctx = LoginActivity.this;
+
     private Socio newSocio;
 
     private SocioService socioService = Api.getApi().create(SocioService.class);
@@ -50,12 +56,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        /**
-         * ACTUALIZACIÓN 18/04:
-         *   Parece que los cambios con las nuevas Creds funcionan.
-         *   Queda pendiente de hacer más pruebas y, en caso de que funcionen, borrar los comentarios
-         *   antiguos.
-         */
+        pedirPermisos();
 
         // --------- PASOS PARA EL LOGIN ---------
         //OPCIÓN A: Hay credenciales guardadas
@@ -73,7 +74,6 @@ public class LoginActivity extends AppCompatActivity {
         //(Si no se entiende en el drive hay un FlowChart explicándolo)
         //----------------------------------------
 
-        //fileCreds = new File(getExternalFilesDir(null).getPath() + File.separator + "cred.cfg");
 
         // En caso de que accedamos desde el logout...
         boolean sesionCerrada = false;
@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         //leerFicheroCreds();
-        File fileCreds = Archivador.recuperarFicheroCreds(LoginActivity.this);
+        File fileCreds = Archivador.recuperarFicheroCredenciales(ctx);
         // Lee el fichero de las creds y, en caso de haberlas, las guarda en un objeto Socio
         Socio socioCredenciales = Archivador.leerFicheroCreds(fileCreds);
 
@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loguearseConCredenciales(final Socio socioCredenciales, final File fileCreds) {
-        final DialogProgress dp = new DialogProgress(LoginActivity.this);
+        final DialogProgress dp = new DialogProgress(ctx);
         final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.iniciando_sesion));
         //Hacemos una llamada a la API (socio completo) para comprobar que esas credenciales sean válidas
         Call<Socio> socioCall = socioService.getSocioByID(socioCredenciales.getId(), true);
@@ -120,6 +120,7 @@ public class LoginActivity extends AppCompatActivity {
                             case 0:
                             default: // socio inactivo o error --> borramos creds, son erroneas
                                 fileCreds.delete();
+                                CustomToast.mostrarWarning(ctx, getLayoutInflater(), "Credenciales erroneas, inicie sesión", true);
                                 break;
                         }
                         break;
@@ -127,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                         fileCreds.delete();
                         break;
                     default:
-                        CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarInfo(ctx, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
 
@@ -138,9 +139,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Call<Socio> call, Throwable t) {
                 String fallo = t.toString();
                 if (fallo.contains("failed to connect"))
-                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
-                else
-                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), t.toString());
+                    CustomToast.mostrarInfo(ctx, getLayoutInflater(), getString(R.string.error_conexion_db), true);
+                else if (fallo.contains("timeout"))
+                    CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.timeout), true);
 
                 fileCreds.delete();
 
@@ -154,6 +155,8 @@ public class LoginActivity extends AppCompatActivity {
         btnAcceder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                pedirPermisos();
+
                 final EditText edCorreo = findViewById(R.id.EditTextCorreo);
                 final EditText edPassword = findViewById(R.id.EditTextPassword);
 
@@ -172,7 +175,7 @@ public class LoginActivity extends AppCompatActivity {
                     final Socio socioTemp = new Socio(email, contrasenyaEncriptada);
 
 
-                    final DialogProgress dp = new DialogProgress(LoginActivity.this);
+                    final DialogProgress dp = new DialogProgress(ctx);
                     final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.iniciando_sesion));
                     //Se clonan las calls para poder realizar una tras otra
                     // (por ejemplo, el usuario se equivoca al loguearse +2 veces), de lo contrario
@@ -196,7 +199,6 @@ public class LoginActivity extends AppCompatActivity {
                                                         case 202:
                                                         case 204:
                                                             newSocio = response.body();
-                                                            //Archivador.guardarJsonCredenciales(fileCreds, newSocio);
 
                                                             // Encriptamos el email para poder guardarlo en el fichero de Creds
                                                             String emailEncriptado = Utils.encriptarString(newSocio.getEmail());
@@ -213,7 +215,7 @@ public class LoginActivity extends AppCompatActivity {
                                                             Archivador.guardarCredenciales(fileCreds, datosMap);
 
                                                             if (sesionCerrada) {
-                                                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                                Intent intent = new Intent(ctx, MainActivity.class);
                                                                 intent.putExtra("socio", newSocio);
                                                                 // Elimina esta activity del stack, así si desde el Main se presiona 'back',
                                                                 // no se volverá a esta activity
@@ -228,7 +230,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                                 @Override
                                                 public void onFailure(Call<Socio> call, Throwable t) {
-                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                    CustomToast.mostrarInfo(ctx, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                                                 }
                                             });
                                             break;
@@ -236,22 +238,23 @@ public class LoginActivity extends AppCompatActivity {
                                             edCorreo.setText("");
                                             edPassword.setText("");
                                             edCorreo.requestFocus();
-                                            CustomToast.mostrarError(LoginActivity.this,getLayoutInflater(), getString(R.string.loginincorrecto));
+                                            CustomToast.mostrarError(ctx, getLayoutInflater(), getString(R.string.loginincorrecto), false);
                                             break;
                                         default: //no hay socios en la bd
-                                            CustomToast.mostrarWarning(LoginActivity.this,getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado));
+                                            CustomToast.mostrarWarning(ctx, getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado), true);
                                             break;
                                     }
                                     break;
                                 default:
-                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), response.code() + " - " + response.message());
+                                    CustomToast.mostrarInfo(ctx, getLayoutInflater(), response.code() + " - " + response.message(), true);
                                     break;
                             }
                             ad.dismiss();
                         }
                         @Override
                         public void onFailure(Call<List<Socio>> call, Throwable t) {
-                            CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
+                            System.err.println(t.getMessage());
+                            CustomToast.mostrarInfo(ctx, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                             ad.dismiss();
                         }
                     });
@@ -270,6 +273,20 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private void pedirPermisos() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            }
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+            }
+            if (checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 3);
+            }
+        }
+    }
+
     private void configurarRecuperacionContrasenya() {
         final TextView tvOlvide = findViewById(R.id.TextViewOlvide);
 
@@ -277,7 +294,7 @@ public class LoginActivity extends AppCompatActivity {
         final TextInputLayout inputLayoutEmail      = view.findViewById(R.id.dialog_olvide_layoutEmail);
         final TextInputEditText inputEditTextEmail  = view.findViewById(R.id.dialog_olvide_etEmail);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
         builder.setView(view)
                 .setTitle(getResources().getString(R.string.escriba_su_email))
                 .setNegativeButton(getResources().getString(R.string.cancelar), new DialogInterface.OnClickListener() {
@@ -298,10 +315,9 @@ public class LoginActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         //Busca en la base de datos el email facilitado por el usuario,
                         //si lo está, envía una nueva contraseña al email
-                        //EditText etEmail = view.findViewById(R.id.dialog_olvide_etEmail);
                         final String email = inputEditTextEmail.getText().toString();
 
-                        if (!email.isEmpty() ) {// FIXME && Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+                        if (!email.isEmpty() ) {// FIXME &&*/ Patterns.EMAIL_ADDRESS.matcher(email).matches()){
                             inputLayoutEmail.setErrorEnabled(false);
                             inputLayoutEmail.setErrorIconDrawable(null);
 
@@ -310,16 +326,16 @@ public class LoginActivity extends AppCompatActivity {
                             final String asunto = getResources().getString(R.string.recuperacion_asunto);
                             final String mensaje;
                             switch (MainActivity.idioma) {
-                                case "es":
-                                    mensaje = "¡Hola!\n\n" +
-                                            "Esta es su nueva contraseña: \n" +
+                                case "en":
+                                    mensaje = "Hi!\n\n" +
+                                            "This is your new password: \n" +
                                             contrasenyaRandom + "\n\n" +
-                                            "Si lo desea, puede modificarla accediendo a la app y, " +
-                                            "una vez dentro, en la pestaña" +
-                                            "de \"Opciones\" > \"Modificar Datos personales\". \n" +
-                                            "\nMuchas gracias.\n\n" +
-                                            "** Mensaje generado automáticamente. " +
-                                            "Por favor, no responda a este email. **";
+                                            "If you wish, you may change it through the app, and " +
+                                            "once you are logged in, " +
+                                            "\"Options\" > \"Modify personal data\". \n" +
+                                            "\nThanks.\n\n" +
+                                            "** Message generated automatically. " +
+                                            "Please, do not reply to this email. **";
                                     break;
                                 case "ca":
                                     mensaje = "Hola!\n\n" +
@@ -332,15 +348,15 @@ public class LoginActivity extends AppCompatActivity {
                                             "Si us plau, no respongui a aquest email. **";
                                     break;
                                 default:
-                                    mensaje = "Hi!\n\n" +
-                                            "This is your new password: \n" +
+                                    mensaje = "¡Hola!\n\n" +
+                                            "Esta es su nueva contraseña: \n" +
                                             contrasenyaRandom + "\n\n" +
-                                            "If you wish, you may change it through the app, and " +
-                                            "once you are logged in, " +
-                                            "\"Options\" > \"Modify personal data\". \n" +
-                                            "\nThanks.\n\n" +
-                                            "** Message generated automatically. " +
-                                            "Please, do not reply to this email. **";
+                                            "Si lo desea, puede modificarla accediendo a la app y, " +
+                                            "una vez dentro, en la pestaña" +
+                                            "de \"Opciones\" > \"Modificar Datos personales\". \n" +
+                                            "\nMuchas gracias.\n\n" +
+                                            "** Mensaje generado automáticamente. " +
+                                            "Por favor, no responda a este email. **";
                                     break;
                             }
                             Call<List<Socio>> sociosCall = socioService.getSocios();
@@ -377,12 +393,9 @@ public class LoginActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onResponse(Call<Socio> call, Response<Socio> response) {
                                                     switch (response.code()) {
-                                                        case 200:
-                                                        case 201:
-                                                        case 202:
-                                                        case 203:
                                                         case 204:
                                                             //se actualizó el usuario
+                                                            System.out.println("Socio actualizado");
                                                             break;
                                                         default:
                                                             //error al intentar actualizar el socio
@@ -392,25 +405,25 @@ public class LoginActivity extends AppCompatActivity {
 
                                                 @Override
                                                 public void onFailure(Call<Socio> call, Throwable t) {
-                                                    CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                    CustomToast.mostrarInfo(ctx, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                                                 }
                                             });
 
                                             //FIXME: modificar el mail para cuando se acaben de hacer las pruebas
                                             //Enviamos el mail al usuario con la nueva contraseña
-                                            JavaMailAPI javaMailAPI = new JavaMailAPI(LoginActivity.this, Utils.EMAIL, asunto, mensaje);
-                                            //JavaMailAPI javaMailAPI = new JavaMailAPI(LoginActivity.this, LoginActivity.this, email, asunto, mensaje);
+                                            JavaMailAPI javaMailAPI = new JavaMailAPI(ctx, Utils.EMAIL, asunto, mensaje);
+                                            //JavaMailAPI javaMailAPI = new JavaMailAPI(ctx, email, asunto, mensaje);
                                             javaMailAPI.execute();
 
-                                            CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getResources().getString(R.string.se_ha_enviado_correo));
+                                            CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.se_ha_enviado_correo), true);
                                         } else
-                                            CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado));
+                                            CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado), true);
                                     }
                                 }
 
                                 @Override
                                 public void onFailure(Call<List<Socio>> call, Throwable t) {
-                                    CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                    CustomToast.mostrarInfo(ctx, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                                 }
                             });
 
@@ -429,133 +442,6 @@ public class LoginActivity extends AppCompatActivity {
         tvOlvide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-
-//                        })
-//                        .setPositiveButton(getResources().getString(R.string.enviar), new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                //Busca en la base de datos el email facilitado por el usuario,
-//                                //si lo está, envía una nueva contraseña al email
-//                                EditText etEmail = view.findViewById(R.id.dialog_olvide_etEmail);
-//                                final String email = etEmail.getText().toString();
-//
-//                                //TODO se cierra al 'enviar'. Reprogramar como los otros alerts,
-//                                //  eliminar el listener del positive y programarlo
-//                                if (!email.isEmpty() ){// FIXME && Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-//                                    //Genera una nueva contraseña aleatorio de 6 carácteres alfabéticos
-//                                    final String contrasenyaRandom = generarContrasenya();
-//                                    final String asunto = getResources().getString(R.string.recuperacion_asunto);
-//                                    final String mensaje;
-//                                    switch(MainActivity.idioma) {
-//                                        case "es":
-//                                            mensaje = "¡Hola!\n\n" +
-//                                                    "Esta es su nueva contraseña: \n" +
-//                                                    contrasenyaRandom + "\n\n" +
-//                                                    "Si lo desea, puede modificarla accediendo a la app y, " +
-//                                                    "una vez dentro, en la pestaña" +
-//                                                    "de \"Opciones\" > \"Modificar Datos personales\". \n" +
-//                                                    "\nMuchas gracias.\n\n" +
-//                                                    "** Mensaje generado automáticamente. " +
-//                                                    "Por favor, no responda a este email. **";
-//                                            break;
-//                                        case "ca":
-//                                            mensaje = "Hola!\n\n" +
-//                                                    "Aquesta és la seva nova contrasenya: \n" +
-//                                                    contrasenyaRandom + "\n\n" +
-//                                                    "Si ho desitja, pot modificar-la accedint a l'App i, " +
-//                                                    "un cop dins, en la pestanya d'\"Opcions\" > \"Modificar dades personals\". \n" +
-//                                                    "\nMoltes gràcies.\n\n" +
-//                                                    "** Missatge generat automàticament. " +
-//                                                    "Si us plau, no respongui a aquest email. **";
-//                                            break;
-//                                        default:
-//                                            mensaje = "Hi!\n\n" +
-//                                                    "This is your new password: \n" +
-//                                                    contrasenyaRandom + "\n\n" +
-//                                                    "If you wish, you may change it through the app, and " +
-//                                                    "once you are logged in, " +
-//                                                    "\"Options\" > \"Modify personal data\". \n" +
-//                                                    "\nThanks.\n\n" +
-//                                                    "** Message generated automatically. " +
-//                                                    "Please, do not reply to this email. **";
-//                                            break;
-//                                    }
-//
-//                                    Call<List<Socio>> sociosCall = socioService.getSocios();
-//                                    sociosCall.clone().enqueue(new Callback<List<Socio>>() {
-//                                        @Override
-//                                        public void onResponse(Call<List<Socio>> call, Response<List<Socio>> response) {
-//                                            ArrayList<Socio> listaSocios = (ArrayList<Socio>)response.body();
-//                                            boolean emailEncontrado = false;
-//
-//                                            if(listaSocios != null || listaSocios.size() > 0) {
-//                                                Iterator ite = listaSocios.iterator();
-//                                                Socio socioIterado = null;
-//
-//                                                while (ite.hasNext() && !emailEncontrado) {
-//                                                    socioIterado = (Socio) ite.next();
-//
-//                                                    if (socioIterado.getEmail().equals(email) &&
-//                                                            socioIterado.isActivo()) {
-//                                                        emailEncontrado = true;
-//                                                    }
-//                                                }
-//
-//                                                if (emailEncontrado){
-//                                                    // Encripta la contraseña que hemos generado automáticamente
-//                                                    //FIXME
-//                                                    // String contrasenyaEncriptada = Utils.encriptarString(contrasenyaRandom);
-//                                                    String contrasenyaEncriptada = Utils.encriptarString("prueba");
-//                                                    Socio socioUpdated = socioIterado;
-//                                                    socioUpdated.setContrasenya(contrasenyaEncriptada);
-//
-//                                                    //Hace una llamada a la API modificando la contraseña del socio
-//                                                    Call<Socio> callUpdateSocio = socioService.updateSocio(socioUpdated.getId(), socioUpdated);
-//                                                    callUpdateSocio.enqueue(new Callback<Socio>() {
-//                                                        @Override
-//                                                        public void onResponse(Call<Socio> call, Response<Socio> response) {
-//                                                            switch(response.code()){
-//                                                                case 200:
-//                                                                case 201:
-//                                                                case 202:
-//                                                                case 203:
-//                                                                case 204:
-//                                                                    //se actualizó el usuario
-//                                                                    break;
-//                                                                default:
-//                                                                    //error al intentar actualizar el socio
-//                                                                    System.out.println(response.code() + " - " + response.message());
-//                                                            }
-//                                                        }
-//
-//                                                        @Override
-//                                                        public void onFailure(Call<Socio> call, Throwable t) {
-//                                                            CustomToast.mostrarInfo(LoginActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
-//                                                        }
-//                                                    });
-//
-//                                                    //FIXME: modificar el mail para cuando se acaben de hacer las pruebas
-//                                                    //Enviamos el mail al usuario con la nueva contraseña
-//                                                    JavaMailAPI javaMailAPI = new JavaMailAPI(LoginActivity.this, "jribgomez@gmail.com", asunto, mensaje);
-//                                                    //JavaMailAPI javaMailAPI = new JavaMailAPI(LoginActivity.this, LoginActivity.this, email, asunto, mensaje);
-//                                                    javaMailAPI.execute();
-//
-//                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(),getResources().getString(R.string.se_ha_enviado_correo));
-//                                                }
-//                                                else
-//                                                    CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getResources().getString(R.string.no_hay_socio_registrado));
-//                                            }
-//                                        }
-//
-//                                        @Override
-//                                        public void onFailure(Call<List<Socio>> call, Throwable t) {
-//                                            CustomToast.mostrarInfo(LoginActivity.this,getLayoutInflater(), getString(R.string.error_conexion_db));
-//                                        }
-//                                    });
-//                                }
-//                            }
-//                        });
-//                AlertDialog dialog = builder.create();
                 dialog.show();
             }
         });
@@ -713,9 +599,8 @@ public class LoginActivity extends AppCompatActivity {
     private void actualizarIdiomaApp(File fileConfig) {
         if (!MainActivity.idioma.equalsIgnoreCase("")) {
             Archivador.guardarConfig(fileConfig, MainActivity.idioma);
-            Utils.configurarIdioma(LoginActivity.this, MainActivity.idioma);
+            Utils.configurarIdioma(ctx, MainActivity.idioma);
             recreate();
-//            MainActivity.idiomaCambiado = true;
         }
     }
 

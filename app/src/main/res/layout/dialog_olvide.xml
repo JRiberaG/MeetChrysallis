@@ -15,7 +15,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/indique_email_recuperacion"/>
+            android:text="@string/indique_email_recuperacion"
+            android:fontFamily="@font/opensans_regular"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/dialog_olvide_layoutEmail"
@@ -23,14 +24,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:errorEnabled="true"
-            android:hint="@string/indique_su_email"
+            android:hint="@string/email"
             app:helperTextEnabled="true"
             app:startIconDrawable="@drawable/ic_email_black_24dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/dialog_olvide_etEmail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:inputType="textEmailAddress"/>
+                style="@style/editText_email"/>
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 </LinearLayout>

@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class Archivador {
 
-    public static File recuperarFicheroCreds(Context context) {
+    public static File recuperarFicheroCredenciales(Context context) {
         return new File (context.getExternalFilesDir(null).getPath() + File.separator + "cred.cfg");
     }
 

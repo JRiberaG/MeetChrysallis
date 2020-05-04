@@ -1,6 +1,9 @@
 package com.example.meetchrysallis.Activities;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -40,6 +44,7 @@ import com.example.meetchrysallis.R;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 
 import retrofit2.Call;
@@ -48,6 +53,7 @@ import retrofit2.Response;
 
 public class EventoDetalladoActivity extends AppCompatActivity {
 
+    private Context ctx = EventoDetalladoActivity.this;
     private Button btnMultifuncion;
     private Button btnComentar;
     private ImageView expand;
@@ -76,24 +82,34 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         evento = (Evento)getIntent().getExtras().getSerializable("evento");
 
         // --------------- ELEMENTOS DEL LAYOUT ---------------
+        ImageView ivBandera        = findViewById(R.id.eve_det_ivImagen);
+
         TextView tvTitulo           = findViewById(R.id.eve_det_tvNombre);
         TextView tvFecha            = findViewById(R.id.eve_det_tvFecha);
         TextView tvUbicacion        = findViewById(R.id.eve_det_tvUbicacion);
         TextView tvFechaLimite      = findViewById(R.id.eve_det_tvFechaLimite);
         TextView tvComunidad        = findViewById(R.id.eve_det_tvComunidad);
-        tvValoracionMedia  = findViewById(R.id.eve_det_tvStars);
+        tvValoracionMedia           = findViewById(R.id.eve_det_tvStars);
         tvNumComentarios            = findViewById(R.id.eve_det_tvNumComments);
+        TextView tvNumDocs          = findViewById(R.id.eve_det_numDocs);
+        TextView tvNumAsis          = findViewById(R.id.eve_det_numAsistentes);
         TextView tvDescripcion      = findViewById(R.id.eve_det_tvDescripcion);
         TextView tvNoComments       = findViewById(R.id.eve_det_tvNoComments);
 
-        LinearLayout linearFechaLim     = findViewById(R.id.eve_det_linearlayout_fechaLim);
-        linearRatingMedio  = findViewById(R.id.eve_det_linearLayout_ratingMedio);
-        LinearLayout linearRatear       = findViewById(R.id.eve_det_linearLayout_rating);
-        LinearLayout linearComentarios  = findViewById(R.id.eve_det_linearLayoutComentarios);
-        LinearLayout linearUbicacion    = findViewById(R.id.eve_det_linearlayout_Ubicacion);
+        LinearLayout linearFecha            = findViewById(R.id.eve_det_linear_fecha);
+        LinearLayout linearUbicacion        = findViewById(R.id.eve_det_linear_ubicacion);
+        LinearLayout linearFechaLim         = findViewById(R.id.eve_det_linear_fechaLim);
+        LinearLayout linearComunidad        = findViewById(R.id.eve_det_linear_comunidad);
+        linearRatingMedio                   = findViewById(R.id.eve_det_linear_ratingMedio);
+        LinearLayout linearNumComentarios   = findViewById(R.id.eve_det_linear_numComentarios);
+        LinearLayout linearNumDocs          = findViewById(R.id.eve_det_linear_numAdjuntos);
+        LinearLayout linearNumAsis          = findViewById(R.id.eve_det_linear_numAsistentes);
+        LinearLayout linearHeadComments     = findViewById(R.id.eve_det_linear_header_comentarios);
+        LinearLayout linearComentarios      = findViewById(R.id.eve_det_linearLayoutComentarios);
+        LinearLayout linearRatear           = findViewById(R.id.eve_det_linearLayout_rating);
 
         btnComentar     = findViewById(R.id.eve_det_btnComentar);
-        btnMultifuncion = findViewById(R.id.eve_det_btnAsistire);
+        btnMultifuncion = findViewById(R.id.eve_det_btnMultifuncion);
         ImageButton ibBack  = findViewById(R.id.eve_det_btnBack);
 
         ratingBar = findViewById(R.id.eve_det_ratingBar);
@@ -105,15 +121,194 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         cargarComentariosAPI();
 
         // A los elementos del layout les asignamos los los valores correspondientes del evento
-        asignarDatos(tvTitulo, tvFecha, tvUbicacion, tvFechaLimite, linearRatear, linearRatingMedio, tvNumComentarios, linearFechaLim, tvComunidad, tvValoracionMedia, tvDescripcion, linearUbicacion, ibBack);
+        asignarDatos(ivBandera, tvTitulo, tvFecha, tvUbicacion, tvFechaLimite, linearRatear, linearRatingMedio,
+                tvNumComentarios, linearFechaLim, tvComunidad, tvValoracionMedia, tvDescripcion, linearUbicacion,
+                ibBack, tvNumDocs, linearNumDocs, tvNumAsis, linearNumAsis);
 
-        configurarBotonExpand(linearComentarios, recyclerComments, tvNoComments);
+        configurarListenersLayouts(linearFecha, linearUbicacion, linearFechaLim, linearComunidad,
+                linearNumComentarios, linearNumDocs, linearNumAsis);
+
+        configurarLayoutExpand(linearComentarios, recyclerComments, tvNoComments, linearHeadComments);
         configurarBotonComentar(recyclerComments, tvNoComments);
         configurarBotonMultifuncion();
     }
 
-    private void asignarDatos(TextView tvTitulo, TextView tvFecha, TextView tvUbicacion, TextView tvFechaLimite, LinearLayout linearRatear, LinearLayout linearRatingMedio, TextView tvNumComentarios, LinearLayout linearFechaLim, TextView tvComunidad, TextView tvValoracionMedia, TextView tvDescripcion, LinearLayout linearUbicacion, ImageButton ibBack) {
+    private void configurarListenersLayouts(LinearLayout linearFecha, final LinearLayout linearUbicacion, LinearLayout linearFechaLim, LinearLayout linearComunidad, LinearLayout linearNumComentarios, LinearLayout linearNumDocs, LinearLayout linearNumAsis) {
+        linearFecha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.info_fecha), false);
+            }
+        });
+
+        linearUbicacion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                configurarIntentMaps();
+            }
+        });
+
+        linearFechaLim.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.info_fechaLim), false);
+            }
+        });
+
+        linearComunidad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.info_comunidad), false);
+            }
+        });
+
+        linearRatingMedio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.info_ratingMedio), false);
+            }
+        });
+
+        linearNumComentarios.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.info_numComents), false);
+            }
+        });
+
+//        linearNumDocs.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                abrirDialogDocs();
+//            }
+//        });
+
+        linearNumAsis.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.info_numAsistentes), false);
+            }
+        });
+    }
+
+    private void abrirDialogDocs() {
+//        final ArrayList<Documento> docs = (ArrayList)evento.getDocumentos();
+//        View view = getLayoutInflater().inflate(R.layout.dialog_documentos, null);
+//        ListViewAdapter lvAdapter = new ListViewAdapter(ctx, evento.getDocumentos());
+//        ListView lvDocs = view.findViewById(R.id.dialog_docs_lvDocs);
+//        lvDocs.setAdapter(lvAdapter);
+//
+//        lvDocs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                //TODO recortar nombre y ver si es png o pdf
+//                String nombre = docs.get(position).getUrl();
+//                String extension = nombre.substring(nombre.length()-3);
+//
+////                if (extension.equals("pdf")){
+//                    Documento documento = docs.get(position);
+//                    byte[] pdfAsBytes = Base64.decode(documento.getDatos(), 0);
+//
+//                    File file = new File(getCacheDir() + documento.getUrl());
+//                    FileOutputStream fos = null;
+//                    try {
+//                        fos = new FileOutputStream(file, true);
+//                        fos.write(pdfAsBytes);
+//                        fos.flush();
+//                        fos.close();
+//                    } catch (FileNotFoundException e) {
+//                        e.printStackTrace();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    Intent intent = new Intent(ctx, PdfViewerActivity.class);
+//                    intent.putExtra("file", file);
+//                    intent.putExtra("ext", extension);
+//                    try {
+//                        startActivity(intent);
+//                    } catch (ActivityNotFoundException e) {
+//                        System.err.println("error");
+//                        // Instruct the user to install a PDF reader here, or something
+//                    }
+//
+////                }
+////                else if (extension.equals("png")){
+////
+////                    Intent intent = new Intent(ctx, PdfViewerActivity.class);
+////                    intent.putExtra("file", file);
+////                    intent.putExtra("ext", extension);
+////                    try {
+////                        startActivity(intent);
+////                    } catch (ActivityNotFoundException e) {
+////                        System.err.println("error");
+////                        // Instruct the user to install a PDF reader here, or something
+////                    }
+////                }
+////                else {
+////                    System.err.println("error de extension");
+////                }
+////                String strTarget = "\\";
+////                String strReplacement = "\\\\";
+////                nombre = nombre.replace(strTarget, strReplacement);
+////
+////                String[] nombreSplit = nombre.split("\\\\");
+////                int numeroParticiones = nombreSplit.length;
+////                String semiFinalNombre = nombreSplit[numeroParticiones-1];
+////
+////                String[] nombreSplit2 = semiFinalNombre.split("\\.");
+////                numeroParticiones = nombreSplit2.length;
+////                String nombreFinal = nombreSplit2[numeroParticiones-1];
+////                Toast.makeText(EventoDetalladoActivity.this, numeroParticiones + ", " + nombreFinal, Toast.LENGTH_SHORT).show();
+//
+//
+////                Documento documento = evento.getDocumentos().get(position);
+////                byte[] pdfAsBytes = Base64.decode(documento.getDatos(), 0);
+////
+////                File filePath = new File(getCacheDir() + documento.getNombre());
+////                FileOutputStream os = null;
+////                try {
+////                    os = new FileOutputStream(filePath, true);
+////                    os.write(pdfAsBytes);
+////                    os.flush();
+////                    os.close();
+////                } catch (FileNotFoundException e) {
+////                    e.printStackTrace();
+////                } catch (IOException e) {
+////                    e.printStackTrace();
+////                }
+////
+////                Intent intent1 = new Intent(EventoActivity.this,PdfViewActivity.class);
+////                intent1.putExtra("file",filePath);
+////                try {
+////                    startActivity(intent1);
+////                } catch (ActivityNotFoundException e) {
+////                    // Instruct the user to install a PDF reader here, or something
+////                }
+////
+////            }
+//                //
+//            }
+//        });
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+//        builder.setView(view)
+//                .setTitle("Documentos")
+//                .setPositiveButton(getResources().getString(R.string.cerrar), null)
+//                .create()
+//                .show();
+    }
+
+    private void asignarDatos(ImageView ivBandera, TextView tvTitulo, TextView tvFecha, TextView tvUbicacion, TextView tvFechaLimite,
+                              LinearLayout linearRatear, LinearLayout linearRatingMedio, TextView tvNumComentarios,
+                              LinearLayout linearFechaLim, TextView tvComunidad, TextView tvValoracionMedia, TextView tvDescripcion,
+                              LinearLayout linearUbicacion, ImageButton ibBack, TextView tvNumDocs, LinearLayout linearNumDocs,
+                              TextView tvNumAsis, LinearLayout linearNumAsis) {
         configurarIbBack(ibBack);
+
+        // Bandera de la CCAA
+        Utils.asignarImagenComunidad(ctx, ivBandera, evento.getIdComunidad());
 
         //titulo
         tvTitulo.setText(evento.getTitulo());
@@ -123,7 +318,8 @@ public class EventoDetalladoActivity extends AppCompatActivity {
 
         //ubicacion
         tvUbicacion.setText(evento.getUbicacion());
-        configurarIntentMaps(tvUbicacion, linearUbicacion);
+        tvUbicacion.setText(Html.fromHtml("<u>" + evento.getUbicacion() + "</u>"));
+        tvUbicacion.setTextColor(getResources().getColor(R.color.hyperlink));
 
         //fecha límite
         if(evento.getFecha_limite() != null) {
@@ -167,8 +363,36 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         else
             tvNumComentarios.setText("0");
 
+//        // núm documentos
+//        if (evento.getDocumentos() != null){
+//            if (evento.getDocumentos().size() > 0) {
+//                tvNumDocs.setText(String.valueOf(evento.getDocumentos().size()));
+//            } else {
+//                linearNumDocs.setVisibility(View.GONE);
+//            }
+//        } else {
+//            linearNumDocs.setVisibility(View.GONE);
+//        }
+
+        // num asistentes
+        if (evento.getAsistencia() != null) {
+            int numAsistentes = 0;
+            for (Asistir a : evento.getAsistencia()) {
+                numAsistentes += a.getNumAsistentes();
+            }
+            tvNumAsis.setText(String.valueOf(numAsistentes));
+
+            if (numAsistentes == 0) {
+                linearNumAsis.setVisibility(View.GONE);
+            }
+        } else {
+            linearNumAsis.setVisibility(View.GONE);
+        }
+
         //descripción
-        tvDescripcion.setText(evento.getDescripcion());
+        String desc = evento.getDescripcion();
+        desc = desc.replace(". ", ".\n");
+        tvDescripcion.setText(desc);
     }
 
     private void configurarIbBack(ImageButton ibBack) {
@@ -180,19 +404,11 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         });
     }
 
-    private void configurarIntentMaps(TextView tvUbicacion, LinearLayout linearUbicacion) {
-        tvUbicacion.setText(Html.fromHtml("<u>" + evento.getUbicacion() + "</u>"));
-        tvUbicacion.setTextColor(getResources().getColor(R.color.hyperlink));
-
-        linearUbicacion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String map = "http://maps.google.com/maps?q=" + evento.getUbicacion().replace(" ", "+");
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(map));
-                startActivity(intent);
-            }
-        });
+    private void configurarIntentMaps() {
+        String strUbicacion = "http://maps.google.com/maps?q=" + evento.getUbicacion().replace(" ", "+");
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(strUbicacion));
+        startActivity(intent);
     }
 
     private void comprobarValoracionMedia() {
@@ -200,12 +416,11 @@ public class EventoDetalladoActivity extends AppCompatActivity {
             linearRatingMedio.setVisibility(View.GONE);
         } else {
             linearRatingMedio.setVisibility(View.VISIBLE);
-            tvValoracionMedia.setText(Utils.formatearFloat(evento.getValoracionMedia()));
+            tvValoracionMedia.setText(Utils.formatearFloat(evento.getValoracionMedia()) + "/5");
         }
     }
 
     private void cargarComentariosAPI() {
-        //comentarioService = Api.getApi().create(ComentarioService.class);
         Call<ArrayList<Comentario>> comentariosCall = comentarioService.getComentariosByEvento(evento.getId());
 
         DialogProgress dp = new DialogProgress(EventoDetalladoActivity.this);
@@ -226,7 +441,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                             tvNumComentarios.setText("0");
                         break;
                     default:
-                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
                 ad.dismiss();
@@ -234,20 +449,18 @@ public class EventoDetalladoActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ArrayList<Comentario>> call, Throwable t) {
-                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                 ad.dismiss();
             }
         });
     }
 
-    private void configurarBotonExpand(final LinearLayout linearComentarios, final RecyclerView recyclerComments, final TextView tvNoComments) {
+    private void configurarLayoutExpand(final LinearLayout linearComentarios, final RecyclerView recyclerComments, final TextView tvNoComments, final LinearLayout linearHeadComments) {
         expand = findViewById(R.id.eve_det_ivExpand);
-        expand.setOnClickListener(new View.OnClickListener() {
+        linearHeadComments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(expandido){
-                    //tvNoComments.setVisibility(View.GONE);
-                    //recyclerComments.setVisibility(View.GONE);
                     linearComentarios.setVisibility(View.GONE);
                     expand.setImageResource(R.drawable.ic_expand_more_black_24dp);
                     expandido = false;
@@ -295,9 +508,9 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                                 int maxCaracteres = 140;
                                 if (comment.length() > maxCaracteres || comment.length() < 5){
                                     if (comment.length() > maxCaracteres){
-                                        CustomToast.mostrarWarning(EventoDetalladoActivity.this,getLayoutInflater(),getResources().getString(R.string.error_comentario_excede));
+                                        CustomToast.mostrarWarning(EventoDetalladoActivity.this,getLayoutInflater(),getResources().getString(R.string.error_comentario_excede), true);
                                     } else {
-                                        CustomToast.mostrarWarning(EventoDetalladoActivity.this,getLayoutInflater(),getResources().getString(R.string.error_comentario_demasiado_corto));
+                                        CustomToast.mostrarWarning(EventoDetalladoActivity.this,getLayoutInflater(),getResources().getString(R.string.error_comentario_demasiado_corto), true);
                                     }
                                 }
                                 else{
@@ -397,7 +610,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                     case 200:
                     case 201:
                     case 204:
-                        CustomToast.mostrarSuccess(EventoDetalladoActivity.this, getLayoutInflater(), getResources().getString(R.string.comentario_anadido));
+                        CustomToast.mostrarSuccess(EventoDetalladoActivity.this, getLayoutInflater(), getResources().getString(R.string.comentario_anadido), false);
                         // Añadimos, al comentario recien creado, el socio para que pete al actualizar el recycler
                         c.setSocio(MainActivity.socio);
                         // Añadimos el comentario al evento
@@ -407,14 +620,14 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                         tvNumComentarios.setText(String.valueOf(evento.getComentarios().size()));
                         break;
                     default:
-                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
             }
 
             @Override
             public void onFailure(Call<Comentario> call, Throwable t) {
-                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db), true);
             }
         });
     }
@@ -425,34 +638,38 @@ public class EventoDetalladoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!eventoPasado) {
                     if(asistido){
-                        DialogProgress dp = new DialogProgress(EventoDetalladoActivity.this);
-                        final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.cargando));
+                        mostrarDialogConfirmacion();
 
-                        // Llamamos a la API para eliminar el asistir
-                        Call<Asistir> asistirCall = asistirService.deleteAsistir(MainActivity.socio.getId(), evento.getId());
-                        asistirCall.clone().enqueue(new Callback<Asistir>() {
-                            @Override
-                            public void onResponse(Call<Asistir> call, Response<Asistir> response) {
-                                switch(response.code()){
-                                    case 200:
-                                    case 201:
-                                        //marcamos como no asistido y cambiamos colores y texto del boton
-                                        asistido = false;
-                                        comprobarAsistido();
-                                        break;
-                                    default:
-                                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
-                                        break;
-                                }
-                                ad.dismiss();
-                            }
-
-                            @Override
-                            public void onFailure(Call<Asistir> call, Throwable t) {
-                                ad.dismiss();
-                                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
-                            }
-                        });
+//                        llamadaApiDesapuntarse();
+//                        DialogProgress dp = new DialogProgress(EventoDetalladoActivity.this);
+//                        final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.cargando));
+//
+//                        // Llamamos a la API para eliminar el asistir
+//                        Call<Asistir> asistirCall = asistirService.deleteAsistir(MainActivity.socio.getId(), evento.getId());
+//                        asistirCall.clone().enqueue(new Callback<Asistir>() {
+//                            @Override
+//                            public void onResponse(Call<Asistir> call, Response<Asistir> response) {
+//                                switch(response.code()){
+//                                    case 200:
+//                                    case 201:
+//                                        mostrarDialogConfirmacion();
+//                                        //marcamos como no asistido y cambiamos colores y texto del boton
+////                                        asistido = false;
+////                                        comprobarAsistido();
+//                                        break;
+//                                    default:
+//                                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+//                                        break;
+//                                }
+//                                ad.dismiss();
+//                            }
+//
+//                            @Override
+//                            public void onFailure(Call<Asistir> call, Throwable t) {
+//                                ad.dismiss();
+//                                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+//                            }
+//                        });
 
                     } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(EventoDetalladoActivity.this);
@@ -500,19 +717,21 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                                                     switch(response.code()){
                                                         case 200:
                                                         case 201:
+//                                                            crearNotificacion();
                                                             //marcamos como asistido y cambiamos colores y texto del boton
                                                             asistido = true;
                                                             comprobarAsistido();
+//                                                            crearNotificacion();
                                                             break;
                                                         default:
-                                                            CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                                                            CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
                                                             break;
                                                     }
                                                 }
 
                                                 @Override
                                                 public void onFailure(Call<Asistir> call, Throwable t) {
-                                                    CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                    CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                                                 }
                                             });
                                             dialog.dismiss();
@@ -557,21 +776,21 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                                                     switch(response.code()){
                                                         case 204:
                                                             valorado = true;
-                                                            CustomToast.mostrarSuccess(EventoDetalladoActivity.this, getLayoutInflater(), getResources().getString(R.string.valoracion_enviada));
+                                                            CustomToast.mostrarSuccess(EventoDetalladoActivity.this, getLayoutInflater(), getResources().getString(R.string.valoracion_enviada), false);
                                                             ratingBar.setEnabled(false);
                                                             comprobarValoracion(asistir);
 
                                                             modificarValoracionMedia();
                                                             break;
                                                         default:
-                                                            CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                                                            CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
                                                             break;
                                                     }
                                                 }
 
                                                 @Override
                                                 public void onFailure(Call<Asistir> call, Throwable t) {
-                                                    CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db));
+                                                    CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db), true);
                                                 }
                                             });
                                         }
@@ -585,6 +804,84 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         });
     }
 
+    private void crearNotificacion() {
+        //TODO
+        //  Pendiente de arreglar: si el socio se desapunta, cancelar la notificacion
+        Calendar calendar = Calendar.getInstance();
+
+        int hora = calendar.get(Calendar.HOUR);
+        int minutos = calendar.get(Calendar.HOUR);
+
+        calendar.set(Calendar.HOUR_OF_DAY, hora);
+        calendar.set(Calendar.MINUTE, minutos + 1);
+        calendar.set(Calendar.SECOND, 00);
+
+        Intent intent = new Intent(ctx, Notification_reciever.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("evento", evento);
+        String tag = String.valueOf(Calendar.getInstance().get(Calendar.HOUR));
+        bundle.putString("tag", tag);
+        intent.putExtra("bundle", bundle);
+        intent.setAction("NOTIFICACION");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Toast.makeText(ctx, "Notificacion creada, tag: " + tag, Toast.LENGTH_SHORT).show();
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+//        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//        nm.cancel(102);
+    }
+
+    private void llamadaApiDesapuntarse() {
+        DialogProgress dp = new DialogProgress(EventoDetalladoActivity.this);
+        final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.cargando));
+
+        // Llamamos a la API para eliminar el asistir
+        Call<Asistir> asistirCall = asistirService.deleteAsistir(MainActivity.socio.getId(), evento.getId());
+        asistirCall.clone().enqueue(new Callback<Asistir>() {
+            @Override
+            public void onResponse(Call<Asistir> call, Response<Asistir> response) {
+                switch(response.code()){
+                    case 200:
+                    case 201:
+                        asistido = false;
+                        comprobarAsistido();
+                        break;
+                    default:
+                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
+                        break;
+                }
+                ad.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<Asistir> call, Throwable t) {
+                ad.dismiss();
+                CustomToast.mostrarInfo(EventoDetalladoActivity.this, getLayoutInflater(), getString(R.string.error_conexion_db), true);
+            }
+        });
+    }
+
+    private void mostrarDialogConfirmacion() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(EventoDetalladoActivity.this);
+        builder.setTitle(getResources().getString(R.string.desea_desapuntarse_evento))
+                .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setPositiveButton(getResources().getString(R.string.si_desapuntarse), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        llamadaApiDesapuntarse();
+                    }
+                })
+                .create()
+                .show();
+    }
+
     private void modificarValoracionMedia() {
         int personas = 0;
         float valoracionTotal = 0;
@@ -596,17 +893,47 @@ public class EventoDetalladoActivity extends AppCompatActivity {
         result = valoracionTotal / personas;
         evento.setValoracionMedia(result);
 
-
-
         DialogProgress dp = new DialogProgress(EventoDetalladoActivity.this);
         final AlertDialog ad = dp.setProgressDialog(getResources().getString(R.string.cargando));
 
-        // llamada a la api para actualizar evento
-        EventoService eventoService = Api.getApi().create(EventoService.class);
+//        // llamada a la api para actualizar evento
+//        EventoService eventoService = Api.getApi().create(EventoService.class);
 
         //FIXME
         //  Funciona, cumple su cometido pero se va por el onFailure
         Evento e = new Evento(evento.getId(), evento.getTitulo(), evento.getFecha(), evento.getUbicacion(), evento.getDescripcion(), evento.getFecha_limite(), evento.getIdComunidad(), evento.getIdAdmin(), evento.getValoracionMedia());
+        actualizarEvento(e, ad);
+//        Call<Evento> callEvento = eventoService.updateEvento(e.getId(), e);
+//        callEvento.enqueue(new Callback<Evento>() {
+//            @Override
+//            public void onResponse(Call<Evento> call, Response<Evento> response) {
+//                switch(response.code()){
+//                    case 200:
+//                        System.out.println("Se actualizó la valoracion media del evento");
+//                        break;
+//                    case 404:
+//                        // not found
+//                        System.out.println("Error: not found");
+//                    default:
+//                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
+//                        break;
+//                }
+//                comprobarValoracionMedia();
+//                ad.dismiss();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Evento> call, Throwable t) {
+//                ad.dismiss();
+//                comprobarValoracionMedia();
+//                System.err.println("Error: onFailure: " + t.getMessage());
+//            }
+//        });
+    }
+
+    private void actualizarEvento(Evento e, final AlertDialog ad) {
+        // llamada a la api para actualizar evento
+        EventoService eventoService = Api.getApi().create(EventoService.class);
         Call<Evento> callEvento = eventoService.updateEvento(e.getId(), e);
         callEvento.enqueue(new Callback<Evento>() {
             @Override
@@ -617,9 +944,9 @@ public class EventoDetalladoActivity extends AppCompatActivity {
                         break;
                     case 404:
                         // not found
-                        System.out.println("Error: not found");
+                        System.out.println("Error: evento not found");
                     default:
-                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message());
+                        CustomToast.mostrarWarning(EventoDetalladoActivity.this, getLayoutInflater(), response.code() + " - " + response.message(), true);
                         break;
                 }
                 comprobarValoracionMedia();
@@ -657,19 +984,21 @@ public class EventoDetalladoActivity extends AppCompatActivity {
      */
     private void comprobarAsistido() {
         // Si el evento no se ha celebrado
+        // FIXME
+        //  Cambiar icono
         if (!eventoPasado) {
             if(asistido){
                 btnMultifuncion.setText(getResources().getString(R.string.no_asistir));
-                btnMultifuncion.setBackground(this.getResources().getDrawable(R.drawable.selector_custom_button_red));
+                btnMultifuncion.setCompoundDrawablesWithIntrinsicBounds((R.drawable.ic_event_busy_black_24dp), 0, 0, 0);
             }
             else{
                 btnMultifuncion.setText(getResources().getString(R.string.asistire));
-                btnMultifuncion.setBackground(this.getResources().getDrawable(R.drawable.selector_custom_button_green));
+                btnMultifuncion.setCompoundDrawablesWithIntrinsicBounds((R.drawable.ic_event_available_black_24dp), 0, 0, 0);
             }
         // Si ya se celebró
         } else {
             btnMultifuncion.setText(getResources().getString(R.string.valorar));
-            btnMultifuncion.setBackground(this.getResources().getDrawable(R.drawable.custom_button_ratear));
+            btnMultifuncion.setCompoundDrawablesWithIntrinsicBounds((R.drawable.ic_star_black_24dp), 0, 0, 0);
         }
 
         // Si ha asistido podrá comentar, de lo contrario no
@@ -687,6 +1016,7 @@ public class EventoDetalladoActivity extends AppCompatActivity {
             // Inhabilitamos el ratingBar y marcamos la valoración que el socio envió
             ratingBar.setRating(a.getValoracion());
             ratingBar.setEnabled(false);
+            btnMultifuncion.setBackground(getResources().getDrawable(R.drawable.custom_button_multifuncion_disabled));
             // Cambiamos el el textView para mayor comodidad del usuario
             TextView tv = findViewById(R.id.eve_det_tvValoraElEvento);
             tv.setText(R.string.gracias_por_valorar);
