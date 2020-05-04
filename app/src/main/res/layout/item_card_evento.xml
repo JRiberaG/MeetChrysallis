@@ -59,7 +59,7 @@
                         android:layout_height="wrap_content"
                         android:text="Titulo del evento"
                         android:fontFamily="@font/raleway_regular"
-                        android:textColor="@color/md_grey_400"
+                        android:textColor="@color/md_text_white_87"
                         android:textSize="@dimen/txt_bigBody"
 
                         android:ellipsize="end"
