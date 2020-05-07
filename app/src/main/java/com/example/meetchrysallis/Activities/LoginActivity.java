@@ -381,9 +381,9 @@ public class LoginActivity extends AppCompatActivity {
 
                                         if (emailEncontrado) {
                                             // Encripta la contraseña que hemos generado automáticamente
-                                            //FIXME
-                                            // String contrasenyaEncriptada = Utils.encriptarString(contrasenyaRandom);
-                                            String contrasenyaEncriptada = Utils.encriptarString("prueba");
+                                            
+                                            String contrasenyaEncriptada = Utils.encriptarString(contrasenyaRandom);
+                                            // String contrasenyaEncriptada = Utils.encriptarString("prueba");
                                             Socio socioUpdated = socioIterado;
                                             socioUpdated.setContrasenya(contrasenyaEncriptada);
 
@@ -409,10 +409,9 @@ public class LoginActivity extends AppCompatActivity {
                                                 }
                                             });
 
-                                            //FIXME: modificar el mail para cuando se acaben de hacer las pruebas
                                             //Enviamos el mail al usuario con la nueva contraseña
-                                            JavaMailAPI javaMailAPI = new JavaMailAPI(ctx, Utils.EMAIL, asunto, mensaje);
-                                            //JavaMailAPI javaMailAPI = new JavaMailAPI(ctx, email, asunto, mensaje);
+                                            //JavaMailAPI javaMailAPI = new JavaMailAPI(ctx, Utils.EMAIL, asunto, mensaje);
+                                            JavaMailAPI javaMailAPI = new JavaMailAPI(ctx, email, asunto, mensaje);
                                             javaMailAPI.execute();
 
                                             CustomToast.mostrarInfo(ctx, getLayoutInflater(), getResources().getString(R.string.se_ha_enviado_correo), true);
